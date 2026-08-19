@@ -1,0 +1,260 @@
+{
+  "prediction": "If DSCA is only 'defaults always win', replacing the classical default by a weaker classical seed should still yield 0 Holm winners. If DSCA is credit attribution, E1 non-superiority is default-relative: some policies (incl. stronger classical seeds or free proposals) can beat a weak default after Holm while still losing to base_onehot_ridge.",
+  "GB1": {
+    "SEED:rf_thompson": {
+      "seed": "SEED:rf_thompson",
+      "n_tested": 128,
+      "n_better_holm": 31,
+      "n_worse_holm": 3,
+      "n_free_better_holm": 4,
+      "n_seed_better_holm": 3,
+      "free_better": [
+        [
+          "FREE:Zero-inflated two-head forest UCB",
+          "free",
+          1.2688,
+          0.0194
+        ],
+        [
+          "REPL:Pairwise-Feature GP with Adaptive UCB",
+          "free_replication",
+          2.0407,
+          0.0029
+        ],
+        [
+          "REPL:Two-Step Rollout Local GP",
+          "free_replication",
+          1.5717,
+          0.0018
+        ],
+        [
+          "REPL:Full One-Hot Bootstrap Ridge Ensemble",
+          "free_replication",
+          1.6095,
+          0.0052
+        ]
+      ],
+      "better_top": [
+        [
+          "REPL:Pairwise-Feature GP with Adaptive UCB",
+          "free_replication",
+          2.0407,
+          0.0029
+        ],
+        [
+          "CMC:generator.scope=local_hamming_ball",
+          "coord_matched",
+          1.9346,
+          0.0
+        ],
+        [
+          "FULL:Add pairwise site coupling",
+          "perturb",
+          1.7828,
+          0.0009
+        ],
+        [
+          "REPL:BASE_REPLICATION_SONNET5",
+          "seed",
+          1.6541,
+          0.0
+        ],
+        [
+          "CMC:surrogate.heads=separated_activity_and_f",
+          "coord_matched",
+          1.6377,
+          0.0005
+        ],
+        [
+          "REPL:Full One-Hot Bootstrap Ridge Ensemble",
+          "free_replication",
+          1.6095,
+          0.0052
+        ],
+        [
+          "REPL:Two-Step Rollout Local GP",
+          "free_replication",
+          1.5717,
+          0.0018
+        ],
+        [
+          "COORD:representation.encoding=onehot_plus_pa",
+          "coord_only",
+          1.453,
+          0.014
+        ],
+        [
+          "CMC:representation.encoding=onehot_plus_pair",
+          "coord_matched",
+          1.453,
+          0.014
+        ],
+        [
+          "REPL:Pretrained Embedding Swap",
+          "perturb_replication",
+          1.452,
+          0.0068
+        ],
+        [
+          "COORD:update.target_transform=log1p",
+          "coord_only",
+          1.4299,
+          0.0082
+        ],
+        [
+          "CMC:update.target_transform=log1p",
+          "coord_matched",
+          1.4299,
+          0.0082
+        ]
+      ]
+    },
+    "SEED:gp_ucb": {
+      "seed": "SEED:gp_ucb",
+      "n_tested": 128,
+      "n_better_holm": 2,
+      "n_worse_holm": 4,
+      "n_free_better_holm": 1,
+      "n_seed_better_holm": 0,
+      "free_better": [
+        [
+          "REPL:Pairwise-Feature GP with Adaptive UCB",
+          "free_replication",
+          1.6599,
+          0.0019
+        ]
+      ],
+      "better_top": [
+        [
+          "REPL:Pairwise-Feature GP with Adaptive UCB",
+          "free_replication",
+          1.6599,
+          0.0019
+        ],
+        [
+          "CMC:generator.scope=local_hamming_ball",
+          "coord_matched",
+          1.5538,
+          0.0322
+        ]
+      ]
+    },
+    "SEED:esm_rf_greedy": {
+      "seed": "SEED:esm_rf_greedy",
+      "n_tested": 128,
+      "n_better_holm": 0,
+      "n_worse_holm": 13,
+      "n_free_better_holm": 0,
+      "n_seed_better_holm": 0,
+      "free_better": [],
+      "better_top": []
+    },
+    "SEED:base_onehot_ridge": {
+      "seed": "SEED:base_onehot_ridge",
+      "n_tested": 128,
+      "n_better_holm": 0,
+      "n_worse_holm": 15,
+      "n_free_better_holm": 0,
+      "n_seed_better_holm": 0,
+      "free_better": [],
+      "better_top": []
+    }
+  },
+  "TEV": {
+    "SEED:rf_thompson": {
+      "seed": "SEED:rf_thompson",
+      "n_tested": 45,
+      "n_better_holm": 0,
+      "n_worse_holm": 0,
+      "n_free_better_holm": 0,
+      "n_seed_better_holm": 0,
+      "free_better": [],
+      "better_top": []
+    },
+    "SEED:gp_ucb": {
+      "seed": "SEED:gp_ucb",
+      "n_tested": 45,
+      "n_better_holm": 0,
+      "n_worse_holm": 0,
+      "n_free_better_holm": 0,
+      "n_seed_better_holm": 0,
+      "free_better": [],
+      "better_top": []
+    },
+    "SEED:esm_rf_greedy": {
+      "seed": "SEED:esm_rf_greedy",
+      "n_tested": 45,
+      "n_better_holm": 0,
+      "n_worse_holm": 0,
+      "n_free_better_holm": 0,
+      "n_seed_better_holm": 0,
+      "free_better": [],
+      "better_top": []
+    },
+    "SEED:base_onehot_ridge": {
+      "seed": "SEED:base_onehot_ridge",
+      "n_tested": 45,
+      "n_better_holm": 0,
+      "n_worse_holm": 0,
+      "n_free_better_holm": 0,
+      "n_seed_better_holm": 0,
+      "free_better": [],
+      "better_top": []
+    }
+  },
+  "TrpB4": {
+    "SEED:rf_thompson": {
+      "seed": "SEED:rf_thompson",
+      "n_tested": 102,
+      "n_better_holm": 2,
+      "n_worse_holm": 1,
+      "n_free_better_holm": 0,
+      "n_seed_better_holm": 0,
+      "free_better": [],
+      "better_top": [
+        [
+          "COORD:representation.encoding=onehot_plus_pa",
+          "coord_only",
+          0.3956,
+          0.0135
+        ],
+        [
+          "CMC:representation.encoding=onehot_plus_pair",
+          "coord_matched",
+          0.3956,
+          0.0135
+        ]
+      ]
+    },
+    "SEED:gp_ucb": {
+      "seed": "SEED:gp_ucb",
+      "n_tested": 102,
+      "n_better_holm": 0,
+      "n_worse_holm": 6,
+      "n_free_better_holm": 0,
+      "n_seed_better_holm": 0,
+      "free_better": [],
+      "better_top": []
+    },
+    "SEED:esm_rf_greedy": {
+      "seed": "SEED:esm_rf_greedy",
+      "n_tested": 102,
+      "n_better_holm": 0,
+      "n_worse_holm": 0,
+      "n_free_better_holm": 0,
+      "n_seed_better_holm": 0,
+      "free_better": [],
+      "better_top": []
+    },
+    "SEED:base_onehot_ridge": {
+      "seed": "SEED:base_onehot_ridge",
+      "n_tested": 102,
+      "n_better_holm": 0,
+      "n_worse_holm": 5,
+      "n_free_better_holm": 0,
+      "n_seed_better_holm": 0,
+      "free_better": [],
+      "better_top": []
+    }
+  }
+}
