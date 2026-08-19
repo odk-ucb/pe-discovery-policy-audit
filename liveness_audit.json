@@ -1,0 +1,254 @@
+[
+ {
+  "coordinate": "representation.encoding",
+  "value": "physicochem",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "representation.encoding",
+  "value": "onehot_plus_pairs",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "representation.encoding",
+  "value": "esm2_frozen",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "representation.pooling",
+  "value": "site",
+  "verdict": "INAPPLICABLE",
+  "detail": "excluded by a declared conditional"
+ },
+ {
+  "coordinate": "representation.rank",
+  "value": "low_rank_pca",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "representation.site_coupling",
+  "value": "pairwise_sites",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "surrogate.family",
+  "value": "random_forest",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "surrogate.family",
+  "value": "gaussian_process",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "surrogate.family",
+  "value": "boosted_trees",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "surrogate.family",
+  "value": "knn",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "surrogate.count",
+  "value": "ensemble_of_k",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "surrogate.heads",
+  "value": "separated_activity_and_fitness",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "surrogate.uncertainty",
+  "value": "ensemble_disagreement",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "surrogate.uncertainty",
+  "value": "gp_posterior",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "surrogate.uncertainty",
+  "value": "bootstrap",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "generator.scope",
+  "value": "local_hamming_ball",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "generator.scope",
+  "value": "recombine_observed_elites",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "generator.ball_centre",
+  "value": "wild_type",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "generator.radius",
+  "value": "r2",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "generator.radius",
+  "value": "adaptive_radius",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "generator.pool_size",
+  "value": "small",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "generator.pool_size",
+  "value": "medium",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "generator.zero_shot_prior",
+  "value": "esm_masked_marginal_focus",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "acquisition.rule",
+  "value": "ucb",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "acquisition.rule",
+  "value": "expected_improvement",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "acquisition.rule",
+  "value": "thompson",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "acquisition.rule",
+  "value": "pure_explore",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "acquisition.beta",
+  "value": "medium",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "acquisition.beta",
+  "value": "high",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "acquisition.beta",
+  "value": "state_adaptive_beta",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "acquisition.lookahead",
+  "value": "two_step_myopic_rollout",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "batch.selection",
+  "value": "diverse_top_k_by_distance",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "batch.selection",
+  "value": "score_then_cluster",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "batch.selection",
+  "value": "epsilon_mixed",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "batch.size_rule",
+  "value": "state_adaptive_size",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "update.refit",
+  "value": "warm_start",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "update.weighting",
+  "value": "recency_weighted",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "update.weighting",
+  "value": "elite_weighted",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "update.target_transform",
+  "value": "log1p",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "update.target_transform",
+  "value": "rank",
+  "verdict": "LIVE",
+  "detail": "trace differs on seed 0"
+ },
+ {
+  "coordinate": "stopping.rule",
+  "value": "plateau_detect",
+  "verdict": "INERT",
+  "detail": ""
+ },
+ {
+  "coordinate": "stopping.rule",
+  "value": "budget_exhausted",
+  "verdict": "INERT",
+  "detail": ""
+ }
+]

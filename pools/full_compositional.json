@@ -1,0 +1,325 @@
+{
+  "condition": "FULL_COMPOSITIONAL",
+  "policies": [
+    {
+      "name": "Spread the batch by Hamming",
+      "channel": "perturb",
+      "derivation": "Component: batch construction. Coordinate: batch.selection (top_k_by_score -> diverse_top_k_by_distance). Operation: add a constraint / de-duplicate, i.e. localise->globalise the batch's coverage of sequence space while leaving the surrogate, the pool and the acquisition untouched. Every other coordinate is held at the base value.",
+      "rationale": "The base fits an additive ridge to 24 labels and then takes the 24 highest predicted variants: on a four-site space the argmax of an additive model is one corner and its next 23 neighbours, so the batch differs at a single site and re-tests one hypothesis 24 times. Forcing pairwise Hamming separation converts a 24-fold replicate into ~24 independent tests of distinct allele combinations, which is exactly where the information sits when fitness is epistatic. Of all one-coordinate moves this is the one that changes how many distinct questions the 96-assay budget actually asks.",
+      "coords": {
+        "representation": {"encoding": "onehot", "pooling": "mean", "rank": "full", "site_coupling": "independent_sites"},
+        "surrogate": {"family": "ridge", "count": "single", "heads": "joint_fitness", "uncertainty": "none"},
+        "generator": {"scope": "global_all_variants", "radius": "r1", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "greedy_mean", "beta": "low", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "fixed_rounds"}
+      },
+      "missing_coordinate": "Diversity strength and metric. The interface names the selector but not the minimum separation it enforces (Hamming >=1 vs >=2 vs >=3 is a completely different policy on a four-site space, where distance takes only five values) and not whether diversity is measured in sequence space or in surrogate-prediction space."
+    },
+    {
+      "name": "Add pairwise site coupling",
+      "channel": "perturb",
+      "derivation": "Component: the feature map / model of site effects. Coordinate: representation.site_coupling (independent_sites -> pairwise_sites). Operation: condition each site's effect on another site, i.e. raise the interaction order of the hypothesis class from 1 to 2. All other coordinates held at base.",
+      "rationale": "R states that fitness is not a sum of per-site effects, and the state adds that the best single mutant reaches under half the optimum; an additive surrogate's argmax is by construction the concatenation of best single-site effects, so the base policy is aiming at a point the state already tells us is roughly half-height. Pairwise terms are the smallest change that lets the model rank combinations rather than alleles, and with 96 labels a ridge penalty keeps the 2,400 cross terms in the well-behaved over-parameterised regime rather than the unstable one.",
+      "coords": {
+        "representation": {"encoding": "onehot", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "ridge", "count": "single", "heads": "joint_fitness", "uncertainty": "none"},
+        "generator": {"scope": "global_all_variants", "radius": "r1", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "greedy_mean", "beta": "low", "lookahead": "one_step"},
+        "batch": {"selection": "top_k_by_score", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "fixed_rounds"}
+      },
+      "missing_coordinate": "Interaction order above two, and regularisation strength. The landscape has four sites and the optimum is at distance 4, so three- and four-way epistasis is precisely the regime that decides the answer, yet site_coupling stops at pairwise; and there is no coordinate for the ridge penalty that determines whether 2,400 pairwise features are usable or fatal at 24-96 labels. representation.encoding=onehot_plus_pairs duplicates this coordinate rather than extending it."
+    },
+    {
+      "name": "Swap ridge for random forest",
+      "channel": "perturb",
+      "derivation": "Component: the surrogate's function class. Coordinate: surrogate.family (ridge -> random_forest). Operation: make exact->approximate / parametric->nonparametric, replacing a global linear form with a locally piecewise-constant one. All other coordinates held at base.",
+      "rationale": "A tree ensemble reads site interactions straight off raw one-hot indicators without spending degrees of freedom on explicit crosses, which is the S2-validated choice when labels number in the tens; and because the oracle is deterministic, all surrogate error here is structural rather than observational, so bagging over resamples attacks the actual source of instability in the argmax. This is the cheapest way to stop targeting the sum of best single-site effects without changing the feature map.",
+      "coords": {
+        "representation": {"encoding": "onehot", "pooling": "mean", "rank": "full", "site_coupling": "independent_sites"},
+        "surrogate": {"family": "random_forest", "count": "single", "heads": "joint_fitness", "uncertainty": "none"},
+        "generator": {"scope": "global_all_variants", "radius": "r1", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "greedy_mean", "beta": "low", "lookahead": "one_step"},
+        "batch": {"selection": "top_k_by_score", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "fixed_rounds"}
+      },
+      "missing_coordinate": "A tie-break rule. A forest cannot predict above the largest observed label, so on a 160,000-candidate pool scored by a model fitted to 24 points, hundreds of candidates receive exactly the incumbent-maximum prediction and top_k_by_score must break the tie arbitrarily; the interface has no coordinate for how ties are resolved (at random, by zero-shot score, by distance to observed data), and on this state that hidden choice can dominate the round."
+    },
+    {
+      "name": "Sample the posterior, not the mean",
+      "channel": "perturb",
+      "derivation": "Component: the acquisition rule. Coordinate: acquisition.rule (greedy_mean -> thompson). Operation: make deterministic->stochastic, i.e. replace maximisation of a point estimate with maximisation of a draw from the coefficient posterior. All other coordinates held at base.",
+      "rationale": "The base policy can only ever propose the argmax of the single model its 24 random labels support, so it never leaves the region that initial sample happens to describe -- fatal when the optimum sits at the maximum possible Hamming distance and 97.6% of the space is at or below wild type. Thompson sampling draws a different plausible coefficient vector per batch slot, so the 24 picks are spread across the posterior's disagreement rather than piled on its mean, and S1 reports exactly this family of acquisitions as what lets an epistatic campaign leave a local optimum.",
+      "coords": {
+        "representation": {"encoding": "onehot", "pooling": "mean", "rank": "full", "site_coupling": "independent_sites"},
+        "surrogate": {"family": "ridge", "count": "single", "heads": "joint_fitness", "uncertainty": "none"},
+        "generator": {"scope": "global_all_variants", "radius": "r1", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "thompson", "beta": "low", "lookahead": "one_step"},
+        "batch": {"selection": "top_k_by_score", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "fixed_rounds"}
+      },
+      "missing_coordinate": "The sampling distribution. surrogate.uncertainty and acquisition.rule are separate coordinates, so a one-coordinate perturbation can ask for Thompson sampling while uncertainty is declared 'none'; the interface never says where the posterior comes from (here I intend the Bayesian-ridge coefficient posterior, which needs no extra machinery). It also cannot say how many draws a batch uses -- one draw with a top-24 cut and 24 draws with one argmax each are opposite policies under the same value."
+    },
+    {
+      "name": "Focus the pool with zero-shot",
+      "channel": "perturb",
+      "derivation": "Component: the candidate generator. Coordinate: generator.zero_shot_prior (none -> esm_masked_marginal_focus). Operation: condition on an external variable, i.e. reweight the enumerable pool by a label-free score that exists before any assay. All other coordinates held at base.",
+      "rationale": "Only 2.4% of the space beats wild type, so under the base policy most of the pool's mass -- and most of the ridge's fitted signal -- is dead sequence that a 24-label model has no way to recognise; S3 shows a zero-shot prior that concentrates attention on plausibly functional variants is worth a large multiple of the same label budget spent at random. With the initial 24 observations fixed and random, the prior's only point of entry on this state is the candidate pool, and this perturbation puts it exactly there.",
+      "coords": {
+        "representation": {"encoding": "onehot", "pooling": "mean", "rank": "full", "site_coupling": "independent_sites"},
+        "surrogate": {"family": "ridge", "count": "single", "heads": "joint_fitness", "uncertainty": "none"},
+        "generator": {"scope": "global_all_variants", "radius": "r1", "pool_size": "exhaustive", "zero_shot_prior": "esm_masked_marginal_focus"},
+        "acquisition": {"rule": "greedy_mean", "beta": "low", "lookahead": "one_step"},
+        "batch": {"selection": "top_k_by_score", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "fixed_rounds"}
+      },
+      "missing_coordinate": "Prior strength and mode. A binary switch cannot distinguish a hard filter (keep the top q% by masked marginal), a soft additive log-prior on the acquisition, and a GP mean function -- and it cannot set q. That matters here because the optimum is at distance 4 from wild type and need not be evolutionarily typical, so a hard filter can delete the answer while a soft prior cannot. S3's actual mechanism, focusing the *training set*, is also inexpressible: the initial 24 are frozen at random."
+    },
+    {
+      "name": "Information per remaining round",
+      "channel": "project",
+      "derivation": "Donor D1, cost-aware Bayesian optimisation. Role mapping: donor's objective value -> predicted fitness; donor's per-evaluation cost -> the share of the decision horizon an assay consumes; donor's acquisition-divided-by-cost -> exploration bonus discounted by rounds remaining, plus a rollout that credits an assay with what it enables at the next refit. The literal mapping is rejected: every assay here is priced identically, so a per-candidate denominator would share only the word 'cost'. The transferable structure is that value and cost are separately accounted, and on this state the heterogeneous resource is not money per variant but position in the horizon -- an assay in round 1 is exploited by three later refits, an assay in round 4 by none, so the same exploration bonus is cheap early and unaffordable late.",
+      "rationale": "With only four rounds, a fixed exploration weight is wrong at both ends of the campaign: too timid in round 1, where every label still has three refits to pay off, and actively wasteful in round 4, where an unresolved uncertainty can never be cashed. Discounting beta by remaining horizon and pricing each pick by its two-step consequence is the honest version of 'information per unit cost' when the price list is flat, and the mixed batch buys the two goods -- information and yield -- with explicitly separate tranches.",
+      "coords": {
+        "representation": {"encoding": "onehot_plus_pairs", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "gaussian_process", "count": "single", "heads": "joint_fitness", "uncertainty": "gp_posterior"},
+        "generator": {"scope": "global_all_variants", "radius": "r1", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "state_adaptive_beta", "lookahead": "two_step_myopic_rollout"},
+        "batch": {"selection": "epsilon_mixed", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "An explicit cost denominator in the acquisition. The donor's whole content is acquisition/cost(x); the interface has no cost model at all, so cost-awareness can only be smuggled in through beta scheduling and lookahead. There is also no coordinate for the discount schedule itself -- 'state_adaptive_beta' says beta depends on state but not that it should fall with rounds remaining, which is the specific mapping derived here."
+    },
+    {
+      "name": "Expand a confirmed-active frontier",
+      "channel": "project",
+      "derivation": "Donor D2, safe / constrained Bayesian optimisation. Role mapping: donor's safety constraint -> the variant being functional at all; donor's safe set -> variants the activity head predicts active with confidence; donor's one-step safe expansion -> growing the pool one Hamming step beyond the current confirmed-active frontier per round; donor's pessimistic constraint estimate -> requiring the activity head's lower bound, not its mean, to clear the threshold; donor's separate objective and constraint models -> separated_activity_and_fitness heads. The reading 'safe means near wild type' is rejected as vocabulary-only: safe BO's safe set is a *moving* frontier, and mapped correctly it is centred on the confirmed-active set, which after four expansions can reach Hamming distance 4 -- exactly the distance the optimum sits at.",
+      "rationale": "Most of this space is non-functional, so an unconstrained global argmax spends assays proving that dead regions are dead; a feasibility model that is fitted separately from the fitness model can refuse those candidates without corrupting the fitness fit with a spike of zeros. The frontier construction also turns the state's warning about local search on its head: one step per round from a set that itself moves is the cheapest schedule that still reaches distance 4 within four rounds, and it keeps the surrogate interpolating rather than extrapolating at every pick.",
+      "coords": {
+        "representation": {"encoding": "esm2_frozen", "pooling": "site", "rank": "low_rank_pca", "site_coupling": "independent_sites"},
+        "surrogate": {"family": "gaussian_process", "count": "single", "heads": "separated_activity_and_fitness", "uncertainty": "gp_posterior"},
+        "generator": {"scope": "local_hamming_ball", "radius": "adaptive_radius", "pool_size": "small", "zero_shot_prior": "esm_masked_marginal_focus"},
+        "acquisition": {"rule": "ucb", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "score_then_cluster", "size_rule": "fixed"},
+        "update": {"refit": "warm_start", "weighting": "uniform"},
+        "stopping": {"rule": "fixed_rounds"}
+      },
+      "missing_coordinate": "The ball's centre, and the feasibility threshold. generator.local_hamming_ball fixes a radius but never says what it is centred on, and on this state that unstated choice is the entire mechanism: a wild-type-centred ball provably cannot reach the optimum, a frontier-of-confirmed-actives ball just can. There is also no coordinate for the activity threshold, nor for requiring a *lower* confidence bound on the constraint rather than its mean, which is what makes safe BO safe."
+    },
+    {
+      "name": "Search for the rare class",
+      "channel": "project",
+      "derivation": "Donor D3, active search. Role mapping: donor's rare positive class -> the top-1% variants named in G's secondary objective; donor's utility (number of positives recovered) -> number of independent chances taken at the top tail, which is what drives P(top-1% found); donor's membership probability -> expected improvement over the incumbent, the only acquisition here that scores probability-of-exceeding rather than predicted level; donor's explicit refusal to optimise predictive accuracy -> elite-weighted fitting, which deliberately mis-fits the dead bulk to be right at the top; donor's exhaustive use of budget -> budget_exhausted, because under active search a plateau is not a reason to stop, it is 24 more draws at the rare class.",
+      "rationale": "The goal G is the best variant found, not a good model, and those two objectives point at different candidates: a variant that would most reduce model error is usually mid-range, while a variant that might be a positive is at the tail. Scoring by improvement probability, fitting with the tail weighted up, and clustering the shortlist so that 24 slots buy 24 independent shots rather than 24 correlated ones is the coherent translation of that objective swap into this budget.",
+      "coords": {
+        "representation": {"encoding": "onehot_plus_pairs", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "boosted_trees", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "bootstrap"},
+        "generator": {"scope": "global_all_variants", "radius": "r1", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "expected_improvement", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "score_then_cluster", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "elite_weighted"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "An explicit target-class threshold. Active search optimises P(y > tau) for a declared tau (here a quantile of the observed labels); expected_improvement is a level-based stand-in for it and the interface offers no way to state the class boundary, nor to make it adapt as the incumbent rises. Batch-level active-search lookahead -- valuing 24 picks jointly as a set of chances rather than ranking them individually -- is also inexpressible."
+    },
+    {
+      "name": "Allocate slots across model classes",
+      "channel": "project",
+      "derivation": "Donor D4, bandit portfolio allocation. Role mapping: donor's arms -> distinct inductive biases over the same labels (linear-epistatic, tree, kernel), because with a deterministic oracle the campaign's dominant uncertainty is misspecification, not noise; donor's per-arm reward -> how well each member explains the labels accumulated so far, i.e. its resampled posterior weight; donor's shift of budget toward what is paying off -> Thompson allocation of the 24 batch slots, each slot drawn from one member and filled with that member's argmax, so an arm that keeps explaining the data keeps winning slots; donor's non-stationary reward tracking -> recency-weighted fitting, which discounts the initial random draw once the search has moved into a different regime. The reading 'portfolio = ensemble averaging' is rejected: averaging destroys precisely the between-arm disagreement that allocation consumes.",
+      "rationale": "Which surrogate is right for this landscape is unknown at round 1 and cannot be estimated from 24 labels by cross-validation, so committing to one family is an unhedged bet placed at the moment of least information. Allocating slots in proportion to each member's posterior credibility lets the campaign pay for the wrong models only while they remain plausible, and the deterministic oracle means disagreement between members is genuine structural doubt rather than resampling noise.",
+      "coords": {
+        "representation": {"encoding": "onehot", "pooling": "mean", "rank": "full", "site_coupling": "independent_sites"},
+        "surrogate": {"family": "random_forest", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "ensemble_disagreement"},
+        "generator": {"scope": "global_all_variants", "radius": "r1", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "thompson", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "recency_weighted"},
+        "stopping": {"rule": "fixed_rounds"}
+      },
+      "missing_coordinate": "Arm heterogeneity and credit assignment. surrogate.count=ensemble_of_k yields k resamples of a single family, but the donor's entire content is that the arms differ -- ideally one arm per (encoding x family) pair, which the interface cannot express because every coordinate takes exactly one value. There is also no coordinate for per-arm budget share, nor for updating an arm's weight from the realised improvement its own picks delivered, which is the bandit's feedback loop rather than a likelihood weight."
+    },
+    {
+      "name": "Propose with one, confirm with another",
+      "channel": "project",
+      "derivation": "Donor D5, decoupled estimation / the double-estimator correction. Role mapping: donor's selecting estimator -> the model that ranks 160,000 candidates and nominates a shortlist; donor's evaluating estimator -> an independently resampled model that re-scores that shortlist and fills the 24 slots; donor's maximisation bias -> the winner's curse of taking an argmax over 160,000 predictions from a model fitted to fewer than 100 labels, where the top of the ranking is populated by whichever candidates the fit happens to over-predict; donor's independence requirement -> disjoint bootstrap resamples, so the errors that promoted a candidate are not the errors that confirm it. This is a structure map, not a vocabulary match: the donor's correction is specifically about the same sample being used both to select and to value.",
+      "rationale": "This is the largest unforced error available on this state -- the pool-to-label ratio is roughly 1,700:1, so the maximum of the predicted surface is dominated by prediction error rather than by fitness, and greedy selection converts that error directly into wasted assays. Averaging independently resampled fits before ranking shrinks idiosyncratic positive errors (they do not survive across resamples) while leaving real signal intact, and clustering the shortlist stops the surviving errors from all coming from one neighbourhood.",
+      "coords": {
+        "representation": {"encoding": "onehot_plus_pairs", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "ridge", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "bootstrap"},
+        "generator": {"scope": "global_all_variants", "radius": "r1", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "greedy_mean", "beta": "low", "lookahead": "one_step"},
+        "batch": {"selection": "score_then_cluster", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "fixed_rounds"}
+      },
+      "missing_coordinate": "The decoupling itself, and a pessimistic acquisition. No coordinate states which model proposes and which one scores, or that the two must be fitted on disjoint data -- ensemble_of_k gives me several models but the interface makes them vote, not check one another. Relatedly there is no lower-confidence-bound or negative-beta option: acquisition.beta runs low..high in the optimistic direction only, so the other standard remedy for the winner's curse (rank by mean minus disagreement) cannot be requested at all."
+    },
+    {
+      "name": "Recombine elites, judge by epistasis",
+      "channel": "recombine",
+      "derivation": "Mechanism A: elite recombination as the generator (S4's move beyond the wild-type neighbourhood, in its combinatorial rather than its perturbative form) on generator.scope. Mechanism B: the pairwise-epistasis feature map from perturbation P2 on representation.site_coupling. Different coordinates, and complementary rather than redundant: recombination is a reach mechanism and answers 'which candidates should exist in the pool', while the pairwise model is a compatibility mechanism and answers 'which of these allele pairs actually work together' -- the precise question recombination raises and cannot itself settle, since epistasis means two individually good alleles may be bad in combination.",
+      "rationale": "The optimum is at Hamming 4 from wild type, and the cheapest route to a distance-4 point that is not a lottery ticket is the Cartesian product of alleles that have already proved good at each site individually. That pool is also the one regime where a 2,400-parameter interaction model fitted to under 100 labels is trustworthy: every recombinant shares each of its four alleles with something already assayed, so the model interpolates over combinations instead of extrapolating over alleles. Reach and reliability are usually traded off here; this pairing buys both.",
+      "coords": {
+        "representation": {"encoding": "onehot_plus_pairs", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "ridge", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "bootstrap"},
+        "generator": {"scope": "recombine_observed_elites", "radius": "r2", "pool_size": "medium", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "The elite threshold and a per-round schedule for generator.scope. 'Elite' is undefined -- top-k, above wild type, or above a quantile -- and with 24 random labels of which about 0.6 are expected to beat wild type, round 1's elite set may be empty under the strictest reading. The binding gap is that scope is a single static value: the derivation wants global enumeration early and elite recombination once the allele table is populated, and the interface cannot say when to switch."
+    },
+    {
+      "name": "Prior feasibility meets learned feasibility",
+      "channel": "recombine",
+      "derivation": "Mechanism A: the zero-shot focused pool from perturbation P5 on generator.zero_shot_prior. Mechanism B: the separated activity/fitness heads from the D2 projection on surrogate.heads. Different coordinates. Complementary in time and in provenance: the zero-shot prior is at full strength in round 1 and is label-free but generic, while the learned activity head is worthless in round 1 (24 random draws contain almost no positives) and becomes the sharper filter by round 3 because it is fitted to this assay rather than to evolutionary plausibility. Not redundant -- they are two independent estimates of the same feasibility quantity, one prior and one posterior.",
+      "rationale": "Dead sequence is the main consumer of budget on a landscape where 2.4% of variants beat wild type, but the two ways of recognising it fail at opposite ends of the campaign, so running both hands the filter off cleanly from prior to data. The interaction I expect is corrective as well as additive: evolutionary likelihood systematically under-rates engineered optima that sit far from the wild type, and the activity head, trained on assayed outcomes, is what can over-rule the prior in exactly that region -- which is where this landscape's optimum lives.",
+      "coords": {
+        "representation": {"encoding": "esm2_frozen", "pooling": "site", "rank": "low_rank_pca", "site_coupling": "independent_sites"},
+        "surrogate": {"family": "random_forest", "count": "ensemble_of_k", "heads": "separated_activity_and_fitness", "uncertainty": "ensemble_disagreement"},
+        "generator": {"scope": "global_all_variants", "radius": "r1", "pool_size": "exhaustive", "zero_shot_prior": "esm_masked_marginal_focus"},
+        "acquisition": {"rule": "ucb", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "How the two feasibility signals compose. The interface says the prior is on and that the heads are separated, but not whether the final score is P(active) x E[fitness], a hard veto by either signal, the prior used as the activity head's prior mean, or a weighted geometric mean -- and not which signal wins a disagreement. The handoff over rounds (prior-dominant early, data-dominant late) is likewise unstateable."
+    },
+    {
+      "name": "Site-pooled embeddings, GP uncertainty",
+      "channel": "recombine",
+      "derivation": "Mechanism A: the frozen protein-language-model representation of S2/S5, taken at site pooling rather than mean pooling, on representation.encoding/pooling. Mechanism B: S1's uncertainty-quantified acquisition in its GP-posterior form, on surrogate.uncertainty and acquisition.rule. Different coordinates. Complementary because one supplies the metric and the other converts a metric into an exploration signal: a GP's uncertainty is a function of distance in the feature space it is given, so the representation decides whether that uncertainty means anything, and the GP decides whether the representation ever influences a pick.",
+      "rationale": "Both halves fix a degeneracy the other cannot. On a four-site library, Hamming distance takes five values and almost every candidate pair differs at three or four sites, so GP uncertainty over one-hot features is nearly constant and the exploration term is noise; conversely, mean pooling over a 56-residue protein in which only four positions vary averages the signal across 52 invariant residues and returns near-collinear embeddings. Site-pooled embeddings restore a graded, chemically meaningful metric, and the GP posterior is what turns that gradation into the exploration S1 credits with escaping local optima.",
+      "coords": {
+        "representation": {"encoding": "esm2_frozen", "pooling": "site", "rank": "low_rank_pca", "site_coupling": "independent_sites"},
+        "surrogate": {"family": "gaussian_process", "count": "single", "heads": "joint_fitness", "uncertainty": "gp_posterior"},
+        "generator": {"scope": "global_all_variants", "radius": "r1", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "state_adaptive_beta", "lookahead": "one_step"},
+        "batch": {"selection": "score_then_cluster", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "Which sites are pooled, and the PCA rank. 'site' pooling does not say whether the embedding is taken at the four mutated positions only or at every position, and on this library that is the difference between a 4x1280 informative tensor and a 56x1280 mostly constant one. low_rank_pca likewise carries no dimension, although with 24 initial labels the choice between roughly 5 and roughly 50 components decides whether a GP is well-posed. A noise-floor coordinate is also absent, and the oracle here is deterministic, so the correct GP nugget is near zero rather than the default."
+    },
+    {
+      "name": "Elite-weighted fit, improvement pick",
+      "channel": "recombine",
+      "derivation": "Mechanism A: elite-weighted fitting on update.weighting. Mechanism B: expected improvement on acquisition.rule. Different coordinates. Complementary because one governs what the model learns and the other what the campaign chooses, and EI is unusually dependent on the first: it integrates the predictive distribution above the incumbent, so its value is set entirely by the model's calibration in the top tail, which is the one region a uniformly weighted least-squares fit on this landscape is guaranteed to get wrong. Not redundant -- elite weighting with greedy selection still ignores uncertainty, and EI with a uniform fit still integrates a mis-calibrated tail.",
+      "rationale": "With 97.6% of variants at or below wild type, the label distribution is a spike near the bottom with a thin tail, so an unweighted fit spends its capacity describing the dead mass and is shrunk toward it precisely where EI does its integrating. Weighting the tail up buys accuracy where the decision is made at the cost of accuracy where no assay will ever be spent -- a trade the stated goal (best found, not predictive accuracy) is happy to make.",
+      "coords": {
+        "representation": {"encoding": "onehot_plus_pairs", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "gaussian_process", "count": "single", "heads": "joint_fitness", "uncertainty": "gp_posterior"},
+        "generator": {"scope": "global_all_variants", "radius": "r2", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "expected_improvement", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "elite_weighted"},
+        "stopping": {"rule": "fixed_rounds"}
+      },
+      "missing_coordinate": "A transform of the target, and the weighting's temperature. update.weighting can reweight rows but cannot reshape the response: on a zero-inflated fitness scale the decisive move is usually a log or rank transform of y before fitting, and no coordinate expresses it. 'elite_weighted' also carries no quantile or temperature, so the difference between mildly tilting toward the tail and fitting the top decile alone -- which at 24 labels means fitting to two points -- is invisible."
+    },
+    {
+      "name": "Rollout that feeds the recombiner",
+      "channel": "recombine",
+      "derivation": "Mechanism A: elite recombination as the generator on generator.scope. Mechanism B: two-step myopic rollout from the D1 projection on acquisition.lookahead. Different coordinates. Complementary because the recombination generator makes the value of a measurement explicitly two-stage: assaying a variant is worth little in itself but changes which alleles enter the next round's recombinant pool, and a one-step acquisition is structurally blind to that -- it prices only the fitness of the variant in hand, never the pool the variant unlocks. Conversely, a rollout under a global generator has nothing concrete to plan over, because the next round's pool is the same 160,000 candidates regardless of what is measured.",
+      "rationale": "This pairing manufactures the explore-then-exploit schedule the interface cannot state directly: the rollout will prefer round-2 picks that resolve which alleles belong in the elite set, because those picks visibly raise the value of the round-3 recombinant pool, and it will stop paying for identification once no further recombination round remains. Allele identification early and combination late is the correct decomposition for a four-site landscape whose optimum requires all four substitutions at once.",
+      "coords": {
+        "representation": {"encoding": "onehot_plus_pairs", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "gaussian_process", "count": "single", "heads": "joint_fitness", "uncertainty": "gp_posterior"},
+        "generator": {"scope": "recombine_observed_elites", "radius": "r2", "pool_size": "medium", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "medium", "lookahead": "two_step_myopic_rollout"},
+        "batch": {"selection": "score_then_cluster", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "fixed_rounds"}
+      },
+      "missing_coordinate": "What the imagined second step optimises, and how many fantasies are averaged. 'two_step_myopic_rollout' fixes the horizon but not the inner objective, and the derivation needs a specific one -- the second step should be valued by the quality of the recombinant pool the first step certifies, not by a replay of the same acquisition. The number of fantasised outcomes per candidate, and whether the fantasy is a posterior sample or the posterior mean, are also unstateable and change the policy completely."
+    },
+    {
+      "name": "Pairwise boosted ensemble, annealed UCB",
+      "channel": "free",
+      "derivation": "My single best guess, assembled from what the state says rather than from a donor. Four facts drive it: fitness is epistatic (so the basis must carry interactions), the oracle is deterministic (so all uncertainty is epistemic and bootstrap disagreement is the right estimate, not a GP noise term), the goal is best-found (so the fit should be tilted toward the tail), and there are exactly four rounds (so exploration must be annealed to zero by the last one, where an unresolved uncertainty can no longer be cashed).",
+      "rationale": "Boosted trees on an explicit pairwise basis get interaction structure from two directions at once -- the features supply the crosses the trees would need depth to discover, and the trees supply the higher-order terms the pairwise basis truncates. Bootstrapped disagreement across the ensemble is the only uncertainty here that reflects the actual failure mode (which function fits 96 points, not how noisy a measurement was), and clustering the shortlist prevents the ensemble's shared blind spot from filling all 24 slots from one neighbourhood.",
+      "coords": {
+        "representation": {"encoding": "onehot_plus_pairs", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "boosted_trees", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "bootstrap"},
+        "generator": {"scope": "global_all_variants", "radius": "r1", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "state_adaptive_beta", "lookahead": "one_step"},
+        "batch": {"selection": "score_then_cluster", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "elite_weighted"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "The annealing schedule behind state_adaptive_beta. The policy needs beta to fall with rounds remaining and to reach zero in round 4, but 'state_adaptive' does not say which state variable drives it -- rounds left, incumbent improvement, or ensemble spread -- and those give different campaigns. Ensemble size k is also unstated, and at 96 labels the difference between k=5 and k=50 changes how much of the winner's curse the averaging removes."
+    },
+    {
+      "name": "Fixed insurance tranche each round",
+      "channel": "free",
+      "derivation": "A hedge built from one observation: the oracle is deterministic, so every prediction error is misspecification rather than noise, and misspecification is not reduced by collecting more labels inside the region the wrong model already likes. The remedy is structural rather than statistical -- reserve a constant fraction of every batch for picks the model does not endorse, so that a wrong model in round 1 cannot make rounds 2 to 4 uninformative. Deliberately simple elsewhere: plain one-hot, forest, no prior, so that the tranche is the only thing being tested.",
+      "rationale": "On a 96-assay budget an epsilon tranche of roughly a quarter costs six assays a round and buys coverage of allele combinations no model class has yet ruled in; against the risk that a 24-label fit locks the campaign into a mediocre basin -- the specific failure the state warns about, given the optimum is at maximum Hamming distance -- that is cheap. High beta on the exploiting tranche is deliberate: with only 2.4% of variants above wild type, a mean-confident pick at 24 labels is barely more credible than an uncertain one.",
+      "coords": {
+        "representation": {"encoding": "onehot", "pooling": "mean", "rank": "full", "site_coupling": "independent_sites"},
+        "surrogate": {"family": "random_forest", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "ensemble_disagreement"},
+        "generator": {"scope": "global_all_variants", "radius": "r1", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "high", "lookahead": "one_step"},
+        "batch": {"selection": "epsilon_mixed", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "fixed_rounds"}
+      },
+      "missing_coordinate": "The mixing fraction and the explore tranche's criterion. epsilon_mixed names a split but not its size, and not what the exploring half optimises -- maximum model uncertainty, maximum distance from observed data, or coverage of unobserved (site, allele) cells. The last is what this derivation actually wants: with 80 site-allele cells and 24 random labels, roughly a quarter of the cells are unobserved, and a design that fills them is not the same as one that chases predictive variance."
+    },
+    {
+      "name": "Physicochemical descriptors with a GP",
+      "channel": "free",
+      "derivation": "A representation argument specific to the label budget. One-hot over four sites needs 80 parameters and pairwise needs 2,400, both larger than the 24 labels available at the first decision; five physicochemical descriptors per site need 20, plus 190 for the pairwise terms. More importantly, one-hot treats every unobserved (site, allele) cell as having exactly zero effect, whereas a descriptor encoding places an unseen amino acid near chemically similar ones that *have* been measured -- and after 24 random draws about a quarter of the 80 cells are unobserved.",
+      "rationale": "This is the only encoding in the interface that can rank an allele it has never seen at a site, which on a 20-letter, four-site library with fewer than 100 assays is a large fraction of the decision. A GP with an ARD kernel over a compact continuous space is well-posed at this sample size in a way it is not over 1280-dimensional embeddings or 2400 sparse indicators, and its posterior gives expected improvement something honest to integrate.",
+      "coords": {
+        "representation": {"encoding": "physicochem", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "gaussian_process", "count": "single", "heads": "joint_fitness", "uncertainty": "gp_posterior"},
+        "generator": {"scope": "global_all_variants", "radius": "r1", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "expected_improvement", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "Which descriptor set, and whether it is concatenated with one-hot. 'physicochem' does not say if it is z-scales, hydrophobicity plus volume plus charge, or a full AAindex projection, and it forbids the hybrid the argument really implies -- descriptors to interpolate over unobserved alleles plus one-hot to memorise observed ones, which is strictly better than either but needs two encodings at once."
+    },
+    {
+      "name": "Design inside the elite allele set",
+      "channel": "free",
+      "derivation": "A deliberate role reversal. In every other policy here the acquisition exploits and the generator merely supplies candidates; this one puts the exploitation in the generator -- the pool is the Cartesian closure of alleles found in observed elites, so everything in it is a priori plausible -- and lets the acquisition do pure design, choosing the 24 recombinants that most reduce uncertainty about which allele combinations work. It is a paired control for the recombination policies: identical to 'Recombine elites, judge by epistasis' except at acquisition.rule, so the run separates the value of the recombinant pool from the value of exploiting it greedily.",
+      "rationale": "Selecting maximum-variance points inside an already-elite pool is close to a fractional-factorial design over the promising alleles, which resolves the interaction structure of the good region far faster than 24 correlated greedy picks -- and because the pool itself is the exploitation, even 'exploratory' assays land on plausibly high-fitness variants. As elites accumulate, the pool re-centres each round, so the design and the exploitation improve together without any explicit schedule.",
+      "coords": {
+        "representation": {"encoding": "onehot_plus_pairs", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "ridge", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "bootstrap"},
+        "generator": {"scope": "recombine_observed_elites", "radius": "r2", "pool_size": "medium", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "pure_explore", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "A design criterion, and a final exploit round. pure_explore selects by predictive variance, but the derivation wants a D-optimal or coverage criterion over the pairwise design matrix, which is a property of the *set* of 24 rather than of each candidate. And because acquisition.rule is static, this policy explores in round 4 as well, when there is no refit left to profit from it -- the one-round greedy finish it needs cannot be written."
+    },
+    {
+      "name": "Adaptive ball around observed elites",
+      "channel": "free",
+      "derivation": "Takes the state's warning seriously but inverts it. A wild-type-centred neighbourhood provably cannot reach an optimum at Hamming 4, but the warning is about the centre, not about locality: a ball re-centred each round on the current elite set drifts, and with four rounds it can drift four steps. Locality then buys something the global policies cannot have -- every candidate scored is within one or two substitutions of something already assayed, so the surrogate is interpolating rather than extrapolating at the moment of choice.",
+      "rationale": "The dominant error on this state is that a model fitted to fewer than 100 of 160,000 candidates is asked to rank all of them, and its argmax is mostly error; restricting the pool to the neighbourhood of observed elites removes the candidates about which the model knows least while keeping the ones with the highest prior odds of being good, since fitness is locally correlated even when it is globally epistatic. The adaptive radius is what stops the ball collapsing onto the incumbent once improvement stalls.",
+      "coords": {
+        "representation": {"encoding": "onehot_plus_pairs", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "boosted_trees", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "bootstrap"},
+        "generator": {"scope": "local_hamming_ball", "radius": "adaptive_radius", "pool_size": "medium", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "elite_weighted"},
+        "stopping": {"rule": "fixed_rounds"}
+      },
+      "missing_coordinate": "The ball's centre, again, and what makes the radius adapt. The entire policy is the claim that the ball is centred on the observed elite set rather than on the wild type, and that claim cannot be written in generator.scope; 'adaptive_radius' likewise does not say whether the radius grows on stalled improvement, shrinks on success, or tracks model uncertainty. There is also no coordinate to express a plateau as a *trigger to change strategy* -- stopping.rule offers plateau_detect only as a reason to stop, which is strictly wrong here since unused assays have no salvage value under this goal."
+    }
+  ]
+}

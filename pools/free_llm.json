@@ -1,0 +1,285 @@
+{
+  "condition": "FREE_LLM",
+  "policies": [
+    {
+      "name": "Zero-inflated two-head forest UCB",
+      "rationale": "With only 2.4% of the library above wild type, most of the 24 random seeds are near-dead, so a single regressor spends its capacity modelling the hole rather than the frontier; splitting an activity classifier from a fitness regressor keeps the usable signal intact. Explicit pair features give the forest the epistatic interactions an additive model structurally cannot see, and clustering the top-scored candidates prevents a batch of 24 near-duplicates.",
+      "coords": {
+        "representation": {"encoding": "onehot_plus_pairs", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "random_forest", "count": "ensemble_of_k", "heads": "separated_activity_and_fitness", "uncertainty": "ensemble_disagreement"},
+        "generator": {"scope": "global_all_variants", "radius": "adaptive_radius", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "state_adaptive_beta", "lookahead": "one_step"},
+        "batch": {"selection": "score_then_cluster", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": ""
+    },
+    {
+      "name": "Categorical-kernel GP Thompson batch",
+      "rationale": "At n between 24 and 96 a Gaussian process over categorical site features with pairwise coupling is the best-calibrated model this interface can build, and calibration is what an acquisition rule actually consumes. Drawing 24 independent posterior samples and taking each sample's argmax yields a batch that is diverse by construction, which suits a multi-peak epistatic surface far better than a distance heuristic bolted onto a point estimate.",
+      "coords": {
+        "representation": {"encoding": "onehot", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "gaussian_process", "count": "single", "heads": "joint_fitness", "uncertainty": "gp_posterior"},
+        "generator": {"scope": "global_all_variants", "radius": "r2", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "thompson", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "top_k_by_score", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": ""
+    },
+    {
+      "name": "ESM site-embedding GP expected improvement",
+      "rationale": "Ninety-six assays can never cover all 80 site-by-amino-acid tokens, let alone their interactions, so any one-hot model must guess blindly on unseen residues; site-pooled language-model features share strength across chemically similar substitutions and give those residues non-trivial predictions. PCA keeps the design dimension below the sample count, and expected improvement is the rule that directly targets the stated objective of maximum discovered fitness.",
+      "coords": {
+        "representation": {"encoding": "esm2_frozen", "pooling": "site", "rank": "low_rank_pca", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "gaussian_process", "count": "single", "heads": "joint_fitness", "uncertainty": "gp_posterior"},
+        "generator": {"scope": "global_all_variants", "radius": "r2", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "expected_improvement", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "elite_weighted"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": ""
+    },
+    {
+      "name": "Physicochemical pairwise GP UCB",
+      "rationale": "A handful of descriptors per site plus their cross-products is the smallest basis that still expresses epistasis, giving the lowest-variance fit available at 24 observations while remaining able to score amino acids never observed at that site. It is the natural low-capacity complement to the one-hot and embedding policies, and should degrade gracefully in the seeds where the random start is uninformative.",
+      "coords": {
+        "representation": {"encoding": "physicochem", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "gaussian_process", "count": "single", "heads": "joint_fitness", "uncertainty": "gp_posterior"},
+        "generator": {"scope": "global_all_variants", "radius": "r2", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": ""
+    },
+    {
+      "name": "Elite recombination greedy exploitation",
+      "rationale": "Because the optimum sits at Hamming distance 4 from wild type, a generator that crosses over the best residues seen at each site reaches fully-substituted designs immediately, whereas hamming-ball crawling from a random start needs more rounds than the budget allows. Boosted trees on pair features rank those crossovers, and elite weighting aims the loss at the tail that determines the score.",
+      "coords": {
+        "representation": {"encoding": "onehot_plus_pairs", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "boosted_trees", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "ensemble_disagreement"},
+        "generator": {"scope": "recombine_observed_elites", "radius": "adaptive_radius", "pool_size": "medium", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "greedy_mean", "beta": "low", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "warm_start", "weighting": "elite_weighted"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "A temperature on the recombination operator (crossover rate, and a mutation rate that admits residues from mid-tier as well as elite variants). generator.scope only toggles recombination on or off, so the elite pool's breadth cannot be tuned as evidence accumulates."
+    },
+    {
+      "name": "Main-effect coverage then adaptive exploit",
+      "rationale": "Twenty-four designs can in principle touch every one of the 80 site-by-amino-acid tokens, and per-site main effects are the only quantity reliably estimable from under 100 samples; they already rank residues well enough to seed recombination. Bootstrapped ridge plus a beta that decays with evidence spends the early rounds buying that coverage and the late rounds cashing it in.",
+      "coords": {
+        "representation": {"encoding": "onehot", "pooling": "mean", "rank": "full", "site_coupling": "independent_sites"},
+        "surrogate": {"family": "ridge", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "bootstrap"},
+        "generator": {"scope": "global_all_variants", "radius": "r2", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "state_adaptive_beta", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "state_adaptive_size"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "An explicit design-of-experiments batch rule (orthogonal array or D-optimal) that guarantees every site-by-amino-acid token is observed at least once in the first paid round. batch.selection offers only score-driven heuristics, and neither acquisition nor generator can be indexed by round number, so the explore-then-exploit schedule has to be smuggled into state_adaptive_beta."
+    },
+    {
+      "name": "Boosted ensemble high-beta global scan",
+      "rationale": "Gradient-boosted trees on one-hot features are among the strongest low-sample learners for small combinatorial landscapes, and boosting handles the sharp thresholds that epistasis produces. A high exploration bonus with cluster-diversified batches keeps four rounds from collapsing into one basin, which matters when the functional variants are a scattered 2.4% minority.",
+      "coords": {
+        "representation": {"encoding": "onehot", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "boosted_trees", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "ensemble_disagreement"},
+        "generator": {"scope": "global_all_variants", "radius": "r2", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "high", "lookahead": "one_step"},
+        "batch": {"selection": "score_then_cluster", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": ""
+    },
+    {
+      "name": "Zero-shot enriched two-head campaign",
+      "rationale": "The dominant failure mode on a hole-rich landscape is a training set made almost entirely of dead variants, and a masked-marginal prior raises the functional hit rate of every batch, which at 96 assays is worth more than the ranking accuracy it costs. The activity head then models whatever holes survive the prior, so the regression head only ever sees the live manifold.",
+      "coords": {
+        "representation": {"encoding": "esm2_frozen", "pooling": "mean", "rank": "low_rank_pca", "site_coupling": "independent_sites"},
+        "surrogate": {"family": "random_forest", "count": "ensemble_of_k", "heads": "separated_activity_and_fitness", "uncertainty": "ensemble_disagreement"},
+        "generator": {"scope": "global_all_variants", "radius": "r2", "pool_size": "exhaustive", "zero_shot_prior": "esm_masked_marginal_focus"},
+        "acquisition": {"rule": "ucb", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "score_then_cluster", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "A weight or temperature on the zero-shot prior, so it acts as a soft re-ranking or a GP prior mean rather than a hard pool filter. This state's optimum is a distance-4 variant that a likelihood model trained on natural sequences is likely to disfavour, so a hard filter risks excluding the target outright; only a tunable strength makes the prior safe to use."
+    },
+    {
+      "name": "Two-step lookahead information front-loading",
+      "rationale": "With only four decisions, the value of the first batch is almost entirely the model it buys for the last two, and a myopic rule cannot represent that. Rolling one fantasy round forward makes the trade explicit rather than delegating it to a hand-set beta, and a GP is the only surrogate here whose posterior supports the fantasy step honestly.",
+      "coords": {
+        "representation": {"encoding": "esm2_frozen", "pooling": "mean", "rank": "low_rank_pca", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "gaussian_process", "count": "single", "heads": "joint_fitness", "uncertainty": "gp_posterior"},
+        "generator": {"scope": "global_all_variants", "radius": "r2", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "expected_improvement", "beta": "medium", "lookahead": "two_step_myopic_rollout"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": ""
+    },
+    {
+      "name": "Epsilon-mixed pairwise ridge bootstrap",
+      "rationale": "A strongly regularised pairwise linear model is the Potts-style fit that matches a four-site epistatic landscape and stays stable below 100 samples, and PCA on the 2400 pair features controls the variance further. Reserving a fixed slice of every batch for unbiased random draws guarantees the campaign keeps sampling outside whatever basin the model currently believes in.",
+      "coords": {
+        "representation": {"encoding": "onehot_plus_pairs", "pooling": "mean", "rank": "low_rank_pca", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "ridge", "count": "single", "heads": "joint_fitness", "uncertainty": "bootstrap"},
+        "generator": {"scope": "global_all_variants", "radius": "r2", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "expected_improvement", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "epsilon_mixed", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": ""
+    },
+    {
+      "name": "Adaptive trust-region local ascent",
+      "rationale": "A region around the running best, widened on failure and tightened on success, concentrates all 96 assays on the frontier instead of the dead bulk. Radius must be able to exceed one because the best single mutant reaches under half the optimum, so any policy that only ever proposes one-step neighbours of its incumbent is capped well below the target.",
+      "coords": {
+        "representation": {"encoding": "onehot", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "random_forest", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "ensemble_disagreement"},
+        "generator": {"scope": "local_hamming_ball", "radius": "adaptive_radius", "pool_size": "medium", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "state_adaptive_beta", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "elite_weighted"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "Trust-region bookkeeping: success and failure counters that expand or shrink the ball, plus a restart rule that re-centres on a different observed elite when the region stalls. adaptive_radius names the knob but not the controller, and it does not say what the ball is centred on when several elites tie."
+    },
+    {
+      "name": "Bagged ESM-PCA ridge Thompson",
+      "rationale": "Bootstrapped linear heads on PCA-reduced site embeddings are well-conditioned even at 24 observations and are far cheaper than a GP over the same features, so the bag can be large. Thompson sampling over bag members produces an automatically diversified batch with no distance heuristic, giving a high-variance, low-bias counterpart to the GP policies.",
+      "coords": {
+        "representation": {"encoding": "esm2_frozen", "pooling": "site", "rank": "low_rank_pca", "site_coupling": "independent_sites"},
+        "surrogate": {"family": "ridge", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "bootstrap"},
+        "generator": {"scope": "global_all_variants", "radius": "r2", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "thompson", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "top_k_by_score", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": ""
+    },
+    {
+      "name": "Elite recombination with ESM GP",
+      "rationale": "This pairs the two mechanisms I trust most on this state: a generator that only proposes crossovers of the best residues found so far, which reaches distance-4 designs directly, and a representation that can score residue combinations never observed. Beta stays low because recombination is itself the exploratory device, so the acquisition rule should simply rank within that pool.",
+      "coords": {
+        "representation": {"encoding": "esm2_frozen", "pooling": "site", "rank": "low_rank_pca", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "gaussian_process", "count": "single", "heads": "joint_fitness", "uncertainty": "gp_posterior"},
+        "generator": {"scope": "recombine_observed_elites", "radius": "adaptive_radius", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "low", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "elite_weighted"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": ""
+    },
+    {
+      "name": "Elite-weighted two-head greedy exploiter",
+      "rationale": "For a maximum-seeking campaign only the ranking of the extreme tail matters, so this drops the exploration bonus entirely, weights elites in the loss, and lets the activity head absorb the dead mass that would otherwise dominate a squared-error fit. Distance-diversified greedy batches are a low-variance exploiter that should post strong area-under-the-best-so-far curves.",
+      "coords": {
+        "representation": {"encoding": "onehot_plus_pairs", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "boosted_trees", "count": "ensemble_of_k", "heads": "separated_activity_and_fitness", "uncertainty": "ensemble_disagreement"},
+        "generator": {"scope": "global_all_variants", "radius": "r2", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "greedy_mean", "beta": "low", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "elite_weighted"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "A monotone target transform (log, Box-Cox, or rank) on the observed fitnesses. The response here is zero-inflated and heavy-tailed, so a squared-error fit on raw fitness is driven by the hole rather than by the tail the objective actually scores, and update.weighting can only reweight rows, not rescale the target."
+    },
+    {
+      "name": "Nonparametric kNN embedding scout",
+      "rationale": "A purely local predictor assumes no additive or smooth-parametric structure at all, so it cannot be misled the way a main-effects model is when interactions dominate, and PCA-reduced site embeddings give it a metric in which chemically similar substitutions are actually close. Bootstrapped neighbourhoods plus a high bonus make this a broad scout that still climbs, and its errors should be uncorrelated with the parametric policies.",
+      "coords": {
+        "representation": {"encoding": "esm2_frozen", "pooling": "site", "rank": "low_rank_pca", "site_coupling": "independent_sites"},
+        "surrogate": {"family": "knn", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "bootstrap"},
+        "generator": {"scope": "global_all_variants", "radius": "r2", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "high", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": ""
+    },
+    {
+      "name": "Warm-start recency-weighted local forest",
+      "rationale": "Once batches move into the functional region the initial random draws are effectively off-distribution for the ranking problem that remains, and recency weighting lets the surrogate specialise on the frontier it is being asked about. A radius-2 ball around known-good anchors keeps proposals reachable while still allowing the two-site jumps that single mutations cannot deliver.",
+      "coords": {
+        "representation": {"encoding": "onehot", "pooling": "mean", "rank": "full", "site_coupling": "independent_sites"},
+        "surrogate": {"family": "random_forest", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "ensemble_disagreement"},
+        "generator": {"scope": "local_hamming_ball", "radius": "r2", "pool_size": "medium", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "score_then_cluster", "size_rule": "fixed"},
+        "update": {"refit": "warm_start", "weighting": "recency_weighted"},
+        "stopping": {"rule": "fixed_rounds"}
+      },
+      "missing_coordinate": ""
+    },
+    {
+      "name": "Potts GP with zero-shot filter",
+      "rationale": "This combines the best-calibrated small-sample model with a prior that raises the live fraction of the candidate pool, so expected improvement is computed over candidates that are mostly functional rather than mostly dead. The activity head cleans up the holes the prior lets through, which is the residual risk of pool-level filtering.",
+      "coords": {
+        "representation": {"encoding": "onehot_plus_pairs", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "gaussian_process", "count": "single", "heads": "separated_activity_and_fitness", "uncertainty": "gp_posterior"},
+        "generator": {"scope": "global_all_variants", "radius": "r2", "pool_size": "exhaustive", "zero_shot_prior": "esm_masked_marginal_focus"},
+        "acquisition": {"rule": "expected_improvement", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "score_then_cluster", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "Using the zero-shot score as an input feature or GP prior mean rather than as a pool restriction. generator.zero_shot_prior is a generator-side switch, so the surrogate never gets to learn how much the likelihood score is worth on this particular landscape and cannot down-weight it when the evidence says it is anti-correlated with fitness."
+    },
+    {
+      "name": "Adaptive budget-shaped rollout explorer",
+      "rationale": "Information is cheapest when the model is worthless, so this spends a larger batch early and contracts to small confident batches later, with a rollout step to judge when contraction is justified. The epsilon channel keeps a random floor of coverage so the contraction cannot happen before any functional region has been located.",
+      "coords": {
+        "representation": {"encoding": "onehot", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "boosted_trees", "count": "ensemble_of_k", "heads": "joint_fitness", "uncertainty": "ensemble_disagreement"},
+        "generator": {"scope": "global_all_variants", "radius": "adaptive_radius", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "ucb", "beta": "state_adaptive_beta", "lookahead": "two_step_myopic_rollout"},
+        "batch": {"selection": "epsilon_mixed", "size_rule": "state_adaptive_size"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "A conserved-total budget re-allocation across rounds, for example 32/28/20/16 summing to 96. state_adaptive_size does not specify whether the 96-assay total is held fixed while round sizes vary, and without that guarantee the policy is either cheating or silently truncated."
+    },
+    {
+      "name": "Recombination plus epsilon global mixing",
+      "rationale": "Pure recombination can lock onto whatever residues a poor random start happened to contain, which is a live risk when the seeds are 24 draws from a library that is 97.6% at or below wild type. Thompson sampling over crossovers supplies the exploitation while the epsilon channel keeps injecting unrestricted global draws, and physicochemical features let the activity head reject chemically implausible crossovers it has never seen.",
+      "coords": {
+        "representation": {"encoding": "physicochem", "pooling": "mean", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "random_forest", "count": "ensemble_of_k", "heads": "separated_activity_and_fitness", "uncertainty": "ensemble_disagreement"},
+        "generator": {"scope": "recombine_observed_elites", "radius": "adaptive_radius", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "thompson", "beta": "medium", "lookahead": "one_step"},
+        "batch": {"selection": "epsilon_mixed", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "elite_weighted"},
+        "stopping": {"rule": "budget_exhausted"}
+      },
+      "missing_coordinate": "An explicit split of one batch between two generators, for example 16 slots from elite recombination and 8 from unrestricted global sampling. generator.scope takes a single value per round, so this policy has to approximate the split through batch.epsilon_mixed, which draws its exploration slots at random rather than from a second designed generator."
+    },
+    {
+      "name": "Distance-four biased global EI",
+      "rationale": "The known structure of this state says the peak is maximally substituted, yet every acquisition surface fitted to a wild-type-dominated random seed will initially prefer near-wild-type variants; deliberately weighting the pool toward fully-substituted quadruples corrects that bias for free. Full-rank site embeddings keep per-site detail, and a GP tolerates the high dimension without the per-feature length scales that would overfit at n=24.",
+      "coords": {
+        "representation": {"encoding": "esm2_frozen", "pooling": "site", "rank": "full", "site_coupling": "pairwise_sites"},
+        "surrogate": {"family": "gaussian_process", "count": "single", "heads": "joint_fitness", "uncertainty": "gp_posterior"},
+        "generator": {"scope": "global_all_variants", "radius": "r2", "pool_size": "exhaustive", "zero_shot_prior": "none"},
+        "acquisition": {"rule": "expected_improvement", "beta": "high", "lookahead": "one_step"},
+        "batch": {"selection": "diverse_top_k_by_distance", "size_rule": "fixed"},
+        "update": {"refit": "refit_from_scratch", "weighting": "uniform"},
+        "stopping": {"rule": "fixed_rounds"}
+      },
+      "missing_coordinate": "A prior over Hamming distance from wild type on the candidate pool, so the generator can favour distance-3 and distance-4 designs. The three generator scopes are global, a ball around observed points, and elite recombination, and none of them expresses 'prefer maximally-substituted variants' independently of what has already been observed."
+    }
+  ]
+}

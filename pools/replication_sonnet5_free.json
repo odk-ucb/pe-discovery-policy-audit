@@ -1,0 +1,885 @@
+{
+ "condition": "REPLICATION_SONNET5_FREE",
+ "policies": [
+  {
+   "name": "Pairwise-Feature GP with Adaptive UCB",
+   "channel": "free_replication",
+   "rationale": "Explicit pairwise one-hot features directly encode the two-way interactions known to dominate this 4-site landscape, unlike an additive encoding that would miss them entirely. A GP over these features gives calibrated posterior uncertainty for principled UCB, and annealing beta from high to low as rounds progress shifts from exploring which sites interact to exploiting the best combination found. Local search around observed elites with diverse batch selection avoids wasting the tight 96-assay follow-up budget on near-duplicate epistatic contexts.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot_plus_pairs",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "gaussian_process",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "gp_posterior"
+    },
+    "generator": {
+     "scope": "local_hamming_ball",
+     "ball_centre": "observed_elites",
+     "radius": "adaptive_radius",
+     "pool_size": "medium",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "ucb",
+     "beta": "state_adaptive_beta",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "diverse_top_k_by_distance",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "warm_start",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "plateau_detect"
+    }
+   },
+   "missing_coordinate": "No coordinate exists to select the GP kernel (e.g. an interaction-aware/Hamming kernel vs. a generic RBF), even though kernel choice strongly affects how well a GP actually captures the stated epistasis."
+  },
+  {
+   "name": "Zero-Shot Focused Global Screen",
+   "channel": "free_replication",
+   "rationale": "Because only a small minority of the 160,000 possible variants are functional at all, screening the full combinatorial space naively wastes assays on dead sequences. Biasing global candidate proposals with the ESM-2 masked-marginal zero-shot score (no labels needed) concentrates the pool on plausibly folded, function-compatible sequences before any surrogate is trained. Thompson sampling over an ensemble-disagreement uncertainty estimate then explores this pre-filtered, exhaustively scored pool efficiently.",
+   "coords": {
+    "representation": {
+     "encoding": "esm2_frozen",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "independent_sites"
+    },
+    "surrogate": {
+     "family": "random_forest",
+     "count": "ensemble_of_k",
+     "heads": "joint_fitness",
+     "uncertainty": "ensemble_disagreement"
+    },
+    "generator": {
+     "scope": "global_all_variants",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "exhaustive",
+     "zero_shot_prior": "esm_masked_marginal_focus"
+    },
+    "acquisition": {
+     "rule": "thompson",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "top_k_by_score",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "log1p"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": "No coordinate sets how strongly the ESM masked-marginal zero-shot score is weighted against the surrogate-based acquisition score once both are in play."
+  },
+  {
+   "name": "Elite Recombination Epistasis Hunter",
+   "channel": "free_replication",
+   "rationale": "In a landscape with strong 4-site epistasis, the best new variants are plausibly novel combinations of individually beneficial substitutions seen across different elites, not points merely near any single elite. Explicitly recombining observed elites' residues at each of the 4 sites directly generates these combinatorial candidates. Boosted trees capture the non-additive interactions among the pairwise features, and expected improvement targets genuine gains over the current best, matching the objective of simply finding the single highest-fitness variant.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot_plus_pairs",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "boosted_trees",
+     "count": "ensemble_of_k",
+     "heads": "joint_fitness",
+     "uncertainty": "bootstrap"
+    },
+    "generator": {
+     "scope": "recombine_observed_elites",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "medium",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "expected_improvement",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "score_then_cluster",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "elite_weighted",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": ""
+  },
+  {
+   "name": "Site-Concatenated ESM Embedding GP",
+   "channel": "free_replication",
+   "rationale": "Concatenating (rather than mean-pooling) the ESM-2 embeddings at exactly the 4 mutated sites preserves position-specific information that mean-pooling would blur, which matters because the interactions are localized to those 4 positions. PCA keeps the resulting high-dimensional vector tractable for a GP given only up to 120 labeled points. High beta favors aggressive exploration early since with only 24 initial labels the GP posterior is highly uncertain everywhere.",
+   "coords": {
+    "representation": {
+     "encoding": "esm2_frozen",
+     "pooling": "site",
+     "rank": "low_rank_pca",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "gaussian_process",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "gp_posterior"
+    },
+    "generator": {
+     "scope": "local_hamming_ball",
+     "ball_centre": "observed_elites",
+     "radius": "r2",
+     "pool_size": "medium",
+     "zero_shot_prior": "esm_masked_marginal_focus"
+    },
+    "acquisition": {
+     "rule": "ucb",
+     "beta": "high",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "diverse_top_k_by_distance",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "warm_start",
+     "weighting": "recency_weighted",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "budget_exhausted"
+    }
+   },
+   "missing_coordinate": ""
+  },
+  {
+   "name": "Physicochemical Additive Ridge Baseline",
+   "channel": "free_replication",
+   "rationale": "This is a deliberately simple additive-effects control: physicochemical descriptors with independent-sites ridge regression assume no epistasis, which the landscape description says is false, so this policy is expected to plateau early or find only mediocre variants. Its value is as an interpretable lower-bound benchmark against which the epistasis-aware policies in this pool can be judged, not as a strong candidate itself.",
+   "coords": {
+    "representation": {
+     "encoding": "physicochem",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "independent_sites"
+    },
+    "surrogate": {
+     "family": "ridge",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "none"
+    },
+    "generator": {
+     "scope": "global_all_variants",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "medium",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "greedy_mean",
+     "beta": "low",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "top_k_by_score",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": ""
+  },
+  {
+   "name": "Hamming-Metric KNN Local Exploiter",
+   "channel": "free_replication",
+   "rationale": "One-hot Hamming distance is the natural, information-preserving metric for a 4-site combinatorial landscape, and KNN regression directly exploits local smoothness/ruggedness patterns among near-neighbor variants without assuming any parametric functional form, which matters because epistasis breaks any smooth global model. Restricting the candidate pool to a tight Hamming ball (r1) around elites is a cheap way to exploit locally once functional regions are found.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "knn",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "none"
+    },
+    "generator": {
+     "scope": "local_hamming_ball",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "small",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "ucb",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "top_k_by_score",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": "No coordinate exists to set k (number of neighbors) or the neighbor-weighting scheme for the KNN surrogate."
+  },
+  {
+   "name": "Exhaustive Thompson Ensemble Explorer",
+   "channel": "free_replication",
+   "rationale": "Because 20^4=160,000 variants is computationally cheap to score in full each round, there is no need to restrict the candidate pool early; exhaustively scoring everything avoids prematurely committing to a local neighborhood before the rare functional region is even found. Thompson sampling from a random-forest ensemble's disagreement naturally balances exploring uncharted regions against exploiting promising ones when so little is known before the first surrogate fit.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot_plus_pairs",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "random_forest",
+     "count": "ensemble_of_k",
+     "heads": "joint_fitness",
+     "uncertainty": "ensemble_disagreement"
+    },
+    "generator": {
+     "scope": "global_all_variants",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "exhaustive",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "thompson",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "diverse_top_k_by_distance",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": ""
+  },
+  {
+   "name": "Two-Head Activity/Fitness Split",
+   "channel": "free_replication",
+   "rationale": "The landscape is described as mostly non-functional with continuous fitness only among the active minority, i.e. an effectively zero-inflated label distribution. A separated activity-classifier-plus-fitness-regressor head models this structure directly rather than forcing one regression head to fit both the dead/alive boundary and the continuous fitness scale, and log1p-transforming fitness further tames the skew among actives. Epsilon-mixed batches keep some purely random probes in every round to keep discovering new active pockets even as the model exploits known ones.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot_plus_pairs",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "boosted_trees",
+     "count": "ensemble_of_k",
+     "heads": "separated_activity_and_fitness",
+     "uncertainty": "bootstrap"
+    },
+    "generator": {
+     "scope": "global_all_variants",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "exhaustive",
+     "zero_shot_prior": "esm_masked_marginal_focus"
+    },
+    "acquisition": {
+     "rule": "expected_improvement",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "epsilon_mixed",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "log1p"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": ""
+  },
+  {
+   "name": "Wild-Type-Anchored Safe Search",
+   "channel": "free_replication",
+   "rationale": "If the wild type is functional, searching a moderate-radius Hamming ball around it is a low-risk way to find additional functional variants when function is rare across the space at large, rather than gambling early exploration entirely on distant, likely-dead global draws. Separating an activity classifier from a fitness regressor respects that most Hamming-neighbors of wild type may still be non-functional even at short distances, while fitness varies continuously only among the actives.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "independent_sites"
+    },
+    "surrogate": {
+     "family": "random_forest",
+     "count": "ensemble_of_k",
+     "heads": "separated_activity_and_fitness",
+     "uncertainty": "ensemble_disagreement"
+    },
+    "generator": {
+     "scope": "local_hamming_ball",
+     "ball_centre": "wild_type",
+     "radius": "r2",
+     "pool_size": "medium",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "expected_improvement",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "diverse_top_k_by_distance",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": ""
+  },
+  {
+   "name": "Rank-Transformed Thompson GP over Recombinants",
+   "channel": "free_replication",
+   "rationale": "With only 24 initial labels and fitness values likely heavy-tailed among the rare active variants, rank-transforming the target stabilizes the GP's Gaussian-noise assumption without needing to guess the true fitness distribution shape. Combining this with elite recombination directly targets the compositional structure of epistasis (new combinations of individually good substitutions), and Thompson sampling from the GP gives well-calibrated stochastic exploration appropriate to the small-sample regime.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot_plus_pairs",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "gaussian_process",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "gp_posterior"
+    },
+    "generator": {
+     "scope": "recombine_observed_elites",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "medium",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "thompson",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "top_k_by_score",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "rank"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": ""
+  },
+  {
+   "name": "PCA-Compressed Elite-Weighted Ridge",
+   "channel": "free_replication",
+   "rationale": "The pairwise one-hot feature space is large relative to the roughly 24-120 labels available, so PCA compression keeps ridge regression well-posed while still letting it fit some pairwise (epistatic) structure, unlike a purely independent-sites encoding. Elite-weighted refitting focuses the model's limited capacity on discriminating among the best-performing variants, matching the campaign's actual goal of finding the single highest-fitness variant rather than modeling the whole landscape accurately.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot_plus_pairs",
+     "pooling": "mean",
+     "rank": "low_rank_pca",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "ridge",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "none"
+    },
+    "generator": {
+     "scope": "recombine_observed_elites",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "medium",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "greedy_mean",
+     "beta": "low",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "top_k_by_score",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "elite_weighted",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": ""
+  },
+  {
+   "name": "Warm-Started Recency-Weighted Boosted Trees on ESM Embeddings",
+   "channel": "free_replication",
+   "rationale": "Site-concatenated ESM-2 embeddings preserve the position-specific signal at exactly the 4 mutated residues, compressed by PCA to keep the boosted-tree ensemble well-posed on limited labels. Warm-starting from the previous round's trees plus recency weighting lets the surrogate adapt quickly to the newest, most informative batch (typically probing near the current best elite) without the cost of refitting on all prior data from scratch every round. An adaptive Hamming-ball radius lets local exploitation tighten as confidence in the elite region grows.",
+   "coords": {
+    "representation": {
+     "encoding": "esm2_frozen",
+     "pooling": "site",
+     "rank": "low_rank_pca",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "boosted_trees",
+     "count": "ensemble_of_k",
+     "heads": "joint_fitness",
+     "uncertainty": "bootstrap"
+    },
+    "generator": {
+     "scope": "local_hamming_ball",
+     "ball_centre": "observed_elites",
+     "radius": "adaptive_radius",
+     "pool_size": "medium",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "expected_improvement",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "diverse_top_k_by_distance",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "warm_start",
+     "weighting": "recency_weighted",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "budget_exhausted"
+    }
+   },
+   "missing_coordinate": "No coordinate controls the warm-start decay rate, i.e. how much weight past-round trees retain versus how quickly they are supplanted by new data."
+  },
+  {
+   "name": "Exhaustive Score-and-Cluster GP",
+   "channel": "free_replication",
+   "rationale": "Scoring the entire 160,000-variant space is affordable, so instead of pre-restricting candidates this policy scores everything with a GP and then clusters the top-scoring candidates before selecting the batch, ensuring the 24 assayed variants per round span structurally distinct epistatic combinations rather than 24 near-duplicates clustered around one local optimum found by chance. That redundancy risk is real precisely because interacting sites can make nearby variants behave very differently.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot_plus_pairs",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "gaussian_process",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "gp_posterior"
+    },
+    "generator": {
+     "scope": "global_all_variants",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "exhaustive",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "thompson",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "score_then_cluster",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": ""
+  },
+  {
+   "name": "Epsilon-Mixed Random Forest UCB",
+   "channel": "free_replication",
+   "rationale": "Random forests fit on modest data can become overconfident about locally exploited regions; reserving a fixed epsilon fraction of each 24-variant batch for purely random draws guards against total commitment to one discovered pocket. This matters because with such a small fraction of variants being functional at all, a second or third independent functional region may still be undiscovered even after finding one.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "random_forest",
+     "count": "ensemble_of_k",
+     "heads": "joint_fitness",
+     "uncertainty": "ensemble_disagreement"
+    },
+    "generator": {
+     "scope": "global_all_variants",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "medium",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "ucb",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "epsilon_mixed",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": ""
+  },
+  {
+   "name": "Two-Step Rollout Local GP",
+   "channel": "free_replication",
+   "rationale": "With only 4 total rounds, each batch decision has outsized influence on what the next round can learn. A two-step myopic rollout that estimates how a candidate batch will update the posterior before scoring the following round's opportunities can avoid a purely greedy round choice that looks good immediately but forecloses better later discoveries, which is worth the extra computation given the tiny number of total decision points in this campaign.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot_plus_pairs",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "gaussian_process",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "gp_posterior"
+    },
+    "generator": {
+     "scope": "local_hamming_ball",
+     "ball_centre": "observed_elites",
+     "radius": "adaptive_radius",
+     "pool_size": "medium",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "ucb",
+     "beta": "state_adaptive_beta",
+     "lookahead": "two_step_myopic_rollout"
+    },
+    "batch": {
+     "selection": "top_k_by_score",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "warm_start",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": "No coordinate exists to set the rollout horizon or number of simulated future batches for the lookahead, beyond the fixed one-vs-two-step choice."
+  },
+  {
+   "name": "Full One-Hot Bootstrap Ridge Ensemble",
+   "channel": "free_replication",
+   "rationale": "This is a second, uncertainty-aware linear control: bootstrap-ensembled ridge on plain one-hot features still assumes an additive model, known to be a poor fit given the strong epistasis, but adding bootstrap uncertainty at least lets it use UCB rather than pure greedy selection. This isolates how much of any performance gap versus the non-linear policies in this pool is attributable to the acquisition strategy versus the surrogate's functional form.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "independent_sites"
+    },
+    "surrogate": {
+     "family": "ridge",
+     "count": "ensemble_of_k",
+     "heads": "joint_fitness",
+     "uncertainty": "bootstrap"
+    },
+    "generator": {
+     "scope": "global_all_variants",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "medium",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "ucb",
+     "beta": "low",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "top_k_by_score",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": ""
+  },
+  {
+   "name": "Adaptive-Radius KNN with Plateau Stop",
+   "channel": "free_replication",
+   "rationale": "An adaptive Hamming-ball radius lets the KNN search widen automatically if the current neighborhood stops yielding improvement, a proxy for having exhausted a local epistatic peak, and narrow again once a better region is found. Pairing this with plateau-based stopping means the campaign can, in principle, stop probing a peak once returns flatten rather than always waiting out fixed rounds, a good match to a batch-limited budget where wasted rounds are costly.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "knn",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "none"
+    },
+    "generator": {
+     "scope": "local_hamming_ball",
+     "ball_centre": "observed_elites",
+     "radius": "adaptive_radius",
+     "pool_size": "small",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "greedy_mean",
+     "beta": "low",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "diverse_top_k_by_distance",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "plateau_detect"
+    }
+   },
+   "missing_coordinate": ""
+  },
+  {
+   "name": "Recombination Pool with Diverse Clustering and Log Fitness",
+   "channel": "free_replication",
+   "rationale": "Combining elite recombination (to directly propose novel epistatic combinations) with an ESM-2 masked-marginal zero-shot filter avoids wasting assays on recombinants that look combinatorially plausible from the fitness data alone but are actually non-functional according to the language model's prior. Log1p-transforming fitness before fitting the boosted-tree ensemble tames the right-skew typical of rare high-fitness outliers, and clustering top-scored candidates keeps the 24-variant batch spread across distinct recombination products.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot_plus_pairs",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "boosted_trees",
+     "count": "ensemble_of_k",
+     "heads": "joint_fitness",
+     "uncertainty": "bootstrap"
+    },
+    "generator": {
+     "scope": "recombine_observed_elites",
+     "ball_centre": "observed_elites",
+     "radius": "r2",
+     "pool_size": "medium",
+     "zero_shot_prior": "esm_masked_marginal_focus"
+    },
+    "acquisition": {
+     "rule": "expected_improvement",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "score_then_cluster",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "log1p"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": ""
+  },
+  {
+   "name": "State-Adaptive Batch Composition over ESM Global Pool",
+   "channel": "free_replication",
+   "rationale": "This policy tests whether adaptively reallocating the fixed 96-assay follow-up budget's per-round composition, favoring more diverse/exploratory picks while the GP is least informed early on and tighter top-k picks as it sharpens, beats a static split. The huge exhaustively scored global candidate pool of mean-pooled ESM-2 features means the campaign never has to restrict itself before knowing where the rare functional region is, letting the batch-composition schedule do the exploration/exploitation work instead of the generator scope.",
+   "coords": {
+    "representation": {
+     "encoding": "esm2_frozen",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "independent_sites"
+    },
+    "surrogate": {
+     "family": "gaussian_process",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "gp_posterior"
+    },
+    "generator": {
+     "scope": "global_all_variants",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "exhaustive",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "ucb",
+     "beta": "state_adaptive_beta",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "diverse_top_k_by_distance",
+     "size_rule": "state_adaptive_size"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   },
+   "missing_coordinate": "No coordinate specifies how a state-adaptive batch size would redistribute the fixed 96-assay follow-up budget across the 4 rounds (e.g. front- vs. back-loaded); the menu only flags that sizing is adaptive, not the schedule."
+  },
+  {
+   "name": "Physicochemical KNN Global Explorer",
+   "channel": "free_replication",
+   "rationale": "This is a deliberate exploration-forward contrast policy: physicochemical descriptors plus a simple KNN surrogate under a pure-explore acquisition rule prioritizes broad coverage of the entire variant space over exploiting any one discovered elite, clustering the globally exhaustive candidate scores before batch selection so the 24-per-round assays spread across many distinct contexts. Given how rare functional variants are, this tests whether maximizing raw discovery of additional functional pockets throughout the whole budget yields a better final maximum than the more exploitative policies elsewhere in this pool.",
+   "coords": {
+    "representation": {
+     "encoding": "physicochem",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "independent_sites"
+    },
+    "surrogate": {
+     "family": "knn",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "none"
+    },
+    "generator": {
+     "scope": "global_all_variants",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "exhaustive",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "pure_explore",
+     "beta": "high",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "score_then_cluster",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "budget_exhausted"
+    }
+   },
+   "missing_coordinate": ""
+  }
+ ]
+}

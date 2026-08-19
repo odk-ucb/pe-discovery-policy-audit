@@ -1,0 +1,268 @@
+{
+ "condition": "REPLICATION_SONNET5_PERTURB",
+ "policies": [
+  {
+   "name": "Local Elite Refinement",
+   "channel": "perturb_replication",
+   "derivation": "changed_coordinate=generator.scope",
+   "rationale": "Given the rarity of function, once elites are found among the 24 initial random draws or the first round, concentrating the generator on a local Hamming neighborhood around them may substantially increase the hit rate of functional, high-fitness candidates per assay compared to continuing to exhaustively score the entire 160,000-variant space every round. This tests the single most fundamental tradeoff in this campaign design: explore broadly versus exploit locally at the generator level, holding the GP-UCB machinery fixed.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot_plus_pairs",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "gaussian_process",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "gp_posterior"
+    },
+    "generator": {
+     "scope": "local_hamming_ball",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "exhaustive",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "ucb",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "diverse_top_k_by_distance",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   }
+  },
+  {
+   "name": "Tree-Ensemble Surrogate Swap",
+   "channel": "perturb_replication",
+   "derivation": "changed_coordinate=surrogate.family",
+   "rationale": "A GP's ability to model the stated epistasis depends heavily on kernel choice, which is not a tunable coordinate in this menu; swapping to a random forest tests whether a non-parametric tree ensemble captures discrete pairwise interaction effects more naturally than a generic-kernel GP, without changing anything else about how candidates are generated or selected. Note this holds uncertainty=gp_posterior fixed by the one-coordinate-change rule even though a random forest would natively produce its variance via ensembling; the point of the ablation is to isolate the surrogate's functional form on the identical pairwise feature set, independent of how its uncertainty would practically be computed.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot_plus_pairs",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "random_forest",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "gp_posterior"
+    },
+    "generator": {
+     "scope": "global_all_variants",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "exhaustive",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "ucb",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "diverse_top_k_by_distance",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   }
+  },
+  {
+   "name": "Pretrained Embedding Swap",
+   "channel": "perturb_replication",
+   "derivation": "changed_coordinate=representation.encoding",
+   "rationale": "Tests whether a pretrained protein language model's general sequence-fitness priors, learned from massive natural sequence data, provide more informative features than hand-crafted pairwise interaction terms. This matters most in the earliest rounds when only 24-48 labels are available and the pairwise one-hot feature space (many parameters relative to labels) is most data-starved, so the representation coordinate is arguably the single highest-leverage lever to test against the base's hand-built epistasis features.",
+   "coords": {
+    "representation": {
+     "encoding": "esm2_frozen",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "gaussian_process",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "gp_posterior"
+    },
+    "generator": {
+     "scope": "global_all_variants",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "exhaustive",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "ucb",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "diverse_top_k_by_distance",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   }
+  },
+  {
+   "name": "Posterior-Sampling Batch Diversification",
+   "channel": "perturb_replication",
+   "derivation": "changed_coordinate=acquisition.rule",
+   "rationale": "UCB's deterministic top-scoring can select a batch of near-identical candidates when the GP posterior is smooth around a peak, wasting several of the 24 per-round assays on redundant information despite the diverse_top_k_by_distance selection rule fighting the same problem downstream. Thompson sampling draws independent posterior samples per candidate, diversifying exploration at the scoring stage itself rather than only at the selection stage, which could matter more than beta tuning ever would under this campaign's hard batch-size constraint.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot_plus_pairs",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "gaussian_process",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "gp_posterior"
+    },
+    "generator": {
+     "scope": "global_all_variants",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "exhaustive",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "thompson",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "diverse_top_k_by_distance",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   }
+  },
+  {
+   "name": "Zero-Shot-Guided Candidate Generation",
+   "channel": "perturb_replication",
+   "derivation": "changed_coordinate=generator.zero_shot_prior",
+   "rationale": "Because only a small minority of the 160,000 variants are functional at all, biasing which candidates even enter the exhaustively scored pool using the ESM-2 masked-marginal zero-shot score, which requires no labels and is essentially free, could disproportionately raise the hit rate of functional variants discovered per assay. This is most valuable in round 1, before any surrogate has been fit on real labels, and tests whether a pretrained-model prior on function is a higher-value lever than anything the surrogate or acquisition rule can do with labels alone.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot_plus_pairs",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "gaussian_process",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "gp_posterior"
+    },
+    "generator": {
+     "scope": "global_all_variants",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "exhaustive",
+     "zero_shot_prior": "esm_masked_marginal_focus"
+    },
+    "acquisition": {
+     "rule": "ucb",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "diverse_top_k_by_distance",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   }
+  },
+  {
+   "name": "BASE_REPLICATION_SONNET5",
+   "channel": "seed",
+   "rationale": "Pairwise one-hot features are the most direct, assumption-light way to represent the known strong 4-site epistasis without needing a pretrained model. A GP surrogate is a natural default for such a small-sample (24-120 total) regression/uncertainty problem and pairs naturally with UCB, a standard, robust exploration-exploitation rule. Scoring the entire feasible 160,000-variant space exhaustively every round, rather than restricting a priori to a neighborhood, is affordable and avoids prematurely committing to a local region before knowing where the rare functional variants live; diverse batch selection guards against wasting the fixed 24-per-round budget on near-duplicate candidates, and refit-from-scratch with uniform weighting and no target transform is the simplest, most transparent update rule to serve as a default.",
+   "coords": {
+    "representation": {
+     "encoding": "onehot_plus_pairs",
+     "pooling": "mean",
+     "rank": "full",
+     "site_coupling": "pairwise_sites"
+    },
+    "surrogate": {
+     "family": "gaussian_process",
+     "count": "single",
+     "heads": "joint_fitness",
+     "uncertainty": "gp_posterior"
+    },
+    "generator": {
+     "scope": "global_all_variants",
+     "ball_centre": "observed_elites",
+     "radius": "r1",
+     "pool_size": "exhaustive",
+     "zero_shot_prior": "none"
+    },
+    "acquisition": {
+     "rule": "ucb",
+     "beta": "medium",
+     "lookahead": "one_step"
+    },
+    "batch": {
+     "selection": "diverse_top_k_by_distance",
+     "size_rule": "fixed"
+    },
+    "update": {
+     "refit": "refit_from_scratch",
+     "weighting": "uniform",
+     "target_transform": "identity"
+    },
+    "stopping": {
+     "rule": "fixed_rounds"
+    }
+   }
+  }
+ ]
+}
