@@ -1,0 +1,76 @@
+{
+  "GB1_complete_case_free_vs_executable_random": {
+    "free_n": 25,
+    "free_mean_of_means": 4.983847760216648,
+    "random_basis_n": 20,
+    "random_executable_n": 18,
+    "random_executable_mean_of_means": 4.958351034962018,
+    "delta_free_minus_exec_random": 0.0255,
+    "interpretation": "Near tie: ITT free-random gain is attrition/feasibility, not residual fitness skill among executable policies."
+  },
+  "LOLO_classical_seeds": {
+    "GB1": {
+      "selected_default": "SEED:base_onehot_ridge",
+      "train_z_sum": {
+        "SEED:base_onehot_ridge": 1.6416971826972084,
+        "SEED:esm_rf_greedy": -1.9194722968889035,
+        "SEED:gp_ucb": 0.4099644712846087,
+        "SEED:rf_thompson": -0.13218935709292146
+      },
+      "means": {
+        "GB1": 5.688788963932917,
+        "TEV": 1.1153809239666441,
+        "TrpB4": 1.7735981798891955
+      }
+    },
+    "TEV": {
+      "selected_default": "SEED:base_onehot_ridge",
+      "train_z_sum": {
+        "SEED:base_onehot_ridge": 1.858003583110173,
+        "SEED:esm_rf_greedy": 0.03318252887381368,
+        "SEED:gp_ucb": 0.2771189267104768,
+        "SEED:rf_thompson": -2.1683050386944664
+      },
+      "means": {
+        "GB1": 5.688788963932917,
+        "TEV": 1.1153809239666441,
+        "TrpB4": 1.7735981798891955
+      }
+    },
+    "TrpB4": {
+      "selected_default": "SEED:base_onehot_ridge",
+      "train_z_sum": {
+        "SEED:base_onehot_ridge": 1.6770590610650657,
+        "SEED:esm_rf_greedy": -0.5089548491120824,
+        "SEED:gp_ucb": -0.91807291887199,
+        "SEED:rf_thompson": -0.25003129308100125
+      },
+      "means": {
+        "GB1": 5.688788963932917,
+        "TEV": 1.1153809239666441,
+        "TrpB4": 1.7735981798891955
+      }
+    },
+    "all_means": {
+      "GB1": {
+        "SEED:base_onehot_ridge": 5.688788963932917,
+        "SEED:esm_rf_greedy": 5.5501708054891665,
+        "SEED:gp_ucb": 4.781156002587917,
+        "SEED:rf_thompson": 4.400372715317083
+      },
+      "TEV": {
+        "SEED:base_onehot_ridge": 1.1153809239666441,
+        "SEED:esm_rf_greedy": 1.047858738253025,
+        "SEED:gp_ucb": 1.0767171116881693,
+        "SEED:rf_thompson": 1.1209814033381438
+      },
+      "TrpB4": {
+        "SEED:base_onehot_ridge": 1.7735981798891955,
+        "SEED:esm_rf_greedy": 1.54212091858633,
+        "SEED:gp_ucb": 1.7578659018510507,
+        "SEED:rf_thompson": 1.4934287289805575
+      }
+    },
+    "note": "LOLO: pick classical SEED:* with highest sum of within-landscape z-scores on the other two landscapes."
+  }
+}
