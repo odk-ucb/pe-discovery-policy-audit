@@ -1,0 +1,238 @@
+{
+  "landscape": "GB1",
+  "seeds": 6,
+  "budget": 96,
+  "K": 4,
+  "G": 3,
+  "n_live_cells": 41,
+  "default": {
+    "mean": 4.027806384340267,
+    "fails": 0,
+    "seeds": [
+      5.033633066381,
+      4.12789621874,
+      3.5139889572469003,
+      6.7765184421741,
+      3.1684264039996,
+      1.5463752175000005
+    ]
+  },
+  "one_shot": {
+    "candidates": [
+      {
+        "move": [
+          "surrogate",
+          "uncertainty",
+          "ensemble_disagreement"
+        ],
+        "mean": 4.027806384340267,
+        "fails": 0
+      },
+      {
+        "move": [
+          "generator",
+          "pool_size",
+          "exhaustive"
+        ],
+        "mean": 4.027806384340267,
+        "fails": 0
+      },
+      {
+        "move": [
+          "batch",
+          "selection",
+          "epsilon_mixed"
+        ],
+        "mean": 4.135292937636933,
+        "fails": 0
+      },
+      {
+        "move": [
+          "acquisition",
+          "rule",
+          "thompson"
+        ],
+        "mean": 4.027806384340267,
+        "fails": 0
+      }
+    ],
+    "best": {
+      "move": [
+        "batch",
+        "selection",
+        "epsilon_mixed"
+      ],
+      "mean": 4.135292937636933,
+      "fails": 0
+    }
+  },
+  "iterative": {
+    "history": [
+      {
+        "gen": 0,
+        "mean": 4.027806384340267,
+        "move": null
+      },
+      {
+        "gen": 1,
+        "mean": 4.295393218168599,
+        "best_of_gen": {
+          "move": [
+            "representation",
+            "encoding",
+            "physicochem"
+          ],
+          "mean": 4.295393218168599,
+          "fails": 0
+        },
+        "all": [
+          {
+            "move": [
+              "representation",
+              "encoding",
+              "physicochem"
+            ],
+            "mean": 4.295393218168599,
+            "fails": 0
+          },
+          {
+            "move": [
+              "batch",
+              "selection",
+              "epsilon_mixed"
+            ],
+            "mean": 4.135292937636933,
+            "fails": 0
+          },
+          {
+            "move": [
+              "surrogate",
+              "family",
+              "gaussian_process"
+            ],
+            "mean": 3.324700266991934,
+            "fails": 0
+          },
+          {
+            "move": [
+              "acquisition",
+              "beta",
+              "medium"
+            ],
+            "mean": 4.027806384340267,
+            "fails": 0
+          }
+        ]
+      },
+      {
+        "gen": 2,
+        "mean": 4.405980768331934,
+        "best_of_gen": {
+          "move": [
+            "update",
+            "weighting",
+            "elite_weighted"
+          ],
+          "mean": 4.405980768331934,
+          "fails": 0
+        },
+        "all": [
+          {
+            "move": [
+              "acquisition",
+              "beta",
+              "state_adaptive_beta"
+            ],
+            "mean": 4.295393218168599,
+            "fails": 0
+          },
+          {
+            "move": [
+              "update",
+              "weighting",
+              "elite_weighted"
+            ],
+            "mean": 4.405980768331934,
+            "fails": 0
+          },
+          {
+            "move": [
+              "acquisition",
+              "rule",
+              "ucb"
+            ],
+            "mean": 4.295393218168599,
+            "fails": 0
+          },
+          {
+            "move": [
+              "acquisition",
+              "rule",
+              "pure_explore"
+            ],
+            "mean": 4.295393218168599,
+            "fails": 0
+          }
+        ]
+      },
+      {
+        "gen": 3,
+        "mean": 4.440636415785266,
+        "best_of_gen": {
+          "move": [
+            "representation",
+            "encoding",
+            "onehot"
+          ],
+          "mean": 4.440636415785266,
+          "fails": 0
+        },
+        "all": [
+          {
+            "move": [
+              "representation",
+              "encoding",
+              "onehot"
+            ],
+            "mean": 4.440636415785266,
+            "fails": 0
+          },
+          {
+            "move": [
+              "batch",
+              "selection",
+              "score_then_cluster"
+            ],
+            "mean": 4.187221434456933,
+            "fails": 0
+          },
+          {
+            "move": [
+              "acquisition",
+              "beta",
+              "medium"
+            ],
+            "mean": 4.405980768331934,
+            "fails": 0
+          },
+          {
+            "move": [
+              "generator",
+              "ball_centre",
+              "wild_type"
+            ],
+            "mean": 4.405980768331934,
+            "fails": 0
+          }
+        ]
+      }
+    ],
+    "final_mean": 4.440636415785266
+  },
+  "contrast": {
+    "iterative_minus_oneshot": 0.30534347814833307,
+    "oneshot_minus_default": 0.10748655329666601,
+    "iterative_minus_default": 0.4128300314449991
+  },
+  "note": "Non-LLM uniform sampling over live single-coordinate moves. Tests whether multi-generation structure alone improves over one-shot under the same proposal class."
+}
