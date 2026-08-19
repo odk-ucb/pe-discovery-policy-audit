@@ -1,0 +1,652 @@
+{
+  "model": "openai/gpt-4o-mini",
+  "temperature": 0.4,
+  "seeds": 6,
+  "budget": 96,
+  "K": 3,
+  "G": 3,
+  "api": "openrouter",
+  "timestamp": "2026-08-19T06:03:22",
+  "prompts": [
+    {
+      "phase": "oneshot",
+      "user": "Classical DEFAULT (flat):\n{\n  \"representation.encoding\": \"onehot\",\n  \"representation.pooling\": \"site\",\n  \"representation.rank\": \"full\",\n  \"representation.site_coupling\": \"independent_sites\",\n  \"surrogate.family\": \"ridge\",\n  \"surrogate.count\": \"single\",\n  \"surrogate.heads\": \"joint_fitness\",\n  \"surrogate.uncertainty\": \"none\",\n  \"generator.scope\": \"global_all_variants\",\n  \"generator.ball_centre\": \"observed_elites\",\n  \"generator.radius\": \"r1\",\n  \"generator.pool_size\": \"medium\",\n  \"generator.zero_shot_prior\": \"none\",\n  \"acquisition.rule\": \"greedy_mean\",\n  \"acquisition.beta\": \"low\",\n  \"acquisition.lookahead\": \"one_step\",\n  \"batch.selection\": \"top_k_by_score\",\n  \"batch.size_rule\": \"fixed\",\n  \"update.refit\": \"refit_from_scratch\",\n  \"update.weighting\": \"uniform\",\n  \"update.target_transform\": \"identity\",\n  \"stopping.rule\": \"fixed_rounds\"\n}\n\nAllowed coordinates:\n  representation.encoding: ['onehot', 'physicochem', 'onehot_plus_pairs', 'esm2_frozen']\n  representation.pooling: ['mean', 'site']\n  representation.rank: ['full', 'low_rank_pca']\n  representation.site_coupling: ['independent_sites', 'pairwise_sites']\n  surrogate.family: ['ridge', 'random_forest', 'gaussian_process', 'boosted_trees', 'knn']\n  surrogate.count: ['single', 'ensemble_of_k']\n  surrogate.heads: ['joint_fitness', 'separated_activity_and_fitness']\n  surrogate.uncertainty: ['none', 'ensemble_disagreement', 'gp_posterior', 'bootstrap']\n  generator.scope: ['global_all_variants', 'local_hamming_ball', 'recombine_observed_elites']\n  generator.ball_centre: ['observed_elites', 'wild_type']\n  generator.radius: ['r1', 'r2', 'adaptive_radius']\n  generator.pool_size: ['small', 'medium', 'exhaustive']\n  generator.zero_shot_prior: ['none', 'esm_masked_marginal_focus']\n  acquisition.rule: ['greedy_mean', 'ucb', 'expected_improvement', 'thompson', 'pure_explore']\n  acquisition.beta: ['low', 'medium', 'high', 'state_adaptive_beta']\n  acquisition.lookahead: ['one_step', 'two_step_myopic_rollout']\n  batch.selection: ['top_k_by_score', 'diverse_top_k_by_distance', 'score_then_cluster', 'epsilon_mixed']\n  batch.size_rule: ['fixed', 'state_adaptive_size']\n  update.refit: ['refit_from_scratch', 'warm_start']\n  update.weighting: ['uniform', 'recency_weighted', 'elite_weighted']\n  update.target_transform: ['identity', 'log1p', 'rank']\n  stopping.rule: ['fixed_rounds', 'plateau_detect', 'budget_exhausted']\n\nPropose 3 distinct one-shot policies as a JSON array of flat coordinate dicts\n(only list coordinates you change from DEFAULT is OK). Optimize for GB1-style\ncombinatorial fitness under budget 96 assays / 4 rounds of 24.",
+      "response": "```json\n[\n    {\n        \"representation.encoding\": \"physicochem\",\n        \"representation.pooling\": \"mean\",\n        \"representation.rank\": \"low_rank_pca\",\n        \"representation.site_coupling\": \"pairwise_sites\",\n        \"surrogate.family\": \"random_forest\",\n        \"surrogate.count\": \"ensemble_of_k\",\n        \"surrogate.heads\": \"separated_activity_and_fitness\",\n        \"surrogate.uncertainty\": \"gp_posterior\",\n        \"generator.scope\": \"local_hamming_ball\",\n        \"generator.ball_centre\": \"wild_type\",\n        \"generator.radius\": \"adaptive_radius\",\n        \"generator.pool_size\": \"small\",\n        \"generator.zero_shot_prior\": \"esm_masked_marginal_focus\",\n        \"acquisition.rule\": \"ucb\",\n        \"acquisition.beta\": \"medium\",\n        \"acquisition.lookahead\": \"two_step_myopic_rollout\",\n        \"batch.selection\": \"diverse_top_k_by_distance\",\n        \"batch.size_rule\": \"state_adaptive_size\",\n        \"update.refit\": \"warm_start\",\n        \"update.weighting\": \"elite_weighted\",\n        \"update.target_transform\": \"log1p\",\n        \"stopping.rule\": \"plateau_detect\"\n    },\n    {\n        \"representation.encoding\": \"onehot_plus_pairs\",\n        \"representation.pooling\": \"site\",\n        \"representation.rank\": \"full\",\n        \"representation.site_coupling\": \"independent_sites\",\n        \"surrogate.family\": \"boosted_trees\",\n        \"surrogate.count\": \"single\",\n        \"surrogate.heads\": \"joint_fitness\",\n        \"surrogate.uncertainty\": \"ensemble_disagreement\",\n        \"generator.scope\": \"global_all_variants\",\n        \"generator.ball_centre\": \"observed_elites\",\n        \"generator.radius\": \"r2\",\n        \"generator.pool_size\": \"medium\",\n        \"generator.zero_shot_prior\": \"none\",\n        \"acquisition.rule\": \"expected_improvement\",\n        \"acquisition.beta\": \"high\",\n        \"acquisition.lookahead\": \"one_step\",\n        \"batch.selection\": \"score_then_cluster\",\n        \"batch.size_rule\": \"fixed\",\n        \"update.refit\": \"refit_from_scratch\",\n        \"update.weighting\": \"uniform\",\n        \"update.target_transform\": \"identity\",\n        \"stopping.rule\": \"fixed_rounds\"\n    },\n    {\n        \"representation.encoding\": \"esm2_frozen\",\n        \"representation.pooling\": \"mean\",\n        \"representation.rank\": \"low_rank_pca\",\n        \"representation.site_coupling\": \"pairwise_sites\",\n        \"surrogate.family\": \"gaussian_process\",\n        \"surrogate.count\": \"ensemble_of_k\",\n        \"surrogate.heads\": \"separated_activity_and_fitness\",\n        \"surrogate.uncertainty\": \"bootstrap\",\n        \"generator.scope\": \"recombine_observed_elites\",\n        \"generator.ball_centre\": \"wild_type\",\n        \"generator.radius\": \"r1\",\n        \"generator.pool_size\": \"exhaustive\",\n        \"generator.zero_shot_prior\": \"esm_masked_marginal_focus\",\n        \"acquisition.rule\": \"thompson\",\n        \"acquisition.beta\": \"state_adaptive_beta\",\n        \"acquisition.lookahead\": \"two_step_myopic_rollout\",\n        \"batch.selection\": \"epsilon_mixed\",\n        \"batch.size_rule\": \"state_adaptive_size\",\n        \"update.refit\": \"warm_start\",\n        \"update.weighting\": \"recency_weighted\",\n        \"update.target_transform\": \"rank\",\n        \"stopping.rule\": \"budget_exhausted\"\n    }\n]\n```",
+      "model": "openai/gpt-4o-mini",
+      "temperature": 0.4
+    },
+    {
+      "phase": "iter_g1",
+      "user": "You are in a multi-generation loop. Prior generations measured mean GAIN on GB1\n(higher is better). DEFAULT gain baseline is in history gen 0.\n\nHistory:\n[\n  {\n    \"gen\": 0,\n    \"mean\": 4.027806384340267,\n    \"label\": \"DEFAULT\",\n    \"partial\": {}\n  }\n]\n\nAllowed coordinates:\n  representation.encoding: ['onehot', 'physicochem', 'onehot_plus_pairs', 'esm2_frozen']\n  representation.pooling: ['mean', 'site']\n  representation.rank: ['full', 'low_rank_pca']\n  representation.site_coupling: ['independent_sites', 'pairwise_sites']\n  surrogate.family: ['ridge', 'random_forest', 'gaussian_process', 'boosted_trees', 'knn']\n  surrogate.count: ['single', 'ensemble_of_k']\n  surrogate.heads: ['joint_fitness', 'separated_activity_and_fitness']\n  surrogate.uncertainty: ['none', 'ensemble_disagreement', 'gp_posterior', 'bootstrap']\n  generator.scope: ['global_all_variants', 'local_hamming_ball', 'recombine_observed_elites']\n  generator.ball_centre: ['observed_elites', 'wild_type']\n  generator.radius: ['r1', 'r2', 'adaptive_radius']\n  generator.pool_size: ['small', 'medium', 'exhaustive']\n  generator.zero_shot_prior: ['none', 'esm_masked_marginal_focus']\n  acquisition.rule: ['greedy_mean', 'ucb', 'expected_improvement', 'thompson', 'pure_explore']\n  acquisition.beta: ['low', 'medium', 'high', 'state_adaptive_beta']\n  acquisition.lookahead: ['one_step', 'two_step_myopic_rollout']\n  batch.selection: ['top_k_by_score', 'diverse_top_k_by_distance', 'score_then_cluster', 'epsilon_mixed']\n  batch.size_rule: ['fixed', 'state_adaptive_size']\n  update.refit: ['refit_from_scratch', 'warm_start']\n  update.weighting: ['uniform', 'recency_weighted', 'elite_weighted']\n  update.target_transform: ['identity', 'log1p', 'rank']\n  stopping.rule: ['fixed_rounds', 'plateau_detect', 'budget_exhausted']\n\nPropose 3 new policies as JSON array of flat dicts, conditioning on what worked.\nPrefer single- or few-coordinate changes from the current best, but you may explore.",
+      "response": "```json\n[\n    {\n        \"representation.encoding\": \"onehot\",\n        \"representation.pooling\": \"mean\",\n        \"representation.rank\": \"full\",\n        \"representation.site_coupling\": \"independent_sites\",\n        \"surrogate.family\": \"ridge\",\n        \"surrogate.count\": \"single\",\n        \"surrogate.heads\": \"joint_fitness\",\n        \"surrogate.uncertainty\": \"none\",\n        \"generator.scope\": \"global_all_variants\",\n        \"generator.ball_centre\": \"observed_elites\",\n        \"generator.radius\": \"r1\",\n        \"generator.pool_size\": \"medium\",\n        \"generator.zero_shot_prior\": \"none\",\n        \"acquisition.rule\": \"greedy_mean\",\n        \"acquisition.beta\": \"medium\",\n        \"acquisition.lookahead\": \"one_step\",\n        \"batch.selection\": \"top_k_by_score\",\n        \"batch.size_rule\": \"fixed\",\n        \"update.refit\": \"refit_from_scratch\",\n        \"update.weighting\": \"uniform\",\n        \"update.target_transform\": \"identity\",\n        \"stopping.rule\": \"fixed_rounds\"\n    },\n    {\n        \"representation.encoding\": \"esm2_frozen\",\n        \"representation.pooling\": \"site\",\n        \"representation.rank\": \"low_rank_pca\",\n        \"representation.site_coupling\": \"pairwise_sites\",\n        \"surrogate.family\": \"boosted_trees\",\n        \"surrogate.count\": \"ensemble_of_k\",\n        \"surrogate.heads\": \"separated_activity_and_fitness\",\n        \"surrogate.uncertainty\": \"gp_posterior\",\n        \"generator.scope\": \"local_hamming_ball\",\n        \"generator.ball_centre\": \"wild_type\",\n        \"generator.radius\": \"adaptive_radius\",\n        \"generator.pool_size\": \"exhaustive\",\n        \"generator.zero_shot_prior\": \"esm_masked_marginal_focus\",\n        \"acquisition.rule\": \"ucb\",\n        \"acquisition.beta\": \"high\",\n        \"acquisition.lookahead\": \"two_step_myopic_rollout\",\n        \"batch.selection\": \"diverse_top_k_by_distance\",\n        \"batch.size_rule\": \"state_adaptive_size\",\n        \"update.refit\": \"warm_start\",\n        \"update.weighting\": \"elite_weighted\",\n        \"update.target_transform\": \"log1p\",\n        \"stopping.rule\": \"plateau_detect\"\n    },\n    {\n        \"representation.encoding\": \"onehot_plus_pairs\",\n        \"representation.pooling\": \"mean\",\n        \"representation.rank\": \"full\",\n        \"representation.site_coupling\": \"independent_sites\",\n        \"surrogate.family\": \"random_forest\",\n        \"surrogate.count\": \"single\",\n        \"surrogate.heads\": \"joint_fitness\",\n        \"surrogate.uncertainty\": \"ensemble_disagreement\",\n        \"generator.scope\": \"global_all_variants\",\n        \"generator.ball_centre\": \"observed_elites\",\n        \"generator.radius\": \"r2\",\n        \"generator.pool_size\": \"small\",\n        \"generator.zero_shot_prior\": \"none\",\n        \"acquisition.rule\": \"expected_improvement\",\n        \"acquisition.beta\": \"low\",\n        \"acquisition.lookahead\": \"one_step\",\n        \"batch.selection\": \"score_then_cluster\",\n        \"batch.size_rule\": \"fixed\",\n        \"update.refit\": \"refit_from_scratch\",\n        \"update.weighting\": \"recency_weighted\",\n        \"update.target_transform\": \"rank\",\n        \"stopping.rule\": \"budget_exhausted\"\n    }\n]\n```",
+      "model": "openai/gpt-4o-mini",
+      "temperature": 0.4
+    },
+    {
+      "phase": "iter_g2",
+      "user": "You are in a multi-generation loop. Prior generations measured mean GAIN on GB1\n(higher is better). DEFAULT gain baseline is in history gen 0.\n\nHistory:\n[\n  {\n    \"gen\": 0,\n    \"mean\": 4.027806384340267,\n    \"label\": \"DEFAULT\",\n    \"partial\": {}\n  },\n  {\n    \"gen\": 1,\n    \"mean\": 4.027806384340267,\n    \"best_of_gen\": {\n      \"partial\": {\n        \"representation.encoding\": \"onehot\",\n        \"representation.pooling\": \"mean\",\n        \"representation.rank\": \"full\",\n        \"representation.site_coupling\": \"independent_sites\",\n        \"surrogate.family\": \"ridge\",\n        \"surrogate.count\": \"single\",\n        \"surrogate.heads\": \"joint_fitness\",\n        \"surrogate.uncertainty\": \"none\",\n        \"generator.scope\": \"global_all_variants\",\n        \"generator.ball_centre\": \"observed_elites\",\n        \"generator.radius\": \"r1\",\n        \"generator.pool_size\": \"medium\",\n        \"generator.zero_shot_prior\": \"none\",\n        \"acquisition.rule\": \"greedy_mean\",\n        \"acquisition.beta\": \"medium\",\n        \"acquisition.lookahead\": \"one_step\",\n        \"batch.selection\": \"top_k_by_score\",\n        \"batch.size_rule\": \"fixed\",\n        \"update.refit\": \"refit_from_scratch\",\n        \"update.weighting\": \"uniform\",\n        \"update.target_transform\": \"identity\",\n        \"stopping.rule\": \"fixed_rounds\"\n      },\n      \"mean\": 4.027806384340267,\n      \"fails\": 0,\n      \"seeds\": [\n        5.033633066381,\n        4.12789621874,\n        3.5139889572469003,\n        6.7765184421741,\n        3.1684264039996,\n        1.5463752175000005\n      ]\n    },\n    \"all\": [\n      {\n        \"partial\": {\n          \"representation.encoding\": \"onehot\",\n          \"representation.pooling\": \"mean\",\n          \"representation.rank\": \"full\",\n          \"representation.site_coupling\": \"independent_sites\",\n          \"surrogate.family\": \"ridge\",\n          \"surrogate.count\": \"single\",\n          \"surrogate.heads\": \"joint_fitness\",\n          \"surrogate.uncertainty\": \"none\",\n          \"generator.scope\": \"global_all_variants\",\n          \"generator.ball_centre\": \"observed_elites\",\n          \"generator.radius\": \"r1\",\n          \"generator.pool_size\": \"medium\",\n          \"generator.zero_shot_prior\": \"none\",\n          \"acquisition.rule\": \"greedy_mean\",\n          \"acquisition.beta\": \"medium\",\n          \"acquisition.lookahead\": \"one_step\",\n          \"batch.selection\": \"top_k_by_score\",\n          \"batch.size_rule\": \"fixed\",\n          \"update.refit\": \"refit_from_scratch\",\n          \"update.weighting\": \"uniform\",\n          \"update.target_transform\": \"identity\",\n          \"stopping.rule\": \"fixed_rounds\"\n        },\n        \"mean\": 4.027806384340267,\n        \"fails\": 0,\n        \"seeds\": [\n          5.033633066381,\n          4.12789621874,\n          3.5139889572469003,\n          6.7765184421741,\n          3.1684264039996,\n          1.5463752175000005\n        ]\n      },\n      {\n        \"partial\": {\n          \"representation.encoding\": \"esm2_frozen\",\n          \"representation.pooling\": \"site\",\n          \"representation.rank\": \"low_rank_pca\",\n          \"representation.site_coupling\": \"pairwise_sites\",\n          \"surrogate.family\": \"boosted_trees\",\n          \"surrogate.count\": \"ensemble_of_k\",\n          \"surrogate.heads\": \"separated_activity_and_fitness\",\n          \"surrogate.uncertainty\": \"gp_posterior\",\n          \"generator.scope\": \"local_hamming_ball\",\n          \"generator.ball_centre\": \"wild_type\",\n          \"generator.radius\": \"adaptive_radius\",\n          \"generator.pool_size\": \"exhaustive\",\n          \"generator.zero_shot_prior\": \"esm_masked_marginal_focus\",\n          \"acquisition.rule\": \"ucb\",\n          \"acquisition.beta\": \"high\",\n          \"acquisition.lookahead\": \"two_step_myopic_rollout\",\n          \"batch.selection\": \"diverse_top_k_by_distance\",\n          \"batch.size_rule\": \"state_adaptive_size\",\n          \"update.refit\": \"warm_start\",\n          \"update.weighting\": \"elite_weighted\",\n          \"update.target_transform\": \"log1p\",\n          \"stopping.rule\": \"plateau_detect\"\n        },\n        \"mean\": 3.5688138213586,\n        \"fails\": 0,\n        \"seeds\": [\n          3.662715346251,\n          2.76072579909,\n          4.2931672381669,\n          4.9942746819041,\n          5.0456688065996,\n          0.65633105614\n        ]\n      },\n      {\n        \"partial\": {\n          \"representation.encoding\": \"onehot_plus_pairs\",\n          \"representation.pooling\": \"mean\",\n          \"representation.rank\": \"full\",\n          \"representation.site_coupling\": \"independent_sites\",\n          \"surrogate.family\": \"random_forest\",\n          \"surrogate.count\": \"single\",\n          \"surrogate.heads\": \"joint_fitness\",\n          \"surrogate.uncertainty\": \"ensemble_disagreement\",\n          \"generator.scope\": \"global_all_variants\",\n          \"generator.ball_centre\": \"observed_elites\",\n          \"generator.radius\": \"r2\",\n          \"generator.pool_size\": \"small\",\n          \"generator.zero_shot_prior\": \"none\",\n          \"acquisition.rule\": \"expected_improvement\",\n          \"acquisition.beta\": \"low\",\n          \"acquisition.lookahead\": \"one_step\",\n          \"batch.selection\": \"score_then_cluster\",\n          \"batch.size_rule\": \"fixed\",\n          \"update.refit\": \"refit_from_scratch\",\n          \"update.weighting\": \"recency_weighted\",\n          \"update.target_transform\": \"rank\",\n          \"stopping.rule\": \"budget_exhausted\"\n        },\n        \"mean\": 2.0409768373287664,\n        \"fails\": 0,\n        \"seeds\": [\n          3.183186686191,\n          0.6608117944099998,\n          0.7025579815569,\n          0.8347110375650999,\n          5.6359147584096,\n          1.2286787658399998\n        ]\n      }\n    ]\n  }\n]\n\nAllowed coordinates:\n  representation.encoding: ['onehot', 'physicochem', 'onehot_plus_pairs', 'esm2_frozen']\n  representation.pooling: ['mean', 'site']\n  representation.rank: ['full', 'low_rank_pca']\n  representation.site_coupling: ['independent_sites', 'pairwise_sites']\n  surrogate.family: ['ridge', 'random_forest', 'gaussian_process', 'boosted_trees', 'knn']\n  surrogate.count: ['single', 'ensemble_of_k']\n  surrogate.heads: ['joint_fitness', 'separated_activity_and_fitness']\n  surrogate.uncertainty: ['none', 'ensemble_disagreement', 'gp_posterior', 'bootstrap']\n  generator.scope: ['global_all_variants', 'local_hamming_ball', 'recombine_observed_elites']\n  generator.ball_centre: ['observed_elites', 'wild_type']\n  generator.radius: ['r1', 'r2', 'adaptive_radius']\n  generator.pool_size: ['small', 'medium', 'exhaustive']\n  generator.zero_shot_prior: ['none', 'esm_masked_marginal_focus']\n  acquisition.rule: ['greedy_mean', 'ucb', 'expected_improvement', 'thompson', 'pure_explore']\n  acquisition.beta: ['low', 'medium', 'high', 'state_adaptive_beta']\n  acquisition.lookahead: ['one_step', 'two_step_myopic_rollout']\n  batch.selection: ['top_k_by_score', 'diverse_top_k_by_distance', 'score_then_cluster', 'epsilon_mixed']\n  batch.size_rule: ['fixed', 'state_adaptive_size']\n  update.refit: ['refit_from_scratch', 'warm_start']\n  update.weighting: ['uniform', 'recency_weighted', 'elite_weighted']\n  update.target_transform: ['identity', 'log1p', 'rank']\n  stopping.rule: ['fixed_rounds', 'plateau_detect', 'budget_exhausted']\n\nPropose 3 new policies as JSON array of flat dicts, conditioning on what worked.\nPrefer single- or few-coordinate changes from the current best, but you may explore.",
+      "response": "```json\n[\n    {\n        \"representation.encoding\": \"physicochem\",\n        \"representation.pooling\": \"site\",\n        \"representation.rank\": \"full\",\n        \"representation.site_coupling\": \"pairwise_sites\",\n        \"surrogate.family\": \"gaussian_process\",\n        \"surrogate.count\": \"single\",\n        \"surrogate.heads\": \"joint_fitness\",\n        \"surrogate.uncertainty\": \"none\",\n        \"generator.scope\": \"global_all_variants\",\n        \"generator.ball_centre\": \"observed_elites\",\n        \"generator.radius\": \"r1\",\n        \"generator.pool_size\": \"medium\",\n        \"generator.zero_shot_prior\": \"esm_masked_marginal_focus\",\n        \"acquisition.rule\": \"greedy_mean\",\n        \"acquisition.beta\": \"medium\",\n        \"acquisition.lookahead\": \"one_step\",\n        \"batch.selection\": \"top_k_by_score\",\n        \"batch.size_rule\": \"fixed\",\n        \"update.refit\": \"refit_from_scratch\",\n        \"update.weighting\": \"uniform\",\n        \"update.target_transform\": \"identity\",\n        \"stopping.rule\": \"fixed_rounds\"\n    },\n    {\n        \"representation.encoding\": \"onehot_plus_pairs\",\n        \"representation.pooling\": \"mean\",\n        \"representation.rank\": \"low_rank_pca\",\n        \"representation.site_coupling\": \"independent_sites\",\n        \"surrogate.family\": \"boosted_trees\",\n        \"surrogate.count\": \"ensemble_of_k\",\n        \"surrogate.heads\": \"separated_activity_and_fitness\",\n        \"surrogate.uncertainty\": \"ensemble_disagreement\",\n        \"generator.scope\": \"local_hamming_ball\",\n        \"generator.ball_centre\": \"wild_type\",\n        \"generator.radius\": \"adaptive_radius\",\n        \"generator.pool_size\": \"small\",\n        \"generator.zero_shot_prior\": \"none\",\n        \"acquisition.rule\": \"ucb\",\n        \"acquisition.beta\": \"high\",\n        \"acquisition.lookahead\": \"two_step_myopic_rollout\",\n        \"batch.selection\": \"diverse_top_k_by_distance\",\n        \"batch.size_rule\": \"state_adaptive_size\",\n        \"update.refit\": \"warm_start\",\n        \"update.weighting\": \"elite_weighted\",\n        \"update.target_transform\": \"log1p\",\n        \"stopping.rule\": \"plateau_detect\"\n    },\n    {\n        \"representation.encoding\": \"esm2_frozen\",\n        \"representation.pooling\": \"site\",\n        \"representation.rank\": \"full\",\n        \"representation.site_coupling\": \"pairwise_sites\",\n        \"surrogate.family\": \"knn\",\n        \"surrogate.count\": \"single\",\n        \"surrogate.heads\": \"joint_fitness\",\n        \"surrogate.uncertainty\": \"bootstrap\",\n        \"generator.scope\": \"recombine_observed_elites\",\n        \"generator.ball_centre\": \"observed_elites\",\n        \"generator.radius\": \"r2\",\n        \"generator.pool_size\": \"exhaustive\",\n        \"generator.zero_shot_prior\": \"esm_masked_marginal_focus\",\n        \"acquisition.rule\": \"expected_improvement\",\n        \"acquisition.beta\": \"low\",\n        \"acquisition.lookahead\": \"one_step\",\n        \"batch.selection\": \"score_then_cluster\",\n        \"batch.size_rule\": \"fixed\",\n        \"update.refit\": \"refit_from_scratch\",\n        \"update.weighting\": \"recency_weighted\",\n        \"update.target_transform\": \"rank\",\n        \"stopping.rule\": \"budget_exhausted\"\n    }\n]\n```",
+      "model": "openai/gpt-4o-mini",
+      "temperature": 0.4
+    },
+    {
+      "phase": "iter_g3",
+      "user": "You are in a multi-generation loop. Prior generations measured mean GAIN on GB1\n(higher is better). DEFAULT gain baseline is in history gen 0.\n\nHistory:\n[\n  {\n    \"gen\": 0,\n    \"mean\": 4.027806384340267,\n    \"label\": \"DEFAULT\",\n    \"partial\": {}\n  },\n  {\n    \"gen\": 1,\n    \"mean\": 4.027806384340267,\n    \"best_of_gen\": {\n      \"partial\": {\n        \"representation.encoding\": \"onehot\",\n        \"representation.pooling\": \"mean\",\n        \"representation.rank\": \"full\",\n        \"representation.site_coupling\": \"independent_sites\",\n        \"surrogate.family\": \"ridge\",\n        \"surrogate.count\": \"single\",\n        \"surrogate.heads\": \"joint_fitness\",\n        \"surrogate.uncertainty\": \"none\",\n        \"generator.scope\": \"global_all_variants\",\n        \"generator.ball_centre\": \"observed_elites\",\n        \"generator.radius\": \"r1\",\n        \"generator.pool_size\": \"medium\",\n        \"generator.zero_shot_prior\": \"none\",\n        \"acquisition.rule\": \"greedy_mean\",\n        \"acquisition.beta\": \"medium\",\n        \"acquisition.lookahead\": \"one_step\",\n        \"batch.selection\": \"top_k_by_score\",\n        \"batch.size_rule\": \"fixed\",\n        \"update.refit\": \"refit_from_scratch\",\n        \"update.weighting\": \"uniform\",\n        \"update.target_transform\": \"identity\",\n        \"stopping.rule\": \"fixed_rounds\"\n      },\n      \"mean\": 4.027806384340267,\n      \"fails\": 0,\n      \"seeds\": [\n        5.033633066381,\n        4.12789621874,\n        3.5139889572469003,\n        6.7765184421741,\n        3.1684264039996,\n        1.5463752175000005\n      ]\n    },\n    \"all\": [\n      {\n        \"partial\": {\n          \"representation.encoding\": \"onehot\",\n          \"representation.pooling\": \"mean\",\n          \"representation.rank\": \"full\",\n          \"representation.site_coupling\": \"independent_sites\",\n          \"surrogate.family\": \"ridge\",\n          \"surrogate.count\": \"single\",\n          \"surrogate.heads\": \"joint_fitness\",\n          \"surrogate.uncertainty\": \"none\",\n          \"generator.scope\": \"global_all_variants\",\n          \"generator.ball_centre\": \"observed_elites\",\n          \"generator.radius\": \"r1\",\n          \"generator.pool_size\": \"medium\",\n          \"generator.zero_shot_prior\": \"none\",\n          \"acquisition.rule\": \"greedy_mean\",\n          \"acquisition.beta\": \"medium\",\n          \"acquisition.lookahead\": \"one_step\",\n          \"batch.selection\": \"top_k_by_score\",\n          \"batch.size_rule\": \"fixed\",\n          \"update.refit\": \"refit_from_scratch\",\n          \"update.weighting\": \"uniform\",\n          \"update.target_transform\": \"identity\",\n          \"stopping.rule\": \"fixed_rounds\"\n        },\n        \"mean\": 4.027806384340267,\n        \"fails\": 0,\n        \"seeds\": [\n          5.033633066381,\n          4.12789621874,\n          3.5139889572469003,\n          6.7765184421741,\n          3.1684264039996,\n          1.5463752175000005\n        ]\n      },\n      {\n        \"partial\": {\n          \"representation.encoding\": \"esm2_frozen\",\n          \"representation.pooling\": \"site\",\n          \"representation.rank\": \"low_rank_pca\",\n          \"representation.site_coupling\": \"pairwise_sites\",\n          \"surrogate.family\": \"boosted_trees\",\n          \"surrogate.count\": \"ensemble_of_k\",\n          \"surrogate.heads\": \"separated_activity_and_fitness\",\n          \"surrogate.uncertainty\": \"gp_posterior\",\n          \"generator.scope\": \"local_hamming_ball\",\n          \"generator.ball_centre\": \"wild_type\",\n          \"generator.radius\": \"adaptive_radius\",\n          \"generator.pool_size\": \"exhaustive\",\n          \"generator.zero_shot_prior\": \"esm_masked_marginal_focus\",\n          \"acquisition.rule\": \"ucb\",\n          \"acquisition.beta\": \"high\",\n          \"acquisition.lookahead\": \"two_step_myopic_rollout\",\n          \"batch.selection\": \"diverse_top_k_by_distance\",\n          \"batch.size_rule\": \"state_adaptive_size\",\n          \"update.refit\": \"warm_start\",\n          \"update.weighting\": \"elite_weighted\",\n          \"update.target_transform\": \"log1p\",\n          \"stopping.rule\": \"plateau_detect\"\n        },\n        \"mean\": 3.5688138213586,\n        \"fails\": 0,\n        \"seeds\": [\n          3.662715346251,\n          2.76072579909,\n          4.2931672381669,\n          4.9942746819041,\n          5.0456688065996,\n          0.65633105614\n        ]\n      },\n      {\n        \"partial\": {\n          \"representation.encoding\": \"onehot_plus_pairs\",\n          \"representation.pooling\": \"mean\",\n          \"representation.rank\": \"full\",\n          \"representation.site_coupling\": \"independent_sites\",\n          \"surrogate.family\": \"random_forest\",\n          \"surrogate.count\": \"single\",\n          \"surrogate.heads\": \"joint_fitness\",\n          \"surrogate.uncertainty\": \"ensemble_disagreement\",\n          \"generator.scope\": \"global_all_variants\",\n          \"generator.ball_centre\": \"observed_elites\",\n          \"generator.radius\": \"r2\",\n          \"generator.pool_size\": \"small\",\n          \"generator.zero_shot_prior\": \"none\",\n          \"acquisition.rule\": \"expected_improvement\",\n          \"acquisition.beta\": \"low\",\n          \"acquisition.lookahead\": \"one_step\",\n          \"batch.selection\": \"score_then_cluster\",\n          \"batch.size_rule\": \"fixed\",\n          \"update.refit\": \"refit_from_scratch\",\n          \"update.weighting\": \"recency_weighted\",\n          \"update.target_transform\": \"rank\",\n          \"stopping.rule\": \"budget_exhausted\"\n        },\n        \"mean\": 2.0409768373287664,\n        \"fails\": 0,\n        \"seeds\": [\n          3.183186686191,\n          0.6608117944099998,\n          0.7025579815569,\n          0.8347110375650999,\n          5.6359147584096,\n          1.2286787658399998\n        ]\n      }\n    ]\n  },\n  {\n    \"gen\": 2,\n    \"mean\": 4.027806384340267,\n    \"best_of_gen\": {\n      \"partial\": {\n        \"representation.encoding\": \"esm2_frozen\",\n        \"representation.pooling\": \"site\",\n        \"representation.rank\": \"full\",\n        \"representation.site_coupling\": \"pairwise_sites\",\n        \"surrogate.family\": \"knn\",\n        \"surrogate.count\": \"single\",\n        \"surrogate.heads\": \"joint_fitness\",\n        \"surrogate.uncertainty\": \"bootstrap\",\n        \"generator.scope\": \"recombine_observed_elites\",\n        \"generator.ball_centre\": \"observed_elites\",\n        \"generator.radius\": \n\nAllowed coordinates:\n  representation.encoding: ['onehot', 'physicochem', 'onehot_plus_pairs', 'esm2_frozen']\n  representation.pooling: ['mean', 'site']\n  representation.rank: ['full', 'low_rank_pca']\n  representation.site_coupling: ['independent_sites', 'pairwise_sites']\n  surrogate.family: ['ridge', 'random_forest', 'gaussian_process', 'boosted_trees', 'knn']\n  surrogate.count: ['single', 'ensemble_of_k']\n  surrogate.heads: ['joint_fitness', 'separated_activity_and_fitness']\n  surrogate.uncertainty: ['none', 'ensemble_disagreement', 'gp_posterior', 'bootstrap']\n  generator.scope: ['global_all_variants', 'local_hamming_ball', 'recombine_observed_elites']\n  generator.ball_centre: ['observed_elites', 'wild_type']\n  generator.radius: ['r1', 'r2', 'adaptive_radius']\n  generator.pool_size: ['small', 'medium', 'exhaustive']\n  generator.zero_shot_prior: ['none', 'esm_masked_marginal_focus']\n  acquisition.rule: ['greedy_mean', 'ucb', 'expected_improvement', 'thompson', 'pure_explore']\n  acquisition.beta: ['low', 'medium', 'high', 'state_adaptive_beta']\n  acquisition.lookahead: ['one_step', 'two_step_myopic_rollout']\n  batch.selection: ['top_k_by_score', 'diverse_top_k_by_distance', 'score_then_cluster', 'epsilon_mixed']\n  batch.size_rule: ['fixed', 'state_adaptive_size']\n  update.refit: ['refit_from_scratch', 'warm_start']\n  update.weighting: ['uniform', 'recency_weighted', 'elite_weighted']\n  update.target_transform: ['identity', 'log1p', 'rank']\n  stopping.rule: ['fixed_rounds', 'plateau_detect', 'budget_exhausted']\n\nPropose 3 new policies as JSON array of flat dicts, conditioning on what worked.\nPrefer single- or few-coordinate changes from the current best, but you may explore.",
+      "response": "```json\n[\n    {\n        \"representation.encoding\": \"onehot_plus_pairs\",\n        \"representation.pooling\": \"site\",\n        \"representation.rank\": \"full\",\n        \"representation.site_coupling\": \"pairwise_sites\",\n        \"surrogate.family\": \"boosted_trees\",\n        \"surrogate.count\": \"ensemble_of_k\",\n        \"surrogate.heads\": \"joint_fitness\",\n        \"surrogate.uncertainty\": \"gp_posterior\",\n        \"generator.scope\": \"local_hamming_ball\",\n        \"generator.ball_centre\": \"wild_type\",\n        \"generator.radius\": \"r2\",\n        \"generator.pool_size\": \"medium\",\n        \"generator.zero_shot_prior\": \"esm_masked_marginal_focus\",\n        \"acquisition.rule\": \"expected_improvement\",\n        \"acquisition.beta\": \"medium\",\n        \"acquisition.lookahead\": \"two_step_myopic_rollout\",\n        \"batch.selection\": \"diverse_top_k_by_distance\",\n        \"batch.size_rule\": \"state_adaptive_size\",\n        \"update.refit\": \"warm_start\",\n        \"update.weighting\": \"elite_weighted\",\n        \"update.target_transform\": \"log1p\",\n        \"stopping.rule\": \"plateau_detect\"\n    },\n    {\n        \"representation.encoding\": \"esm2_frozen\",\n        \"representation.pooling\": \"mean\",\n        \"representation.rank\": \"low_rank_pca\",\n        \"representation.site_coupling\": \"independent_sites\",\n        \"surrogate.family\": \"gaussian_process\",\n        \"surrogate.count\": \"single\",\n        \"surrogate.heads\": \"separated_activity_and_fitness\",\n        \"surrogate.uncertainty\": \"none\",\n        \"generator.scope\": \"recombine_observed_elites\",\n        \"generator.ball_centre\": \"observed_elites\",\n        \"generator.radius\": \"adaptive_radius\",\n        \"generator.pool_size\": \"small\",\n        \"generator.zero_shot_prior\": \"none\",\n        \"acquisition.rule\": \"ucb\",\n        \"acquisition.beta\": \"high\",\n        \"acquisition.lookahead\": \"one_step\",\n        \"batch.selection\": \"top_k_by_score\",\n        \"batch.size_rule\": \"fixed\",\n        \"update.refit\": \"refit_from_scratch\",\n        \"update.weighting\": \"uniform\",\n        \"update.target_transform\": \"identity\",\n        \"stopping.rule\": \"fixed_rounds\"\n    },\n    {\n        \"representation.encoding\": \"onehot\",\n        \"representation.pooling\": \"site\",\n        \"representation.rank\": \"full\",\n        \"representation.site_coupling\": \"pairwise_sites\",\n        \"surrogate.family\": \"ridge\",\n        \"surrogate.count\": \"ensemble_of_k\",\n        \"surrogate.heads\": \"joint_fitness\",\n        \"surrogate.uncertainty\": \"bootstrap\",\n        \"generator.scope\": \"global_all_variants\",\n        \"generator.ball_centre\": \"wild_type\",\n        \"generator.radius\": \"r1\",\n        \"generator.pool_size\": \"exhaustive\",\n        \"generator.zero_shot_prior\": \"esm_masked_marginal_focus\",\n        \"acquisition.rule\": \"greedy_mean\",\n        \"acquisition.beta\": \"low\",\n        \"acquisition.lookahead\": \"two_step_myopic_rollout\",\n        \"batch.selection\": \"score_then_cluster\",\n        \"batch.size_rule\": \"fixed\",\n        \"update.refit\": \"warm_start\",\n        \"update.weighting\": \"recency_weighted\",\n        \"update.target_transform\": \"rank\",\n        \"stopping.rule\": \"budget_exhausted\"\n    }\n]\n```",
+      "model": "openai/gpt-4o-mini",
+      "temperature": 0.4
+    }
+  ],
+  "oneshot": [
+    {
+      "partial": {
+        "representation.encoding": "physicochem",
+        "representation.pooling": "mean",
+        "representation.rank": "low_rank_pca",
+        "representation.site_coupling": "pairwise_sites",
+        "surrogate.family": "random_forest",
+        "surrogate.count": "ensemble_of_k",
+        "surrogate.heads": "separated_activity_and_fitness",
+        "surrogate.uncertainty": "gp_posterior",
+        "generator.scope": "local_hamming_ball",
+        "generator.ball_centre": "wild_type",
+        "generator.radius": "adaptive_radius",
+        "generator.pool_size": "small",
+        "generator.zero_shot_prior": "esm_masked_marginal_focus",
+        "acquisition.rule": "ucb",
+        "acquisition.beta": "medium",
+        "acquisition.lookahead": "two_step_myopic_rollout",
+        "batch.selection": "diverse_top_k_by_distance",
+        "batch.size_rule": "state_adaptive_size",
+        "update.refit": "warm_start",
+        "update.weighting": "elite_weighted",
+        "update.target_transform": "log1p",
+        "stopping.rule": "plateau_detect"
+      },
+      "mean": 3.5458817953769333,
+      "fails": 0,
+      "seeds": [
+        3.937696341841,
+        2.0731716520199996,
+        4.9807213852369,
+        4.3067205348341,
+        4.358114659529599,
+        1.6188661988000002
+      ]
+    },
+    {
+      "partial": {
+        "representation.encoding": "onehot_plus_pairs",
+        "representation.pooling": "site",
+        "representation.rank": "full",
+        "representation.site_coupling": "independent_sites",
+        "surrogate.family": "boosted_trees",
+        "surrogate.count": "single",
+        "surrogate.heads": "joint_fitness",
+        "surrogate.uncertainty": "ensemble_disagreement",
+        "generator.scope": "global_all_variants",
+        "generator.ball_centre": "observed_elites",
+        "generator.radius": "r2",
+        "generator.pool_size": "medium",
+        "generator.zero_shot_prior": "none",
+        "acquisition.rule": "expected_improvement",
+        "acquisition.beta": "high",
+        "acquisition.lookahead": "one_step",
+        "batch.selection": "score_then_cluster",
+        "batch.size_rule": "fixed",
+        "update.refit": "refit_from_scratch",
+        "update.weighting": "uniform",
+        "update.target_transform": "identity",
+        "stopping.rule": "fixed_rounds"
+      },
+      "mean": 1.5196725013852668,
+      "fails": 0,
+      "seeds": [
+        4.223071910051,
+        0.0,
+        2.1747055815969003,
+        1.1102799146441,
+        1.6099776020196,
+        0.0
+      ]
+    },
+    {
+      "partial": {
+        "representation.encoding": "esm2_frozen",
+        "representation.pooling": "mean",
+        "representation.rank": "low_rank_pca",
+        "representation.site_coupling": "pairwise_sites",
+        "surrogate.family": "gaussian_process",
+        "surrogate.count": "ensemble_of_k",
+        "surrogate.heads": "separated_activity_and_fitness",
+        "surrogate.uncertainty": "bootstrap",
+        "generator.scope": "recombine_observed_elites",
+        "generator.ball_centre": "wild_type",
+        "generator.radius": "r1",
+        "generator.pool_size": "exhaustive",
+        "generator.zero_shot_prior": "esm_masked_marginal_focus",
+        "acquisition.rule": "thompson",
+        "acquisition.beta": "state_adaptive_beta",
+        "acquisition.lookahead": "two_step_myopic_rollout",
+        "batch.selection": "epsilon_mixed",
+        "batch.size_rule": "state_adaptive_size",
+        "update.refit": "warm_start",
+        "update.weighting": "recency_weighted",
+        "update.target_transform": "rank",
+        "stopping.rule": "budget_exhausted"
+      },
+      "mean": 3.7063572346002664,
+      "fails": 0,
+      "seeds": [
+        5.751086501621,
+        2.63838658792,
+        5.3514623012569,
+        3.1589423922341,
+        5.338265624569599,
+        0.0
+      ]
+    }
+  ],
+  "iterative": {
+    "history": [
+      {
+        "gen": 0,
+        "mean": 4.027806384340267,
+        "label": "DEFAULT",
+        "partial": {}
+      },
+      {
+        "gen": 1,
+        "mean": 4.027806384340267,
+        "best_of_gen": {
+          "partial": {
+            "representation.encoding": "onehot",
+            "representation.pooling": "mean",
+            "representation.rank": "full",
+            "representation.site_coupling": "independent_sites",
+            "surrogate.family": "ridge",
+            "surrogate.count": "single",
+            "surrogate.heads": "joint_fitness",
+            "surrogate.uncertainty": "none",
+            "generator.scope": "global_all_variants",
+            "generator.ball_centre": "observed_elites",
+            "generator.radius": "r1",
+            "generator.pool_size": "medium",
+            "generator.zero_shot_prior": "none",
+            "acquisition.rule": "greedy_mean",
+            "acquisition.beta": "medium",
+            "acquisition.lookahead": "one_step",
+            "batch.selection": "top_k_by_score",
+            "batch.size_rule": "fixed",
+            "update.refit": "refit_from_scratch",
+            "update.weighting": "uniform",
+            "update.target_transform": "identity",
+            "stopping.rule": "fixed_rounds"
+          },
+          "mean": 4.027806384340267,
+          "fails": 0,
+          "seeds": [
+            5.033633066381,
+            4.12789621874,
+            3.5139889572469003,
+            6.7765184421741,
+            3.1684264039996,
+            1.5463752175000005
+          ]
+        },
+        "all": [
+          {
+            "partial": {
+              "representation.encoding": "onehot",
+              "representation.pooling": "mean",
+              "representation.rank": "full",
+              "representation.site_coupling": "independent_sites",
+              "surrogate.family": "ridge",
+              "surrogate.count": "single",
+              "surrogate.heads": "joint_fitness",
+              "surrogate.uncertainty": "none",
+              "generator.scope": "global_all_variants",
+              "generator.ball_centre": "observed_elites",
+              "generator.radius": "r1",
+              "generator.pool_size": "medium",
+              "generator.zero_shot_prior": "none",
+              "acquisition.rule": "greedy_mean",
+              "acquisition.beta": "medium",
+              "acquisition.lookahead": "one_step",
+              "batch.selection": "top_k_by_score",
+              "batch.size_rule": "fixed",
+              "update.refit": "refit_from_scratch",
+              "update.weighting": "uniform",
+              "update.target_transform": "identity",
+              "stopping.rule": "fixed_rounds"
+            },
+            "mean": 4.027806384340267,
+            "fails": 0,
+            "seeds": [
+              5.033633066381,
+              4.12789621874,
+              3.5139889572469003,
+              6.7765184421741,
+              3.1684264039996,
+              1.5463752175000005
+            ]
+          },
+          {
+            "partial": {
+              "representation.encoding": "esm2_frozen",
+              "representation.pooling": "site",
+              "representation.rank": "low_rank_pca",
+              "representation.site_coupling": "pairwise_sites",
+              "surrogate.family": "boosted_trees",
+              "surrogate.count": "ensemble_of_k",
+              "surrogate.heads": "separated_activity_and_fitness",
+              "surrogate.uncertainty": "gp_posterior",
+              "generator.scope": "local_hamming_ball",
+              "generator.ball_centre": "wild_type",
+              "generator.radius": "adaptive_radius",
+              "generator.pool_size": "exhaustive",
+              "generator.zero_shot_prior": "esm_masked_marginal_focus",
+              "acquisition.rule": "ucb",
+              "acquisition.beta": "high",
+              "acquisition.lookahead": "two_step_myopic_rollout",
+              "batch.selection": "diverse_top_k_by_distance",
+              "batch.size_rule": "state_adaptive_size",
+              "update.refit": "warm_start",
+              "update.weighting": "elite_weighted",
+              "update.target_transform": "log1p",
+              "stopping.rule": "plateau_detect"
+            },
+            "mean": 3.5688138213586,
+            "fails": 0,
+            "seeds": [
+              3.662715346251,
+              2.76072579909,
+              4.2931672381669,
+              4.9942746819041,
+              5.0456688065996,
+              0.65633105614
+            ]
+          },
+          {
+            "partial": {
+              "representation.encoding": "onehot_plus_pairs",
+              "representation.pooling": "mean",
+              "representation.rank": "full",
+              "representation.site_coupling": "independent_sites",
+              "surrogate.family": "random_forest",
+              "surrogate.count": "single",
+              "surrogate.heads": "joint_fitness",
+              "surrogate.uncertainty": "ensemble_disagreement",
+              "generator.scope": "global_all_variants",
+              "generator.ball_centre": "observed_elites",
+              "generator.radius": "r2",
+              "generator.pool_size": "small",
+              "generator.zero_shot_prior": "none",
+              "acquisition.rule": "expected_improvement",
+              "acquisition.beta": "low",
+              "acquisition.lookahead": "one_step",
+              "batch.selection": "score_then_cluster",
+              "batch.size_rule": "fixed",
+              "update.refit": "refit_from_scratch",
+              "update.weighting": "recency_weighted",
+              "update.target_transform": "rank",
+              "stopping.rule": "budget_exhausted"
+            },
+            "mean": 2.0409768373287664,
+            "fails": 0,
+            "seeds": [
+              3.183186686191,
+              0.6608117944099998,
+              0.7025579815569,
+              0.8347110375650999,
+              5.6359147584096,
+              1.2286787658399998
+            ]
+          }
+        ]
+      },
+      {
+        "gen": 2,
+        "mean": 4.027806384340267,
+        "best_of_gen": {
+          "partial": {
+            "representation.encoding": "esm2_frozen",
+            "representation.pooling": "site",
+            "representation.rank": "full",
+            "representation.site_coupling": "pairwise_sites",
+            "surrogate.family": "knn",
+            "surrogate.count": "single",
+            "surrogate.heads": "joint_fitness",
+            "surrogate.uncertainty": "bootstrap",
+            "generator.scope": "recombine_observed_elites",
+            "generator.ball_centre": "observed_elites",
+            "generator.radius": "r2",
+            "generator.pool_size": "exhaustive",
+            "generator.zero_shot_prior": "esm_masked_marginal_focus",
+            "acquisition.rule": "expected_improvement",
+            "acquisition.beta": "low",
+            "acquisition.lookahead": "one_step",
+            "batch.selection": "score_then_cluster",
+            "batch.size_rule": "fixed",
+            "update.refit": "refit_from_scratch",
+            "update.weighting": "recency_weighted",
+            "update.target_transform": "rank",
+            "stopping.rule": "budget_exhausted"
+          },
+          "mean": 3.1063182768202666,
+          "fails": 0,
+          "seeds": [
+            5.592028690051,
+            2.56640680072,
+            3.1359219652669,
+            4.2048843480041,
+            3.0391500230096002,
+            0.09951783387000024
+          ]
+        },
+        "all": [
+          {
+            "partial": {
+              "representation.encoding": "physicochem",
+              "representation.pooling": "site",
+              "representation.rank": "full",
+              "representation.site_coupling": "pairwise_sites",
+              "surrogate.family": "gaussian_process",
+              "surrogate.count": "single",
+              "surrogate.heads": "joint_fitness",
+              "surrogate.uncertainty": "none",
+              "generator.scope": "global_all_variants",
+              "generator.ball_centre": "observed_elites",
+              "generator.radius": "r1",
+              "generator.pool_size": "medium",
+              "generator.zero_shot_prior": "esm_masked_marginal_focus",
+              "acquisition.rule": "greedy_mean",
+              "acquisition.beta": "medium",
+              "acquisition.lookahead": "one_step",
+              "batch.selection": "top_k_by_score",
+              "batch.size_rule": "fixed",
+              "update.refit": "refit_from_scratch",
+              "update.weighting": "uniform",
+              "update.target_transform": "identity",
+              "stopping.rule": "fixed_rounds"
+            },
+            "mean": 1.8213030819702667,
+            "fails": 0,
+            "seeds": [
+              3.5856445375010004,
+              0.20838310076999988,
+              1.8380608471569002,
+              3.0132786759841004,
+              1.8085565510896,
+              0.4738947793200001
+            ]
+          },
+          {
+            "partial": {
+              "representation.encoding": "onehot_plus_pairs",
+              "representation.pooling": "mean",
+              "representation.rank": "low_rank_pca",
+              "representation.site_coupling": "independent_sites",
+              "surrogate.family": "boosted_trees",
+              "surrogate.count": "ensemble_of_k",
+              "surrogate.heads": "separated_activity_and_fitness",
+              "surrogate.uncertainty": "ensemble_disagreement",
+              "generator.scope": "local_hamming_ball",
+              "generator.ball_centre": "wild_type",
+              "generator.radius": "adaptive_radius",
+              "generator.pool_size": "small",
+              "generator.zero_shot_prior": "none",
+              "acquisition.rule": "ucb",
+              "acquisition.beta": "high",
+              "acquisition.lookahead": "two_step_myopic_rollout",
+              "batch.selection": "diverse_top_k_by_distance",
+              "batch.size_rule": "state_adaptive_size",
+              "update.refit": "warm_start",
+              "update.weighting": "elite_weighted",
+              "update.target_transform": "log1p",
+              "stopping.rule": "plateau_detect"
+            },
+            "mean": 3.0924596858652666,
+            "fails": 0,
+            "seeds": [
+              3.6230767000509996,
+              1.7585520102299994,
+              3.9344880615269,
+              3.8204360005941003,
+              4.9731778252996,
+              0.44502751749000025
+            ]
+          },
+          {
+            "partial": {
+              "representation.encoding": "esm2_frozen",
+              "representation.pooling": "site",
+              "representation.rank": "full",
+              "representation.site_coupling": "pairwise_sites",
+              "surrogate.family": "knn",
+              "surrogate.count": "single",
+              "surrogate.heads": "joint_fitness",
+              "surrogate.uncertainty": "bootstrap",
+              "generator.scope": "recombine_observed_elites",
+              "generator.ball_centre": "observed_elites",
+              "generator.radius": "r2",
+              "generator.pool_size": "exhaustive",
+              "generator.zero_shot_prior": "esm_masked_marginal_focus",
+              "acquisition.rule": "expected_improvement",
+              "acquisition.beta": "low",
+              "acquisition.lookahead": "one_step",
+              "batch.selection": "score_then_cluster",
+              "batch.size_rule": "fixed",
+              "update.refit": "refit_from_scratch",
+              "update.weighting": "recency_weighted",
+              "update.target_transform": "rank",
+              "stopping.rule": "budget_exhausted"
+            },
+            "mean": 3.1063182768202666,
+            "fails": 0,
+            "seeds": [
+              5.592028690051,
+              2.56640680072,
+              3.1359219652669,
+              4.2048843480041,
+              3.0391500230096002,
+              0.09951783387000024
+            ]
+          }
+        ]
+      },
+      {
+        "gen": 3,
+        "mean": 4.340648431151933,
+        "best_of_gen": {
+          "partial": {
+            "representation.encoding": "esm2_frozen",
+            "representation.pooling": "mean",
+            "representation.rank": "low_rank_pca",
+            "representation.site_coupling": "independent_sites",
+            "surrogate.family": "gaussian_process",
+            "surrogate.count": "single",
+            "surrogate.heads": "separated_activity_and_fitness",
+            "surrogate.uncertainty": "none",
+            "generator.scope": "recombine_observed_elites",
+            "generator.ball_centre": "observed_elites",
+            "generator.radius": "adaptive_radius",
+            "generator.pool_size": "small",
+            "generator.zero_shot_prior": "none",
+            "acquisition.rule": "ucb",
+            "acquisition.beta": "high",
+            "acquisition.lookahead": "one_step",
+            "batch.selection": "top_k_by_score",
+            "batch.size_rule": "fixed",
+            "update.refit": "refit_from_scratch",
+            "update.weighting": "uniform",
+            "update.target_transform": "identity",
+            "stopping.rule": "fixed_rounds"
+          },
+          "mean": 4.340648431151933,
+          "fails": 0,
+          "seeds": [
+            6.407494249181,
+            2.63838658792,
+            5.3514623012569,
+            2.9415765069141,
+            7.5272384575696,
+            1.1777324840699999
+          ]
+        },
+        "all": [
+          {
+            "partial": {
+              "representation.encoding": "onehot_plus_pairs",
+              "representation.pooling": "site",
+              "representation.rank": "full",
+              "representation.site_coupling": "pairwise_sites",
+              "surrogate.family": "boosted_trees",
+              "surrogate.count": "ensemble_of_k",
+              "surrogate.heads": "joint_fitness",
+              "surrogate.uncertainty": "gp_posterior",
+              "generator.scope": "local_hamming_ball",
+              "generator.ball_centre": "wild_type",
+              "generator.radius": "r2",
+              "generator.pool_size": "medium",
+              "generator.zero_shot_prior": "esm_masked_marginal_focus",
+              "acquisition.rule": "expected_improvement",
+              "acquisition.beta": "medium",
+              "acquisition.lookahead": "two_step_myopic_rollout",
+              "batch.selection": "diverse_top_k_by_distance",
+              "batch.size_rule": "state_adaptive_size",
+              "update.refit": "warm_start",
+              "update.weighting": "elite_weighted",
+              "update.target_transform": "log1p",
+              "stopping.rule": "plateau_detect"
+            },
+            "mean": 2.9621561000302665,
+            "fails": 0,
+            "seeds": [
+              3.937696341841,
+              1.7144924753799997,
+              4.0181862425769,
+              4.0317395392441,
+              2.4519558023396,
+              1.6188661988000002
+            ]
+          },
+          {
+            "partial": {
+              "representation.encoding": "esm2_frozen",
+              "representation.pooling": "mean",
+              "representation.rank": "low_rank_pca",
+              "representation.site_coupling": "independent_sites",
+              "surrogate.family": "gaussian_process",
+              "surrogate.count": "single",
+              "surrogate.heads": "separated_activity_and_fitness",
+              "surrogate.uncertainty": "none",
+              "generator.scope": "recombine_observed_elites",
+              "generator.ball_centre": "observed_elites",
+              "generator.radius": "adaptive_radius",
+              "generator.pool_size": "small",
+              "generator.zero_shot_prior": "none",
+              "acquisition.rule": "ucb",
+              "acquisition.beta": "high",
+              "acquisition.lookahead": "one_step",
+              "batch.selection": "top_k_by_score",
+              "batch.size_rule": "fixed",
+              "update.refit": "refit_from_scratch",
+              "update.weighting": "uniform",
+              "update.target_transform": "identity",
+              "stopping.rule": "fixed_rounds"
+            },
+            "mean": 4.340648431151933,
+            "fails": 0,
+            "seeds": [
+              6.407494249181,
+              2.63838658792,
+              5.3514623012569,
+              2.9415765069141,
+              7.5272384575696,
+              1.1777324840699999
+            ]
+          },
+          {
+            "partial": {
+              "representation.encoding": "onehot",
+              "representation.pooling": "site",
+              "representation.rank": "full",
+              "representation.site_coupling": "pairwise_sites",
+              "surrogate.family": "ridge",
+              "surrogate.count": "ensemble_of_k",
+              "surrogate.heads": "joint_fitness",
+              "surrogate.uncertainty": "bootstrap",
+              "generator.scope": "global_all_variants",
+              "generator.ball_centre": "wild_type",
+              "generator.radius": "r1",
+              "generator.pool_size": "exhaustive",
+              "generator.zero_shot_prior": "esm_masked_marginal_focus",
+              "acquisition.rule": "greedy_mean",
+              "acquisition.beta": "low",
+              "acquisition.lookahead": "two_step_myopic_rollout",
+              "batch.selection": "score_then_cluster",
+              "batch.size_rule": "fixed",
+              "update.refit": "warm_start",
+              "update.weighting": "recency_weighted",
+              "update.target_transform": "rank",
+              "stopping.rule": "budget_exhausted"
+            },
+            "mean": 3.9345966630369333,
+            "fails": 0,
+            "seeds": [
+              5.288131638011,
+              3.1532510577,
+              3.6241815288069,
+              6.2100581184041,
+              4.4006455835696,
+              0.93131205173
+            ]
+          }
+        ]
+      }
+    ],
+    "final_mean": 4.340648431151933,
+    "final_partial": {
+      "representation.encoding": "esm2_frozen",
+      "representation.pooling": "mean",
+      "representation.rank": "low_rank_pca",
+      "representation.site_coupling": "independent_sites",
+      "surrogate.family": "gaussian_process",
+      "surrogate.count": "single",
+      "surrogate.heads": "separated_activity_and_fitness",
+      "surrogate.uncertainty": "none",
+      "generator.scope": "recombine_observed_elites",
+      "generator.ball_centre": "observed_elites",
+      "generator.radius": "adaptive_radius",
+      "generator.pool_size": "small",
+      "generator.zero_shot_prior": "none",
+      "acquisition.rule": "ucb",
+      "acquisition.beta": "high",
+      "acquisition.lookahead": "one_step",
+      "batch.selection": "top_k_by_score",
+      "batch.size_rule": "fixed",
+      "update.refit": "refit_from_scratch",
+      "update.weighting": "uniform",
+      "update.target_transform": "identity",
+      "stopping.rule": "fixed_rounds"
+    }
+  },
+  "contrast": {
+    "oneshot_minus_default": -0.3214491497400007,
+    "iterative_minus_default": 0.3128420468116655,
+    "iterative_minus_oneshot": 0.6342911965516662
+  },
+  "default": {
+    "mean": 4.027806384340267,
+    "fails": 0,
+    "seeds": [
+      5.033633066381,
+      4.12789621874,
+      3.5139889572469003,
+      6.7765184421741,
+      3.1684264039996,
+      1.5463752175000005
+    ]
+  }
+}

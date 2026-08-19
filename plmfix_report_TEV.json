@@ -1,0 +1,132 @@
+{
+  "landscape": "TEV",
+  "n_failed": 13,
+  "now_ok": [
+    "FREE:ESM site-embedding GP expected improveme",
+    "FREE:Two-step lookahead information front-loa",
+    "RAND:draw_01",
+    "RAND:draw_06",
+    "CMC:representation.encoding=esm2_frozen",
+    "SEED:esm_rf_greedy"
+  ],
+  "still_fail": [
+    "FREE:Zero-shot enriched two-head campaign",
+    "FULL:Focus the pool with zero-shot",
+    "RAND:draw_02",
+    "RAND:draw_05",
+    "RAND:draw_07",
+    "RAND:draw_08",
+    "RAND:draw_09"
+  ],
+  "skipped": [],
+  "rerun": [
+    {
+      "name": "FREE:ESM site-embedding GP expected improveme",
+      "channel": "free",
+      "ok": true,
+      "best": 1.090374723671572,
+      "fail": 0,
+      "sec": 67.8
+    },
+    {
+      "name": "FREE:Zero-shot enriched two-head campaign",
+      "channel": "free",
+      "ok": false,
+      "best": null,
+      "fail": 8,
+      "sec": 5.6
+    },
+    {
+      "name": "FREE:Two-step lookahead information front-loa",
+      "channel": "free",
+      "ok": true,
+      "best": 1.0021768857906852,
+      "fail": 0,
+      "sec": 32.3
+    },
+    {
+      "name": "FULL:Focus the pool with zero-shot",
+      "channel": "perturb",
+      "ok": false,
+      "best": null,
+      "fail": 8,
+      "sec": 2.4
+    },
+    {
+      "name": "RAND:draw_01",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 0.8869128201910405,
+      "fail": 0,
+      "sec": 6.5
+    },
+    {
+      "name": "RAND:draw_02",
+      "channel": "random_basis",
+      "ok": false,
+      "best": null,
+      "fail": 8,
+      "sec": 1.6
+    },
+    {
+      "name": "RAND:draw_05",
+      "channel": "random_basis",
+      "ok": false,
+      "best": null,
+      "fail": 8,
+      "sec": 1.7
+    },
+    {
+      "name": "RAND:draw_06",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 0.9122537418971814,
+      "fail": 0,
+      "sec": 22.6
+    },
+    {
+      "name": "RAND:draw_07",
+      "channel": "random_basis",
+      "ok": false,
+      "best": null,
+      "fail": 8,
+      "sec": 4.2
+    },
+    {
+      "name": "RAND:draw_08",
+      "channel": "random_basis",
+      "ok": false,
+      "best": null,
+      "fail": 8,
+      "sec": 6.9
+    },
+    {
+      "name": "RAND:draw_09",
+      "channel": "random_basis",
+      "ok": false,
+      "best": null,
+      "fail": 8,
+      "sec": 9.3
+    },
+    {
+      "name": "CMC:representation.encoding=esm2_frozen",
+      "channel": "coord_matched",
+      "ok": true,
+      "best": 1.0197646683334858,
+      "fail": 0,
+      "sec": 37.5
+    },
+    {
+      "name": "SEED:esm_rf_greedy",
+      "channel": "seed",
+      "ok": true,
+      "best": 1.047858738253025,
+      "fail": 0,
+      "sec": 61.7
+    }
+  ],
+  "n_now_ok": 6,
+  "n_still_fail": 7,
+  "n_skipped": 0,
+  "out": "/Users/odysseus/Documents/Research/Academic_research/Projects/Novelty_Landscape_Engineering_2026_07/01_Scientific_Idea_Discovery_and_Lineages/paper_distant_inspiration_retrieval/protein/pool_results_TEV_plmfix.json"
+}
