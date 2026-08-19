@@ -1,0 +1,77 @@
+{
+  "landscape": "TEV",
+  "n_failed": 7,
+  "now_ok": [
+    "FREE:Zero-shot enriched two-head campaign",
+    "FULL:Focus the pool with zero-shot",
+    "RAND:draw_02",
+    "RAND:draw_05",
+    "RAND:draw_07",
+    "RAND:draw_08",
+    "RAND:draw_09"
+  ],
+  "still_fail": [],
+  "skipped": [],
+  "rerun": [
+    {
+      "name": "FREE:Zero-shot enriched two-head campaign",
+      "channel": "free",
+      "ok": true,
+      "best": 0.9943249320642334,
+      "fail": 0,
+      "sec": 19.7
+    },
+    {
+      "name": "FULL:Focus the pool with zero-shot",
+      "channel": "perturb",
+      "ok": true,
+      "best": 1.0263704291175348,
+      "fail": 0,
+      "sec": 3.9
+    },
+    {
+      "name": "RAND:draw_02",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 1.078833426448371,
+      "fail": 0,
+      "sec": 4.2
+    },
+    {
+      "name": "RAND:draw_05",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 0.9121154811493329,
+      "fail": 0,
+      "sec": 4.5
+    },
+    {
+      "name": "RAND:draw_07",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 0.9398069502029625,
+      "fail": 0,
+      "sec": 8.8
+    },
+    {
+      "name": "RAND:draw_08",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 1.1481514291851085,
+      "fail": 0,
+      "sec": 5.9
+    },
+    {
+      "name": "RAND:draw_09",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 0.6801796828618453,
+      "fail": 0,
+      "sec": 12.6
+    }
+  ],
+  "n_now_ok": 7,
+  "n_still_fail": 0,
+  "n_skipped": 0,
+  "out": "/Users/odysseus/Documents/Research/Academic_research/Projects/Novelty_Landscape_Engineering_2026_07/01_Scientific_Idea_Discovery_and_Lineages/paper_distant_inspiration_retrieval/protein/pool_results_TEV_plmfix2.json"
+}

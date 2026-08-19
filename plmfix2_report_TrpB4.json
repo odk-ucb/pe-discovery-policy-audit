@@ -1,0 +1,177 @@
+{
+  "landscape": "TrpB4",
+  "n_failed": 18,
+  "now_ok": [
+    "FREE:Zero-shot enriched two-head campaign",
+    "FREE:Potts GP with zero-shot filter",
+    "FULL:Focus the pool with zero-shot",
+    "FULL:Expand a confirmed-active frontier",
+    "FULL:Prior feasibility meets learned feasibil",
+    "RAND:draw_02",
+    "RAND:draw_05",
+    "RAND:draw_07",
+    "RAND:draw_08",
+    "RAND:draw_09",
+    "RAND:draw_10",
+    "RAND:draw_11",
+    "RAND:draw_12",
+    "RAND:draw_17",
+    "RAND:draw_18",
+    "RAND:draw_19"
+  ],
+  "still_fail": [
+    "RAND:draw_13",
+    "RAND:draw_16"
+  ],
+  "skipped": [],
+  "rerun": [
+    {
+      "name": "FREE:Zero-shot enriched two-head campaign",
+      "channel": "free",
+      "ok": true,
+      "best": 1.7598699701891447,
+      "fail": 0,
+      "sec": 13.1
+    },
+    {
+      "name": "FREE:Potts GP with zero-shot filter",
+      "channel": "free",
+      "ok": true,
+      "best": 1.8131399658718923,
+      "fail": 0,
+      "sec": 19.8
+    },
+    {
+      "name": "FULL:Focus the pool with zero-shot",
+      "channel": "perturb",
+      "ok": true,
+      "best": 1.760030618845347,
+      "fail": 0,
+      "sec": 5.3
+    },
+    {
+      "name": "FULL:Expand a confirmed-active frontier",
+      "channel": "perturb",
+      "ok": true,
+      "best": 1.8339041441954809,
+      "fail": 0,
+      "sec": 5.6
+    },
+    {
+      "name": "FULL:Prior feasibility meets learned feasibil",
+      "channel": "perturb",
+      "ok": true,
+      "best": 1.7254021864268134,
+      "fail": 0,
+      "sec": 10.6
+    },
+    {
+      "name": "RAND:draw_02",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 1.6388314600640403,
+      "fail": 0,
+      "sec": 3.9
+    },
+    {
+      "name": "RAND:draw_05",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 1.2065003913250785,
+      "fail": 1,
+      "sec": 4.1
+    },
+    {
+      "name": "RAND:draw_07",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 1.7851163457955839,
+      "fail": 0,
+      "sec": 8.0
+    },
+    {
+      "name": "RAND:draw_08",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 1.641078009390177,
+      "fail": 0,
+      "sec": 4.7
+    },
+    {
+      "name": "RAND:draw_09",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 1.64547828173371,
+      "fail": 0,
+      "sec": 13.5
+    },
+    {
+      "name": "RAND:draw_10",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 0.8137814798302652,
+      "fail": 0,
+      "sec": 3.7
+    },
+    {
+      "name": "RAND:draw_11",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 1.2256717732842946,
+      "fail": 4,
+      "sec": 7.5
+    },
+    {
+      "name": "RAND:draw_12",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 1.4724294511985254,
+      "fail": 0,
+      "sec": 3.9
+    },
+    {
+      "name": "RAND:draw_13",
+      "channel": "random_basis",
+      "ok": false,
+      "best": null,
+      "fail": 8,
+      "sec": 3.8
+    },
+    {
+      "name": "RAND:draw_16",
+      "channel": "random_basis",
+      "ok": false,
+      "best": null,
+      "fail": 8,
+      "sec": 7.9
+    },
+    {
+      "name": "RAND:draw_17",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 1.463529669269853,
+      "fail": 0,
+      "sec": 3.9
+    },
+    {
+      "name": "RAND:draw_18",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 1.6721937551586246,
+      "fail": 0,
+      "sec": 8.9
+    },
+    {
+      "name": "RAND:draw_19",
+      "channel": "random_basis",
+      "ok": true,
+      "best": 1.2867602131947817,
+      "fail": 2,
+      "sec": 5.5
+    }
+  ],
+  "n_now_ok": 16,
+  "n_still_fail": 2,
+  "n_skipped": 0,
+  "out": "/Users/odysseus/Documents/Research/Academic_research/Projects/Novelty_Landscape_Engineering_2026_07/01_Scientific_Idea_Discovery_and_Lineages/paper_distant_inspiration_retrieval/protein/pool_results_TrpB4_plmfix2.json"
+}

@@ -69,14 +69,19 @@ def _zs():
     """
     global _ZS
     if _LANDSCAPE_NAME not in _ZS:
-        # Currently only GB1 has a zeroshot cache; keep the explicit map for clarity.
         zs_files = {
             "GB1": "gb1_zeroshot_esm2.npz",
+            "TEV": "tev_zeroshot_esm2.npz",
+            "TrpB4": "trpb4_zeroshot_esm2.npz",
         }
         fn = zs_files.get(_LANDSCAPE_NAME)
         if not fn:
             raise RuntimeError(f"zero_shot_prior requires a cache not built for landscape={_LANDSCAPE_NAME}")
         f = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", fn)
+        if not os.path.exists(f):
+            raise FileNotFoundError(
+                f"zero-shot cache missing for {_LANDSCAPE_NAME}: {f}; run zeroshot_multi.py {_LANDSCAPE_NAME}"
+            )
         z = np.load(f)
         _ZS[_LANDSCAPE_NAME] = {str(v): float(x) for v, x in zip(z["variants"], z["zs"])}
     return _ZS[_LANDSCAPE_NAME]

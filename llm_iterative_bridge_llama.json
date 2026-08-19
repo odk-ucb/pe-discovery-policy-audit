@@ -1,0 +1,582 @@
+{
+  "model": "meta-llama/llama-3.3-70b-instruct",
+  "temperature": 0.4,
+  "seeds": 6,
+  "budget": 96,
+  "K": 3,
+  "G": 3,
+  "api": "openrouter",
+  "timestamp": "2026-08-19T14:16:38",
+  "prompts": [
+    {
+      "phase": "oneshot",
+      "user": "Classical DEFAULT (flat):\n{\n  \"representation.encoding\": \"onehot\",\n  \"representation.pooling\": \"site\",\n  \"representation.rank\": \"full\",\n  \"representation.site_coupling\": \"independent_sites\",\n  \"surrogate.family\": \"ridge\",\n  \"surrogate.count\": \"single\",\n  \"surrogate.heads\": \"joint_fitness\",\n  \"surrogate.uncertainty\": \"none\",\n  \"generator.scope\": \"global_all_variants\",\n  \"generator.ball_centre\": \"observed_elites\",\n  \"generator.radius\": \"r1\",\n  \"generator.pool_size\": \"medium\",\n  \"generator.zero_shot_prior\": \"none\",\n  \"acquisition.rule\": \"greedy_mean\",\n  \"acquisition.beta\": \"low\",\n  \"acquisition.lookahead\": \"one_step\",\n  \"batch.selection\": \"top_k_by_score\",\n  \"batch.size_rule\": \"fixed\",\n  \"update.refit\": \"refit_from_scratch\",\n  \"update.weighting\": \"uniform\",\n  \"update.target_transform\": \"identity\",\n  \"stopping.rule\": \"fixed_rounds\"\n}\n\nAllowed coordinates:\n  representation.encoding: ['onehot', 'physicochem', 'onehot_plus_pairs', 'esm2_frozen']\n  representation.pooling: ['mean', 'site']\n  representation.rank: ['full', 'low_rank_pca']\n  representation.site_coupling: ['independent_sites', 'pairwise_sites']\n  surrogate.family: ['ridge', 'random_forest', 'gaussian_process', 'boosted_trees', 'knn']\n  surrogate.count: ['single', 'ensemble_of_k']\n  surrogate.heads: ['joint_fitness', 'separated_activity_and_fitness']\n  surrogate.uncertainty: ['none', 'ensemble_disagreement', 'gp_posterior', 'bootstrap']\n  generator.scope: ['global_all_variants', 'local_hamming_ball', 'recombine_observed_elites']\n  generator.ball_centre: ['observed_elites', 'wild_type']\n  generator.radius: ['r1', 'r2', 'adaptive_radius']\n  generator.pool_size: ['small', 'medium', 'exhaustive']\n  generator.zero_shot_prior: ['none', 'esm_masked_marginal_focus']\n  acquisition.rule: ['greedy_mean', 'ucb', 'expected_improvement', 'thompson', 'pure_explore']\n  acquisition.beta: ['low', 'medium', 'high', 'state_adaptive_beta']\n  acquisition.lookahead: ['one_step', 'two_step_myopic_rollout']\n  batch.selection: ['top_k_by_score', 'diverse_top_k_by_distance', 'score_then_cluster', 'epsilon_mixed']\n  batch.size_rule: ['fixed', 'state_adaptive_size']\n  update.refit: ['refit_from_scratch', 'warm_start']\n  update.weighting: ['uniform', 'recency_weighted', 'elite_weighted']\n  update.target_transform: ['identity', 'log1p', 'rank']\n  stopping.rule: ['fixed_rounds', 'plateau_detect', 'budget_exhausted']\n\nPropose 3 distinct one-shot policies as a JSON array of flat coordinate dicts\n(only list coordinates you change from DEFAULT is OK). Optimize for GB1-style\ncombinatorial fitness under budget 96 assays / 4 rounds of 24.",
+      "response": "[\n  {\n    \"representation.encoding\": \"esm2_frozen\",\n    \"surrogate.family\": \"gaussian_process\",\n    \"generator.scope\": \"local_hamming_ball\",\n    \"acquisition.rule\": \"ucb\",\n    \"batch.selection\": \"diverse_top_k_by_distance\"\n  },\n  {\n    \"representation.pooling\": \"mean\",\n    \"representation.rank\": \"low_rank_pca\",\n    \"surrogate.count\": \"ensemble_of_k\",\n    \"generator.ball_centre\": \"wild_type\",\n    \"acquisition.beta\": \"medium\",\n    \"update.weighting\": \"recency_weighted\"\n  },\n  {\n    \"representation.site_coupling\": \"pairwise_sites\",\n    \"surrogate.heads\": \"separated_activity_and_fitness\",\n    \"generator.radius\": \"adaptive_radius\",\n    \"generator.pool_size\": \"exhaustive\",\n    \"acquisition.lookahead\": \"two_step_myopic_rollout\",\n    \"batch.size_rule\": \"state_adaptive_size\"\n  }\n]",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "temperature": 0.4
+    },
+    {
+      "phase": "iter_g1",
+      "user": "You are in a multi-generation loop. Prior generations measured mean GAIN on GB1\n(higher is better). DEFAULT gain baseline is in history gen 0.\n\nHistory:\n[\n  {\n    \"gen\": 0,\n    \"mean\": 4.027806384340267,\n    \"label\": \"DEFAULT\",\n    \"partial\": {}\n  }\n]\n\nAllowed coordinates:\n  representation.encoding: ['onehot', 'physicochem', 'onehot_plus_pairs', 'esm2_frozen']\n  representation.pooling: ['mean', 'site']\n  representation.rank: ['full', 'low_rank_pca']\n  representation.site_coupling: ['independent_sites', 'pairwise_sites']\n  surrogate.family: ['ridge', 'random_forest', 'gaussian_process', 'boosted_trees', 'knn']\n  surrogate.count: ['single', 'ensemble_of_k']\n  surrogate.heads: ['joint_fitness', 'separated_activity_and_fitness']\n  surrogate.uncertainty: ['none', 'ensemble_disagreement', 'gp_posterior', 'bootstrap']\n  generator.scope: ['global_all_variants', 'local_hamming_ball', 'recombine_observed_elites']\n  generator.ball_centre: ['observed_elites', 'wild_type']\n  generator.radius: ['r1', 'r2', 'adaptive_radius']\n  generator.pool_size: ['small', 'medium', 'exhaustive']\n  generator.zero_shot_prior: ['none', 'esm_masked_marginal_focus']\n  acquisition.rule: ['greedy_mean', 'ucb', 'expected_improvement', 'thompson', 'pure_explore']\n  acquisition.beta: ['low', 'medium', 'high', 'state_adaptive_beta']\n  acquisition.lookahead: ['one_step', 'two_step_myopic_rollout']\n  batch.selection: ['top_k_by_score', 'diverse_top_k_by_distance', 'score_then_cluster', 'epsilon_mixed']\n  batch.size_rule: ['fixed', 'state_adaptive_size']\n  update.refit: ['refit_from_scratch', 'warm_start']\n  update.weighting: ['uniform', 'recency_weighted', 'elite_weighted']\n  update.target_transform: ['identity', 'log1p', 'rank']\n  stopping.rule: ['fixed_rounds', 'plateau_detect', 'budget_exhausted']\n\nPropose 3 new policies as JSON array of flat dicts, conditioning on what worked.\nPrefer single- or few-coordinate changes from the current best, but you may explore.",
+      "response": "[\n  {\n    \"representation.encoding\": \"onehot_plus_pairs\",\n    \"representation.pooling\": \"mean\",\n    \"representation.rank\": \"full\",\n    \"representation.site_coupling\": \"independent_sites\",\n    \"surrogate.family\": \"ridge\",\n    \"surrogate.count\": \"single\",\n    \"surrogate.heads\": \"joint_fitness\",\n    \"surrogate.uncertainty\": \"none\",\n    \"generator.scope\": \"global_all_variants\",\n    \"generator.ball_centre\": \"observed_elites\",\n    \"generator.radius\": \"r1\",\n    \"generator.pool_size\": \"small\",\n    \"generator.zero_shot_prior\": \"none\",\n    \"acquisition.rule\": \"greedy_mean\",\n    \"acquisition.beta\": \"low\",\n    \"acquisition.lookahead\": \"one_step\",\n    \"batch.selection\": \"top_k_by_score\",\n    \"batch.size_rule\": \"fixed\",\n    \"update.refit\": \"refit_from_scratch\",\n    \"update.weighting\": \"uniform\",\n    \"update.target_transform\": \"identity\",\n    \"stopping.rule\": \"fixed_rounds\"\n  },\n  {\n    \"representation.encoding\": \"esm2_frozen\",\n    \"representation.pooling\": \"mean\",\n    \"representation.rank\": \"full\",\n    \"representation.site_coupling\": \"independent_sites\",\n    \"surrogate.family\": \"random_forest\",\n    \"surrogate.count\": \"single\",\n    \"surrogate.heads\": \"joint_fitness\",\n    \"surrogate.uncertainty\": \"none\",\n    \"generator.scope\": \"global_all_variants\",\n    \"generator.ball_centre\": \"observed_elites\",\n    \"generator.radius\": \"r1\",\n    \"generator.pool_size\": \"small\",\n    \"generator.zero_shot_prior\": \"none\",\n    \"acquisition.rule\": \"ucb\",\n    \"acquisition.beta\": \"medium\",\n    \"acquisition.lookahead\": \"one_step\",\n    \"batch.selection\": \"top_k_by_score\",\n    \"batch.size_rule\": \"fixed\",\n    \"update.refit\": \"refit_from_scratch\",\n    \"update.weighting\": \"uniform\",\n    \"update.target_transform\": \"identity\",\n    \"stopping.rule\": \"fixed_rounds\"\n  },\n  {\n    \"representation.encoding\": \"onehot\",\n    \"representation.pooling\": \"site\",\n    \"representation.rank\": \"low_rank_pca\",\n    \"representation.site_coupling\": \"pairwise_sites\",\n    \"surrogate.family\": \"gaussian_process\",\n    \"surrogate.count\": \"ensemble_of_k\",\n    \"surrogate.heads\": \"separated_activity_and_fitness\",\n    \"surrogate.uncertainty\": \"gp_posterior\",\n    \"generator.scope\": \"local_hamming_ball\",\n    \"generator.ball_centre\": \"wild_type\",\n    \"generator.radius\": \"adaptive_radius\",\n    \"generator.pool_size\": \"medium\",\n    \"generator.zero_shot_prior\": \"esm_masked_marginal_focus\",\n    \"acquisition.rule\": \"expected_improvement\",\n    \"acquisition.beta\": \"high\",\n    \"acquisition.lookahead\": \"two_step_myopic_rollout\",\n    \"batch.selection\": \"diverse_top_k_by_distance\",\n    \"batch.size_rule\": \"state_adaptive_size\",\n    \"update.refit\": \"warm_start\",\n    \"update.weighting\": \"recency_weighted\",\n    \"update.target_transform\": \"log1p\",\n    \"stopping.rule\": \"plateau_detect\"\n  }\n]",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "temperature": 0.4
+    },
+    {
+      "phase": "iter_g2",
+      "user": "You are in a multi-generation loop. Prior generations measured mean GAIN on GB1\n(higher is better). DEFAULT gain baseline is in history gen 0.\n\nHistory:\n[\n  {\n    \"gen\": 0,\n    \"mean\": 4.027806384340267,\n    \"label\": \"DEFAULT\",\n    \"partial\": {}\n  },\n  {\n    \"gen\": 1,\n    \"mean\": 4.027806384340267,\n    \"best_of_gen\": {\n      \"partial\": {\n        \"representation.encoding\": \"onehot_plus_pairs\",\n        \"representation.pooling\": \"mean\",\n        \"representation.rank\": \"full\",\n        \"representation.site_coupling\": \"independent_sites\",\n        \"surrogate.family\": \"ridge\",\n        \"surrogate.count\": \"single\",\n        \"surrogate.heads\": \"joint_fitness\",\n        \"surrogate.uncertainty\": \"none\",\n        \"generator.scope\": \"global_all_variants\",\n        \"generator.ball_centre\": \"observed_elites\",\n        \"generator.radius\": \"r1\",\n        \"generator.pool_size\": \"small\",\n        \"generator.zero_shot_prior\": \"none\",\n        \"acquisition.rule\": \"greedy_mean\",\n        \"acquisition.beta\": \"low\",\n        \"acquisition.lookahead\": \"one_step\",\n        \"batch.selection\": \"top_k_by_score\",\n        \"batch.size_rule\": \"fixed\",\n        \"update.refit\": \"refit_from_scratch\",\n        \"update.weighting\": \"uniform\",\n        \"update.target_transform\": \"identity\",\n        \"stopping.rule\": \"fixed_rounds\"\n      },\n      \"mean\": 4.012845198746933,\n      \"fails\": 0,\n      \"seeds\": [\n        4.617994471841,\n        2.6984443928399995,\n        3.5646634154669,\n        7.4736384307841,\n        4.604535091869599,\n        1.1177953896800004\n      ]\n    },\n    \"all\": [\n      {\n        \"partial\": {\n          \"representation.encoding\": \"onehot_plus_pairs\",\n          \"representation.pooling\": \"mean\",\n          \"representation.rank\": \"full\",\n          \"representation.site_coupling\": \"independent_sites\",\n          \"surrogate.family\": \"ridge\",\n          \"surrogate.count\": \"single\",\n          \"surrogate.heads\": \"joint_fitness\",\n          \"surrogate.uncertainty\": \"none\",\n          \"generator.scope\": \"global_all_variants\",\n          \"generator.ball_centre\": \"observed_elites\",\n          \"generator.radius\": \"r1\",\n          \"generator.pool_size\": \"small\",\n          \"generator.zero_shot_prior\": \"none\",\n          \"acquisition.rule\": \"greedy_mean\",\n          \"acquisition.beta\": \"low\",\n          \"acquisition.lookahead\": \"one_step\",\n          \"batch.selection\": \"top_k_by_score\",\n          \"batch.size_rule\": \"fixed\",\n          \"update.refit\": \"refit_from_scratch\",\n          \"update.weighting\": \"uniform\",\n          \"update.target_transform\": \"identity\",\n          \"stopping.rule\": \"fixed_rounds\"\n        },\n        \"mean\": 4.012845198746933,\n        \"fails\": 0,\n        \"seeds\": [\n          4.617994471841,\n          2.6984443928399995,\n          3.5646634154669,\n          7.4736384307841,\n          4.604535091869599,\n          1.1177953896800004\n        ]\n      },\n      {\n        \"partial\": {\n          \"representation.encoding\": \"esm2_frozen\",\n          \"representation.pooling\": \"mean\",\n          \"representation.rank\": \"full\",\n          \"representation.site_coupling\": \"independent_sites\",\n          \"surrogate.family\": \"random_forest\",\n          \"surrogate.count\": \"single\",\n          \"surrogate.heads\": \"joint_fitness\",\n          \"surrogate.uncertainty\": \"none\",\n          \"generator.scope\": \"global_all_variants\",\n          \"generator.ball_centre\": \"observed_elites\",\n          \"generator.radius\": \"r1\",\n          \"generator.pool_size\": \"small\",\n          \"generator.zero_shot_prior\": \"none\",\n          \"acquisition.rule\": \"ucb\",\n          \"acquisition.beta\": \"medium\",\n          \"acquisition.lookahead\": \"one_step\",\n          \"batch.selection\": \"top_k_by_score\",\n          \"batch.size_rule\": \"fixed\",\n          \"update.refit\": \"refit_from_scratch\",\n          \"update.weighting\": \"uniform\",\n          \"update.target_transform\": \"identity\",\n          \"stopping.rule\": \"fixed_rounds\"\n        },\n        \"mean\": 3.4739900992152672,\n        \"fails\": 0,\n        \"seeds\": [\n          0.9493067164210001,\n          2.07964266049,\n          4.6454145476569,\n          6.8472324247241,\n          3.9095910494396002,\n          2.4127531965599998\n        ]\n      },\n      {\n        \"partial\": {\n          \"representation.encoding\": \"onehot\",\n          \"representation.pooling\": \"site\",\n          \"representation.rank\": \"low_rank_pca\",\n          \"representation.site_coupling\": \"pairwise_sites\",\n          \"surrogate.family\": \"gaussian_process\",\n          \"surrogate.count\": \"ensemble_of_k\",\n          \"surrogate.heads\": \"separated_activity_and_fitness\",\n          \"surrogate.uncertainty\": \"gp_posterior\",\n          \"generator.scope\": \"local_hamming_ball\",\n          \"generator.ball_centre\": \"wild_type\",\n          \"generator.radius\": \"adaptive_radius\",\n          \"generator.pool_size\": \"medium\",\n          \"generator.zero_shot_prior\": \"esm_masked_marginal_focus\",\n          \"acquisition.rule\": \"expected_improvement\",\n          \"acquisition.beta\": \"high\",\n          \"acquisition.lookahead\": \"two_step_myopic_rollout\",\n          \"batch.selection\": \"diverse_top_k_by_distance\",\n          \"batch.size_rule\": \"state_adaptive_size\",\n          \"update.refit\": \"warm_start\",\n          \"update.weighting\": \"recency_weighted\",\n          \"update.target_transform\": \"log1p\",\n          \"stopping.rule\": \"plateau_detect\"\n        },\n        \"mean\": 2.971929424816933,\n        \"fails\": 0,\n        \"seeds\": [\n          3.579017165201,\n          1.5768874523699998,\n          3.7968830385169,\n          4.3067205348341,\n          3.9994354828896,\n          0.57263287509\n        ]\n      }\n    ]\n  }\n]\n\nAllowed coordinates:\n  representation.encoding: ['onehot', 'physicochem', 'onehot_plus_pairs', 'esm2_frozen']\n  representation.pooling: ['mean', 'site']\n  representation.rank: ['full', 'low_rank_pca']\n  representation.site_coupling: ['independent_sites', 'pairwise_sites']\n  surrogate.family: ['ridge', 'random_forest', 'gaussian_process', 'boosted_trees', 'knn']\n  surrogate.count: ['single', 'ensemble_of_k']\n  surrogate.heads: ['joint_fitness', 'separated_activity_and_fitness']\n  surrogate.uncertainty: ['none', 'ensemble_disagreement', 'gp_posterior', 'bootstrap']\n  generator.scope: ['global_all_variants', 'local_hamming_ball', 'recombine_observed_elites']\n  generator.ball_centre: ['observed_elites', 'wild_type']\n  generator.radius: ['r1', 'r2', 'adaptive_radius']\n  generator.pool_size: ['small', 'medium', 'exhaustive']\n  generator.zero_shot_prior: ['none', 'esm_masked_marginal_focus']\n  acquisition.rule: ['greedy_mean', 'ucb', 'expected_improvement', 'thompson', 'pure_explore']\n  acquisition.beta: ['low', 'medium', 'high', 'state_adaptive_beta']\n  acquisition.lookahead: ['one_step', 'two_step_myopic_rollout']\n  batch.selection: ['top_k_by_score', 'diverse_top_k_by_distance', 'score_then_cluster', 'epsilon_mixed']\n  batch.size_rule: ['fixed', 'state_adaptive_size']\n  update.refit: ['refit_from_scratch', 'warm_start']\n  update.weighting: ['uniform', 'recency_weighted', 'elite_weighted']\n  update.target_transform: ['identity', 'log1p', 'rank']\n  stopping.rule: ['fixed_rounds', 'plateau_detect', 'budget_exhausted']\n\nPropose 3 new policies as JSON array of flat dicts, conditioning on what worked.\nPrefer single- or few-coordinate changes from the current best, but you may explore.",
+      "response": "[\n  {\n    \"representation.encoding\": \"onehot_plus_pairs\",\n    \"representation.pooling\": \"mean\",\n    \"representation.rank\": \"full\",\n    \"representation.site_coupling\": \"independent_sites\",\n    \"surrogate.family\": \"ridge\",\n    \"surrogate.count\": \"single\",\n    \"surrogate.heads\": \"joint_fitness\",\n    \"surrogate.uncertainty\": \"none\",\n    \"generator.scope\": \"global_all_variants\",\n    \"generator.ball_centre\": \"observed_elites\",\n    \"generator.radius\": \"r1\",\n    \"generator.pool_size\": \"small\",\n    \"generator.zero_shot_prior\": \"none\",\n    \"acquisition.rule\": \"greedy_mean\",\n    \"acquisition.beta\": \"low\",\n    \"acquisition.lookahead\": \"one_step\",\n    \"batch.selection\": \"top_k_by_score\",\n    \"batch.size_rule\": \"fixed\",\n    \"update.refit\": \"refit_from_scratch\",\n    \"update.weighting\": \"uniform\",\n    \"update.target_transform\": \"identity\",\n    \"stopping.rule\": \"fixed_rounds\"\n  },\n  {\n    \"representation.encoding\": \"onehot_plus_pairs\",\n    \"representation.pooling\": \"mean\",\n    \"representation.rank\": \"full\",\n    \"representation.site_coupling\": \"independent_sites\",\n    \"surrogate.family\": \"random_forest\",\n    \"surrogate.count\": \"single\",\n    \"surrogate.heads\": \"joint_fitness\",\n    \"surrogate.uncertainty\": \"none\",\n    \"generator.scope\": \"global_all_variants\",\n    \"generator.ball_centre\": \"observed_elites\",\n    \"generator.radius\": \"r1\",\n    \"generator.pool_size\": \"small\",\n    \"generator.zero_shot_prior\": \"none\",\n    \"acquisition.rule\": \"ucb\",\n    \"acquisition.beta\": \"medium\",\n    \"acquisition.lookahead\": \"one_step\",\n    \"batch.selection\": \"top_k_by_score\",\n    \"batch.size_rule\": \"fixed\",\n    \"update.refit\": \"refit_from_scratch\",\n    \"update.weighting\": \"uniform\",\n    \"update.target_transform\": \"identity\",\n    \"stopping.rule\": \"fixed_rounds\"\n  },\n  {\n    \"representation.encoding\": \"esm2_frozen\",\n    \"representation.pooling\": \"mean\",\n    \"representation.rank\": \"full\",\n    \"representation.site_coupling\": \"independent_sites\",\n    \"surrogate.family\": \"ridge\",\n    \"surrogate.count\": \"single\",\n    \"surrogate.heads\": \"joint_fitness\",\n    \"surrogate.uncertainty\": \"none\",\n    \"generator.scope\": \"global_all_variants\",\n    \"generator.ball_centre\": \"observed_elites\",\n    \"generator.radius\": \"r1\",\n    \"generator.pool_size\": \"small\",\n    \"generator.zero_shot_prior\": \"none\",\n    \"acquisition.rule\": \"greedy_mean\",\n    \"acquisition.beta\": \"low\",\n    \"acquisition.lookahead\": \"one_step\",\n    \"batch.selection\": \"top_k_by_score\",\n    \"batch.size_rule\": \"fixed\",\n    \"update.refit\": \"refit_from_scratch\",\n    \"update.weighting\": \"uniform\",\n    \"update.target_transform\": \"identity\",\n    \"stopping.rule\": \"fixed_rounds\"\n  }\n]",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "temperature": 0.4
+    },
+    {
+      "phase": "iter_g3",
+      "user": "You are in a multi-generation loop. Prior generations measured mean GAIN on GB1\n(higher is better). DEFAULT gain baseline is in history gen 0.\n\nHistory:\n[\n  {\n    \"gen\": 0,\n    \"mean\": 4.027806384340267,\n    \"label\": \"DEFAULT\",\n    \"partial\": {}\n  },\n  {\n    \"gen\": 1,\n    \"mean\": 4.027806384340267,\n    \"best_of_gen\": {\n      \"partial\": {\n        \"representation.encoding\": \"onehot_plus_pairs\",\n        \"representation.pooling\": \"mean\",\n        \"representation.rank\": \"full\",\n        \"representation.site_coupling\": \"independent_sites\",\n        \"surrogate.family\": \"ridge\",\n        \"surrogate.count\": \"single\",\n        \"surrogate.heads\": \"joint_fitness\",\n        \"surrogate.uncertainty\": \"none\",\n        \"generator.scope\": \"global_all_variants\",\n        \"generator.ball_centre\": \"observed_elites\",\n        \"generator.radius\": \"r1\",\n        \"generator.pool_size\": \"small\",\n        \"generator.zero_shot_prior\": \"none\",\n        \"acquisition.rule\": \"greedy_mean\",\n        \"acquisition.beta\": \"low\",\n        \"acquisition.lookahead\": \"one_step\",\n        \"batch.selection\": \"top_k_by_score\",\n        \"batch.size_rule\": \"fixed\",\n        \"update.refit\": \"refit_from_scratch\",\n        \"update.weighting\": \"uniform\",\n        \"update.target_transform\": \"identity\",\n        \"stopping.rule\": \"fixed_rounds\"\n      },\n      \"mean\": 4.012845198746933,\n      \"fails\": 0,\n      \"seeds\": [\n        4.617994471841,\n        2.6984443928399995,\n        3.5646634154669,\n        7.4736384307841,\n        4.604535091869599,\n        1.1177953896800004\n      ]\n    },\n    \"all\": [\n      {\n        \"partial\": {\n          \"representation.encoding\": \"onehot_plus_pairs\",\n          \"representation.pooling\": \"mean\",\n          \"representation.rank\": \"full\",\n          \"representation.site_coupling\": \"independent_sites\",\n          \"surrogate.family\": \"ridge\",\n          \"surrogate.count\": \"single\",\n          \"surrogate.heads\": \"joint_fitness\",\n          \"surrogate.uncertainty\": \"none\",\n          \"generator.scope\": \"global_all_variants\",\n          \"generator.ball_centre\": \"observed_elites\",\n          \"generator.radius\": \"r1\",\n          \"generator.pool_size\": \"small\",\n          \"generator.zero_shot_prior\": \"none\",\n          \"acquisition.rule\": \"greedy_mean\",\n          \"acquisition.beta\": \"low\",\n          \"acquisition.lookahead\": \"one_step\",\n          \"batch.selection\": \"top_k_by_score\",\n          \"batch.size_rule\": \"fixed\",\n          \"update.refit\": \"refit_from_scratch\",\n          \"update.weighting\": \"uniform\",\n          \"update.target_transform\": \"identity\",\n          \"stopping.rule\": \"fixed_rounds\"\n        },\n        \"mean\": 4.012845198746933,\n        \"fails\": 0,\n        \"seeds\": [\n          4.617994471841,\n          2.6984443928399995,\n          3.5646634154669,\n          7.4736384307841,\n          4.604535091869599,\n          1.1177953896800004\n        ]\n      },\n      {\n        \"partial\": {\n          \"representation.encoding\": \"esm2_frozen\",\n          \"representation.pooling\": \"mean\",\n          \"representation.rank\": \"full\",\n          \"representation.site_coupling\": \"independent_sites\",\n          \"surrogate.family\": \"random_forest\",\n          \"surrogate.count\": \"single\",\n          \"surrogate.heads\": \"joint_fitness\",\n          \"surrogate.uncertainty\": \"none\",\n          \"generator.scope\": \"global_all_variants\",\n          \"generator.ball_centre\": \"observed_elites\",\n          \"generator.radius\": \"r1\",\n          \"generator.pool_size\": \"small\",\n          \"generator.zero_shot_prior\": \"none\",\n          \"acquisition.rule\": \"ucb\",\n          \"acquisition.beta\": \"medium\",\n          \"acquisition.lookahead\": \"one_step\",\n          \"batch.selection\": \"top_k_by_score\",\n          \"batch.size_rule\": \"fixed\",\n          \"update.refit\": \"refit_from_scratch\",\n          \"update.weighting\": \"uniform\",\n          \"update.target_transform\": \"identity\",\n          \"stopping.rule\": \"fixed_rounds\"\n        },\n        \"mean\": 3.4739900992152672,\n        \"fails\": 0,\n        \"seeds\": [\n          0.9493067164210001,\n          2.07964266049,\n          4.6454145476569,\n          6.8472324247241,\n          3.9095910494396002,\n          2.4127531965599998\n        ]\n      },\n      {\n        \"partial\": {\n          \"representation.encoding\": \"onehot\",\n          \"representation.pooling\": \"site\",\n          \"representation.rank\": \"low_rank_pca\",\n          \"representation.site_coupling\": \"pairwise_sites\",\n          \"surrogate.family\": \"gaussian_process\",\n          \"surrogate.count\": \"ensemble_of_k\",\n          \"surrogate.heads\": \"separated_activity_and_fitness\",\n          \"surrogate.uncertainty\": \"gp_posterior\",\n          \"generator.scope\": \"local_hamming_ball\",\n          \"generator.ball_centre\": \"wild_type\",\n          \"generator.radius\": \"adaptive_radius\",\n          \"generator.pool_size\": \"medium\",\n          \"generator.zero_shot_prior\": \"esm_masked_marginal_focus\",\n          \"acquisition.rule\": \"expected_improvement\",\n          \"acquisition.beta\": \"high\",\n          \"acquisition.lookahead\": \"two_step_myopic_rollout\",\n          \"batch.selection\": \"diverse_top_k_by_distance\",\n          \"batch.size_rule\": \"state_adaptive_size\",\n          \"update.refit\": \"warm_start\",\n          \"update.weighting\": \"recency_weighted\",\n          \"update.target_transform\": \"log1p\",\n          \"stopping.rule\": \"plateau_detect\"\n        },\n        \"mean\": 2.971929424816933,\n        \"fails\": 0,\n        \"seeds\": [\n          3.579017165201,\n          1.5768874523699998,\n          3.7968830385169,\n          4.3067205348341,\n          3.9994354828896,\n          0.57263287509\n        ]\n      }\n    ]\n  },\n  {\n    \"gen\": 2,\n    \"mean\": 4.027806384340267,\n    \"best_of_gen\": {\n      \"partial\": {\n        \"representation.encoding\": \"onehot_plus_pairs\",\n        \"representation.pooling\": \"mean\",\n        \"representation.rank\": \"full\",\n        \"representation.site_coupling\": \"independent_sites\",\n        \"surrogate.family\": \"ridge\",\n        \"surrogate.count\": \"single\",\n        \"surrogate.heads\": \"joint_fitness\",\n        \"surrogate.uncertainty\": \"none\",\n        \"generator.scope\": \"global_all_variants\",\n        \"generator.ball_centre\": \"observed_elites\",\n        \"generator.radius\": \"r1\",\n   \n\nAllowed coordinates:\n  representation.encoding: ['onehot', 'physicochem', 'onehot_plus_pairs', 'esm2_frozen']\n  representation.pooling: ['mean', 'site']\n  representation.rank: ['full', 'low_rank_pca']\n  representation.site_coupling: ['independent_sites', 'pairwise_sites']\n  surrogate.family: ['ridge', 'random_forest', 'gaussian_process', 'boosted_trees', 'knn']\n  surrogate.count: ['single', 'ensemble_of_k']\n  surrogate.heads: ['joint_fitness', 'separated_activity_and_fitness']\n  surrogate.uncertainty: ['none', 'ensemble_disagreement', 'gp_posterior', 'bootstrap']\n  generator.scope: ['global_all_variants', 'local_hamming_ball', 'recombine_observed_elites']\n  generator.ball_centre: ['observed_elites', 'wild_type']\n  generator.radius: ['r1', 'r2', 'adaptive_radius']\n  generator.pool_size: ['small', 'medium', 'exhaustive']\n  generator.zero_shot_prior: ['none', 'esm_masked_marginal_focus']\n  acquisition.rule: ['greedy_mean', 'ucb', 'expected_improvement', 'thompson', 'pure_explore']\n  acquisition.beta: ['low', 'medium', 'high', 'state_adaptive_beta']\n  acquisition.lookahead: ['one_step', 'two_step_myopic_rollout']\n  batch.selection: ['top_k_by_score', 'diverse_top_k_by_distance', 'score_then_cluster', 'epsilon_mixed']\n  batch.size_rule: ['fixed', 'state_adaptive_size']\n  update.refit: ['refit_from_scratch', 'warm_start']\n  update.weighting: ['uniform', 'recency_weighted', 'elite_weighted']\n  update.target_transform: ['identity', 'log1p', 'rank']\n  stopping.rule: ['fixed_rounds', 'plateau_detect', 'budget_exhausted']\n\nPropose 3 new policies as JSON array of flat dicts, conditioning on what worked.\nPrefer single- or few-coordinate changes from the current best, but you may explore.",
+      "response": "[\n  {\n    \"representation.encoding\": \"onehot_plus_pairs\",\n    \"representation.pooling\": \"mean\",\n    \"representation.rank\": \"full\",\n    \"representation.site_coupling\": \"independent_sites\",\n    \"surrogate.family\": \"ridge\",\n    \"surrogate.count\": \"single\",\n    \"surrogate.heads\": \"joint_fitness\",\n    \"surrogate.uncertainty\": \"none\",\n    \"generator.scope\": \"global_all_variants\",\n    \"generator.ball_centre\": \"observed_elites\",\n    \"generator.radius\": \"r2\",\n    \"generator.pool_size\": \"small\",\n    \"generator.zero_shot_prior\": \"none\",\n    \"acquisition.rule\": \"greedy_mean\",\n    \"acquisition.beta\": \"low\",\n    \"acquisition.lookahead\": \"one_step\",\n    \"batch.selection\": \"top_k_by_score\",\n    \"batch.size_rule\": \"fixed\",\n    \"update.refit\": \"refit_from_scratch\",\n    \"update.weighting\": \"uniform\",\n    \"update.target_transform\": \"identity\",\n    \"stopping.rule\": \"fixed_rounds\"\n  },\n  {\n    \"representation.encoding\": \"onehot_plus_pairs\",\n    \"representation.pooling\": \"mean\",\n    \"representation.rank\": \"full\",\n    \"representation.site_coupling\": \"independent_sites\",\n    \"surrogate.family\": \"random_forest\",\n    \"surrogate.count\": \"single\",\n    \"surrogate.heads\": \"joint_fitness\",\n    \"surrogate.uncertainty\": \"none\",\n    \"generator.scope\": \"global_all_variants\",\n    \"generator.ball_centre\": \"observed_elites\",\n    \"generator.radius\": \"r1\",\n    \"generator.pool_size\": \"small\",\n    \"generator.zero_shot_prior\": \"none\",\n    \"acquisition.rule\": \"ucb\",\n    \"acquisition.beta\": \"medium\",\n    \"acquisition.lookahead\": \"one_step\",\n    \"batch.selection\": \"top_k_by_score\",\n    \"batch.size_rule\": \"fixed\",\n    \"update.refit\": \"refit_from_scratch\",\n    \"update.weighting\": \"uniform\",\n    \"update.target_transform\": \"identity\",\n    \"stopping.rule\": \"fixed_rounds\"\n  },\n  {\n    \"representation.encoding\": \"esm2_frozen\",\n    \"representation.pooling\": \"mean\",\n    \"representation.rank\": \"full\",\n    \"representation.site_coupling\": \"independent_sites\",\n    \"surrogate.family\": \"ridge\",\n    \"surrogate.count\": \"single\",\n    \"surrogate.heads\": \"joint_fitness\",\n    \"surrogate.uncertainty\": \"none\",\n    \"generator.scope\": \"global_all_variants\",\n    \"generator.ball_centre\": \"observed_elites\",\n    \"generator.radius\": \"r1\",\n    \"generator.pool_size\": \"small\",\n    \"generator.zero_shot_prior\": \"none\",\n    \"acquisition.rule\": \"greedy_mean\",\n    \"acquisition.beta\": \"low\",\n    \"acquisition.lookahead\": \"one_step\",\n    \"batch.selection\": \"top_k_by_score\",\n    \"batch.size_rule\": \"fixed\",\n    \"update.refit\": \"refit_from_scratch\",\n    \"update.weighting\": \"uniform\",\n    \"update.target_transform\": \"identity\",\n    \"stopping.rule\": \"fixed_rounds\"\n  }\n]",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "temperature": 0.4
+    }
+  ],
+  "oneshot": [
+    {
+      "partial": {
+        "representation.encoding": "esm2_frozen",
+        "surrogate.family": "gaussian_process",
+        "generator.scope": "local_hamming_ball",
+        "acquisition.rule": "ucb",
+        "batch.selection": "diverse_top_k_by_distance"
+      },
+      "mean": 4.919123621846934,
+      "fails": 0,
+      "seeds": [
+        6.407494249181,
+        2.63838658792,
+        4.4796505761169,
+        6.7765184421741,
+        5.114461928009599,
+        4.09822994768
+      ]
+    },
+    {
+      "partial": {
+        "representation.pooling": "mean",
+        "representation.rank": "low_rank_pca",
+        "surrogate.count": "ensemble_of_k",
+        "generator.ball_centre": "wild_type",
+        "acquisition.beta": "medium",
+        "update.weighting": "recency_weighted"
+      },
+      "mean": 3.9394168778586,
+      "fails": 0,
+      "seeds": [
+        5.824897546751,
+        1.2020726651599998,
+        2.7525620247669003,
+        6.2624727234941,
+        6.8483184117996,
+        0.7461778951799998
+      ]
+    },
+    {
+      "partial": {
+        "representation.site_coupling": "pairwise_sites",
+        "surrogate.heads": "separated_activity_and_fitness",
+        "generator.radius": "adaptive_radius",
+        "generator.pool_size": "exhaustive",
+        "acquisition.lookahead": "two_step_myopic_rollout",
+        "batch.size_rule": "state_adaptive_size"
+      },
+      "mean": 4.833232700263601,
+      "fails": 0,
+      "seeds": [
+        5.841033925411,
+        3.17065258175,
+        5.3460365146269,
+        7.1476352974941,
+        5.4555955892596,
+        2.03844229304
+      ]
+    }
+  ],
+  "iterative": {
+    "history": [
+      {
+        "gen": 0,
+        "mean": 4.027806384340267,
+        "label": "DEFAULT",
+        "partial": {}
+      },
+      {
+        "gen": 1,
+        "mean": 4.027806384340267,
+        "best_of_gen": {
+          "partial": {
+            "representation.encoding": "onehot_plus_pairs",
+            "representation.pooling": "mean",
+            "representation.rank": "full",
+            "representation.site_coupling": "independent_sites",
+            "surrogate.family": "ridge",
+            "surrogate.count": "single",
+            "surrogate.heads": "joint_fitness",
+            "surrogate.uncertainty": "none",
+            "generator.scope": "global_all_variants",
+            "generator.ball_centre": "observed_elites",
+            "generator.radius": "r1",
+            "generator.pool_size": "small",
+            "generator.zero_shot_prior": "none",
+            "acquisition.rule": "greedy_mean",
+            "acquisition.beta": "low",
+            "acquisition.lookahead": "one_step",
+            "batch.selection": "top_k_by_score",
+            "batch.size_rule": "fixed",
+            "update.refit": "refit_from_scratch",
+            "update.weighting": "uniform",
+            "update.target_transform": "identity",
+            "stopping.rule": "fixed_rounds"
+          },
+          "mean": 4.012845198746933,
+          "fails": 0,
+          "seeds": [
+            4.617994471841,
+            2.6984443928399995,
+            3.5646634154669,
+            7.4736384307841,
+            4.604535091869599,
+            1.1177953896800004
+          ]
+        },
+        "all": [
+          {
+            "partial": {
+              "representation.encoding": "onehot_plus_pairs",
+              "representation.pooling": "mean",
+              "representation.rank": "full",
+              "representation.site_coupling": "independent_sites",
+              "surrogate.family": "ridge",
+              "surrogate.count": "single",
+              "surrogate.heads": "joint_fitness",
+              "surrogate.uncertainty": "none",
+              "generator.scope": "global_all_variants",
+              "generator.ball_centre": "observed_elites",
+              "generator.radius": "r1",
+              "generator.pool_size": "small",
+              "generator.zero_shot_prior": "none",
+              "acquisition.rule": "greedy_mean",
+              "acquisition.beta": "low",
+              "acquisition.lookahead": "one_step",
+              "batch.selection": "top_k_by_score",
+              "batch.size_rule": "fixed",
+              "update.refit": "refit_from_scratch",
+              "update.weighting": "uniform",
+              "update.target_transform": "identity",
+              "stopping.rule": "fixed_rounds"
+            },
+            "mean": 4.012845198746933,
+            "fails": 0,
+            "seeds": [
+              4.617994471841,
+              2.6984443928399995,
+              3.5646634154669,
+              7.4736384307841,
+              4.604535091869599,
+              1.1177953896800004
+            ]
+          },
+          {
+            "partial": {
+              "representation.encoding": "esm2_frozen",
+              "representation.pooling": "mean",
+              "representation.rank": "full",
+              "representation.site_coupling": "independent_sites",
+              "surrogate.family": "random_forest",
+              "surrogate.count": "single",
+              "surrogate.heads": "joint_fitness",
+              "surrogate.uncertainty": "none",
+              "generator.scope": "global_all_variants",
+              "generator.ball_centre": "observed_elites",
+              "generator.radius": "r1",
+              "generator.pool_size": "small",
+              "generator.zero_shot_prior": "none",
+              "acquisition.rule": "ucb",
+              "acquisition.beta": "medium",
+              "acquisition.lookahead": "one_step",
+              "batch.selection": "top_k_by_score",
+              "batch.size_rule": "fixed",
+              "update.refit": "refit_from_scratch",
+              "update.weighting": "uniform",
+              "update.target_transform": "identity",
+              "stopping.rule": "fixed_rounds"
+            },
+            "mean": 3.4739900992152672,
+            "fails": 0,
+            "seeds": [
+              0.9493067164210001,
+              2.07964266049,
+              4.6454145476569,
+              6.8472324247241,
+              3.9095910494396002,
+              2.4127531965599998
+            ]
+          },
+          {
+            "partial": {
+              "representation.encoding": "onehot",
+              "representation.pooling": "site",
+              "representation.rank": "low_rank_pca",
+              "representation.site_coupling": "pairwise_sites",
+              "surrogate.family": "gaussian_process",
+              "surrogate.count": "ensemble_of_k",
+              "surrogate.heads": "separated_activity_and_fitness",
+              "surrogate.uncertainty": "gp_posterior",
+              "generator.scope": "local_hamming_ball",
+              "generator.ball_centre": "wild_type",
+              "generator.radius": "adaptive_radius",
+              "generator.pool_size": "medium",
+              "generator.zero_shot_prior": "esm_masked_marginal_focus",
+              "acquisition.rule": "expected_improvement",
+              "acquisition.beta": "high",
+              "acquisition.lookahead": "two_step_myopic_rollout",
+              "batch.selection": "diverse_top_k_by_distance",
+              "batch.size_rule": "state_adaptive_size",
+              "update.refit": "warm_start",
+              "update.weighting": "recency_weighted",
+              "update.target_transform": "log1p",
+              "stopping.rule": "plateau_detect"
+            },
+            "mean": 2.971929424816933,
+            "fails": 0,
+            "seeds": [
+              3.579017165201,
+              1.5768874523699998,
+              3.7968830385169,
+              4.3067205348341,
+              3.9994354828896,
+              0.57263287509
+            ]
+          }
+        ]
+      },
+      {
+        "gen": 2,
+        "mean": 4.027806384340267,
+        "best_of_gen": {
+          "partial": {
+            "representation.encoding": "onehot_plus_pairs",
+            "representation.pooling": "mean",
+            "representation.rank": "full",
+            "representation.site_coupling": "independent_sites",
+            "surrogate.family": "ridge",
+            "surrogate.count": "single",
+            "surrogate.heads": "joint_fitness",
+            "surrogate.uncertainty": "none",
+            "generator.scope": "global_all_variants",
+            "generator.ball_centre": "observed_elites",
+            "generator.radius": "r1",
+            "generator.pool_size": "small",
+            "generator.zero_shot_prior": "none",
+            "acquisition.rule": "greedy_mean",
+            "acquisition.beta": "low",
+            "acquisition.lookahead": "one_step",
+            "batch.selection": "top_k_by_score",
+            "batch.size_rule": "fixed",
+            "update.refit": "refit_from_scratch",
+            "update.weighting": "uniform",
+            "update.target_transform": "identity",
+            "stopping.rule": "fixed_rounds"
+          },
+          "mean": 4.012845198746933,
+          "fails": 0,
+          "seeds": [
+            4.617994471841,
+            2.6984443928399995,
+            3.5646634154669,
+            7.4736384307841,
+            4.604535091869599,
+            1.1177953896800004
+          ]
+        },
+        "all": [
+          {
+            "partial": {
+              "representation.encoding": "onehot_plus_pairs",
+              "representation.pooling": "mean",
+              "representation.rank": "full",
+              "representation.site_coupling": "independent_sites",
+              "surrogate.family": "ridge",
+              "surrogate.count": "single",
+              "surrogate.heads": "joint_fitness",
+              "surrogate.uncertainty": "none",
+              "generator.scope": "global_all_variants",
+              "generator.ball_centre": "observed_elites",
+              "generator.radius": "r1",
+              "generator.pool_size": "small",
+              "generator.zero_shot_prior": "none",
+              "acquisition.rule": "greedy_mean",
+              "acquisition.beta": "low",
+              "acquisition.lookahead": "one_step",
+              "batch.selection": "top_k_by_score",
+              "batch.size_rule": "fixed",
+              "update.refit": "refit_from_scratch",
+              "update.weighting": "uniform",
+              "update.target_transform": "identity",
+              "stopping.rule": "fixed_rounds"
+            },
+            "mean": 4.012845198746933,
+            "fails": 0,
+            "seeds": [
+              4.617994471841,
+              2.6984443928399995,
+              3.5646634154669,
+              7.4736384307841,
+              4.604535091869599,
+              1.1177953896800004
+            ]
+          },
+          {
+            "partial": {
+              "representation.encoding": "onehot_plus_pairs",
+              "representation.pooling": "mean",
+              "representation.rank": "full",
+              "representation.site_coupling": "independent_sites",
+              "surrogate.family": "random_forest",
+              "surrogate.count": "single",
+              "surrogate.heads": "joint_fitness",
+              "surrogate.uncertainty": "none",
+              "generator.scope": "global_all_variants",
+              "generator.ball_centre": "observed_elites",
+              "generator.radius": "r1",
+              "generator.pool_size": "small",
+              "generator.zero_shot_prior": "none",
+              "acquisition.rule": "ucb",
+              "acquisition.beta": "medium",
+              "acquisition.lookahead": "one_step",
+              "batch.selection": "top_k_by_score",
+              "batch.size_rule": "fixed",
+              "update.refit": "refit_from_scratch",
+              "update.weighting": "uniform",
+              "update.target_transform": "identity",
+              "stopping.rule": "fixed_rounds"
+            },
+            "mean": 3.569624103476933,
+            "fails": 0,
+            "seeds": [
+              4.617994471841,
+              2.6761525790799996,
+              3.5646634154669,
+              4.7999556835341,
+              5.1446116451696,
+              0.6143668257700003
+            ]
+          },
+          {
+            "partial": {
+              "representation.encoding": "esm2_frozen",
+              "representation.pooling": "mean",
+              "representation.rank": "full",
+              "representation.site_coupling": "independent_sites",
+              "surrogate.family": "ridge",
+              "surrogate.count": "single",
+              "surrogate.heads": "joint_fitness",
+              "surrogate.uncertainty": "none",
+              "generator.scope": "global_all_variants",
+              "generator.ball_centre": "observed_elites",
+              "generator.radius": "r1",
+              "generator.pool_size": "small",
+              "generator.zero_shot_prior": "none",
+              "acquisition.rule": "greedy_mean",
+              "acquisition.beta": "low",
+              "acquisition.lookahead": "one_step",
+              "batch.selection": "top_k_by_score",
+              "batch.size_rule": "fixed",
+              "update.refit": "refit_from_scratch",
+              "update.weighting": "uniform",
+              "update.target_transform": "identity",
+              "stopping.rule": "fixed_rounds"
+            },
+            "mean": 2.9820856392985995,
+            "fails": 0,
+            "seeds": [
+              3.500263004111,
+              1.9149897144799994,
+              3.3196205259269003,
+              3.6814723597041,
+              4.016301005059599,
+              1.4598672265100001
+            ]
+          }
+        ]
+      },
+      {
+        "gen": 3,
+        "mean": 4.027806384340267,
+        "best_of_gen": {
+          "partial": {
+            "representation.encoding": "onehot_plus_pairs",
+            "representation.pooling": "mean",
+            "representation.rank": "full",
+            "representation.site_coupling": "independent_sites",
+            "surrogate.family": "ridge",
+            "surrogate.count": "single",
+            "surrogate.heads": "joint_fitness",
+            "surrogate.uncertainty": "none",
+            "generator.scope": "global_all_variants",
+            "generator.ball_centre": "observed_elites",
+            "generator.radius": "r2",
+            "generator.pool_size": "small",
+            "generator.zero_shot_prior": "none",
+            "acquisition.rule": "greedy_mean",
+            "acquisition.beta": "low",
+            "acquisition.lookahead": "one_step",
+            "batch.selection": "top_k_by_score",
+            "batch.size_rule": "fixed",
+            "update.refit": "refit_from_scratch",
+            "update.weighting": "uniform",
+            "update.target_transform": "identity",
+            "stopping.rule": "fixed_rounds"
+          },
+          "mean": 4.012845198746933,
+          "fails": 0,
+          "seeds": [
+            4.617994471841,
+            2.6984443928399995,
+            3.5646634154669,
+            7.4736384307841,
+            4.604535091869599,
+            1.1177953896800004
+          ]
+        },
+        "all": [
+          {
+            "partial": {
+              "representation.encoding": "onehot_plus_pairs",
+              "representation.pooling": "mean",
+              "representation.rank": "full",
+              "representation.site_coupling": "independent_sites",
+              "surrogate.family": "ridge",
+              "surrogate.count": "single",
+              "surrogate.heads": "joint_fitness",
+              "surrogate.uncertainty": "none",
+              "generator.scope": "global_all_variants",
+              "generator.ball_centre": "observed_elites",
+              "generator.radius": "r2",
+              "generator.pool_size": "small",
+              "generator.zero_shot_prior": "none",
+              "acquisition.rule": "greedy_mean",
+              "acquisition.beta": "low",
+              "acquisition.lookahead": "one_step",
+              "batch.selection": "top_k_by_score",
+              "batch.size_rule": "fixed",
+              "update.refit": "refit_from_scratch",
+              "update.weighting": "uniform",
+              "update.target_transform": "identity",
+              "stopping.rule": "fixed_rounds"
+            },
+            "mean": 4.012845198746933,
+            "fails": 0,
+            "seeds": [
+              4.617994471841,
+              2.6984443928399995,
+              3.5646634154669,
+              7.4736384307841,
+              4.604535091869599,
+              1.1177953896800004
+            ]
+          },
+          {
+            "partial": {
+              "representation.encoding": "onehot_plus_pairs",
+              "representation.pooling": "mean",
+              "representation.rank": "full",
+              "representation.site_coupling": "independent_sites",
+              "surrogate.family": "random_forest",
+              "surrogate.count": "single",
+              "surrogate.heads": "joint_fitness",
+              "surrogate.uncertainty": "none",
+              "generator.scope": "global_all_variants",
+              "generator.ball_centre": "observed_elites",
+              "generator.radius": "r1",
+              "generator.pool_size": "small",
+              "generator.zero_shot_prior": "none",
+              "acquisition.rule": "ucb",
+              "acquisition.beta": "medium",
+              "acquisition.lookahead": "one_step",
+              "batch.selection": "top_k_by_score",
+              "batch.size_rule": "fixed",
+              "update.refit": "refit_from_scratch",
+              "update.weighting": "uniform",
+              "update.target_transform": "identity",
+              "stopping.rule": "fixed_rounds"
+            },
+            "mean": 3.569624103476933,
+            "fails": 0,
+            "seeds": [
+              4.617994471841,
+              2.6761525790799996,
+              3.5646634154669,
+              4.7999556835341,
+              5.1446116451696,
+              0.6143668257700003
+            ]
+          },
+          {
+            "partial": {
+              "representation.encoding": "esm2_frozen",
+              "representation.pooling": "mean",
+              "representation.rank": "full",
+              "representation.site_coupling": "independent_sites",
+              "surrogate.family": "ridge",
+              "surrogate.count": "single",
+              "surrogate.heads": "joint_fitness",
+              "surrogate.uncertainty": "none",
+              "generator.scope": "global_all_variants",
+              "generator.ball_centre": "observed_elites",
+              "generator.radius": "r1",
+              "generator.pool_size": "small",
+              "generator.zero_shot_prior": "none",
+              "acquisition.rule": "greedy_mean",
+              "acquisition.beta": "low",
+              "acquisition.lookahead": "one_step",
+              "batch.selection": "top_k_by_score",
+              "batch.size_rule": "fixed",
+              "update.refit": "refit_from_scratch",
+              "update.weighting": "uniform",
+              "update.target_transform": "identity",
+              "stopping.rule": "fixed_rounds"
+            },
+            "mean": 2.9820856392985995,
+            "fails": 0,
+            "seeds": [
+              3.500263004111,
+              1.9149897144799994,
+              3.3196205259269003,
+              3.6814723597041,
+              4.016301005059599,
+              1.4598672265100001
+            ]
+          }
+        ]
+      }
+    ],
+    "final_mean": 4.027806384340267,
+    "final_partial": {},
+    "best_any_llm_mean": 4.919123621846934
+  },
+  "contrast": {
+    "oneshot_minus_default": 0.8913172375066667,
+    "iterative_minus_default": 0.0,
+    "iterative_minus_oneshot": -0.8913172375066667,
+    "best_any_minus_default": 0.8913172375066667
+  },
+  "default": {
+    "mean": 4.027806384340267,
+    "fails": 0,
+    "seeds": [
+      5.033633066381,
+      4.12789621874,
+      3.5139889572469003,
+      6.7765184421741,
+      3.1684264039996,
+      1.5463752175000005
+    ]
+  }
+}
