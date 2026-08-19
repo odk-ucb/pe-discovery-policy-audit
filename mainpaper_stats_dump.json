@@ -1,0 +1,323 @@
+{
+  "equiv_margin": 0.2,
+  "landscapes": {
+    "GB1": {
+      "path": "/Users/odysseus/Documents/Research/Academic_research/Projects/Novelty_Landscape_Engineering_2026_07/01_Scientific_Idea_Discovery_and_Lineages/paper_distant_inspiration_retrieval/protein/pool_results_GB1_s24_b96i24x24.json",
+      "build": "594e370793f16f49",
+      "n_rows": 129,
+      "holm_beat_default": {
+        "n_tested": 128,
+        "n_better_holm": 0,
+        "n_worse_holm": 15,
+        "mean_policy_delta_vs_default": -0.47390987502599646,
+        "mean_policy_delta_ci95": [
+          -0.592908944390978,
+          -0.35491080566101496
+        ],
+        "median_policy_delta": -0.28948493453979174,
+        "frac_positive_mean_delta": 0.1953125
+      },
+      "free_vs_base": {
+        "channel": "free",
+        "n_policies": 25,
+        "n_seeds": 24,
+        "mean_delta": -0.7049412037162684,
+        "ci95": [
+          -1.0908117441639,
+          -0.3190706632686368
+        ],
+        "se": 0.18653185452447382,
+        "ttest_p": 0.0009718486595340771,
+        "tost_p": 0.9937112163871611,
+        "tost_equiv_margin": 0.2,
+        "tost_equiv_at_0.05": false,
+        "mde_halfwidth_approx": 0.38587054044763164,
+        "wins": 4
+      },
+      "perturb_vs_base": {
+        "channel": "perturb",
+        "n_policies": 5,
+        "n_seeds": 24,
+        "mean_delta": 0.024718988734916476,
+        "ci95": [
+          -0.2990226677931954,
+          0.34846064526302833
+        ],
+        "se": 0.15649842433931416,
+        "ttest_p": 0.8758744383165759,
+        "tost_p": 0.13713303886085573,
+        "tost_equiv_margin": 0.2,
+        "tost_equiv_at_0.05": false,
+        "mde_halfwidth_approx": 0.3237416565281119,
+        "wins": 13
+      },
+      "base_vs_free": {
+        "channel": "free",
+        "n_policies": 25,
+        "n_seeds": 24,
+        "se": 0.18653185452447382,
+        "ttest_p": 0.0009718486595340771,
+        "tost_p": 0.9937112163871611,
+        "tost_equiv_margin": 0.2,
+        "tost_equiv_at_0.05": false,
+        "mde_halfwidth_approx": 0.38587054044763164,
+        "mean_delta": 0.7049412037162684,
+        "ci95": [
+          0.3190706632686368,
+          1.0908117441639
+        ],
+        "wins": 20
+      },
+      "free_vs_random": {
+        "n_free_policies": 25,
+        "n_random_exec_policies": 18,
+        "complete_case": {
+          "mean_delta_free_minus_random": 0.14414783648282262,
+          "ci95": [
+            -0.13486193119928244,
+            0.42315760416492765
+          ],
+          "ttest_p": 0.27965272895226506,
+          "tost_p": 0.33402039318477317,
+          "tost_equiv_at_0.05": false,
+          "mde": 0.27900976768210506,
+          "n_seeds": 12,
+          "wins": 8
+        },
+        "policy_mean_of_means": {
+          "free_mean": 4.983847760216648,
+          "free_n": 25,
+          "random_exec_mean": 4.958351034962018,
+          "random_exec_n": 18,
+          "delta": 0.025496725254630093,
+          "welch_p": 0.8986414237963917
+        },
+        "itt": {
+          "mean_delta": 0.7107815498338352,
+          "ci95": [
+            0.517561148455143,
+            0.9040019512125275
+          ],
+          "ttest_p": 1.0005635314162569e-07,
+          "tost_p": 0.9999926489704836,
+          "tost_equiv_at_0.05": false,
+          "mde": 0.19322040137869223,
+          "n_seeds": 24,
+          "anchor": 0.0667638892489
+        }
+      }
+    },
+    "TEV": {
+      "path": "/Users/odysseus/Documents/Research/Academic_research/Projects/Novelty_Landscape_Engineering_2026_07/01_Scientific_Idea_Discovery_and_Lineages/paper_distant_inspiration_retrieval/protein/pool_results_TEV_plmfix2.json",
+      "build": "plmfix_TEV_1787145235",
+      "n_rows": 46,
+      "holm_beat_default": {
+        "n_tested": 45,
+        "n_better_holm": 0,
+        "n_worse_holm": 0,
+        "mean_policy_delta_vs_default": -0.044470760515411364,
+        "mean_policy_delta_ci95": [
+          -0.07159295524176999,
+          -0.017348565789052736
+        ],
+        "median_policy_delta": -0.04246575357618058,
+        "frac_positive_mean_delta": 0.26666666666666666
+      },
+      "free_vs_base": {
+        "channel": "free",
+        "n_policies": 10,
+        "n_seeds": 8,
+        "mean_delta": -0.03161914823270473,
+        "ci95": [
+          -0.5618243346190562,
+          0.49858603815364677
+        ],
+        "se": 0.22422386390954557,
+        "ttest_p": 0.8918296297787714,
+        "tost_p": 0.2385816543451521,
+        "tost_equiv_margin": 0.2,
+        "tost_equiv_at_0.05": false,
+        "mde_halfwidth_approx": 0.5302051863863515,
+        "wins": 3
+      },
+      "perturb_vs_base": {
+        "channel": "perturb",
+        "n_policies": 5,
+        "n_seeds": 8,
+        "mean_delta": -0.0027179893426520496,
+        "ci95": [
+          -0.42295685211585093,
+          0.41752087343054683
+        ],
+        "se": 0.17771908686554777,
+        "ttest_p": 0.9882246070273769,
+        "tost_p": 0.1518187987570958,
+        "tost_equiv_margin": 0.2,
+        "tost_equiv_at_0.05": false,
+        "mde_halfwidth_approx": 0.4202388627731989,
+        "wins": 3
+      },
+      "base_vs_free": {
+        "channel": "free",
+        "n_policies": 10,
+        "n_seeds": 8,
+        "se": 0.22422386390954557,
+        "ttest_p": 0.8918296297787714,
+        "tost_p": 0.2385816543451521,
+        "tost_equiv_margin": 0.2,
+        "tost_equiv_at_0.05": false,
+        "mde_halfwidth_approx": 0.5302051863863515,
+        "mean_delta": 0.03161914823270473,
+        "ci95": [
+          -0.49858603815364677,
+          0.5618243346190562
+        ],
+        "wins": 5
+      },
+      "free_vs_random": {
+        "n_free_policies": 10,
+        "n_random_exec_policies": 10,
+        "complete_case": {
+          "mean_delta_free_minus_random": 0.08717476762468573,
+          "ci95": [
+            -0.06652220369019243,
+            0.2408717389395639
+          ],
+          "ttest_p": 0.22174297622240466,
+          "tost_p": 0.06308827715950706,
+          "tost_equiv_at_0.05": false,
+          "mde": 0.15369697131487817,
+          "n_seeds": 8,
+          "wins": 4
+        },
+        "policy_mean_of_means": {
+          "free_mean": 1.0774160568938913,
+          "free_n": 10,
+          "random_exec_mean": 0.9749603498370183,
+          "random_exec_n": 10,
+          "delta": 0.10245570705687301,
+          "welch_p": 0.06988993792908468
+        },
+        "itt": {
+          "mean_delta": 0.2704870085919236,
+          "ci95": [
+            0.1876106715857402,
+            0.353363345598107
+          ],
+          "ttest_p": 6.918378227998164e-07,
+          "tost_p": 0.9540973783706471,
+          "tost_equiv_at_0.05": false,
+          "mde": 0.08287633700618338,
+          "n_seeds": 24,
+          "anchor": 0.23772686684589803
+        }
+      }
+    },
+    "TrpB4": {
+      "path": "/Users/odysseus/Documents/Research/Academic_research/Projects/Novelty_Landscape_Engineering_2026_07/01_Scientific_Idea_Discovery_and_Lineages/paper_distant_inspiration_retrieval/protein/pool_results_TrpB4_plmfix2.json",
+      "build": "plmfix_TrpB4_1787145384",
+      "n_rows": 103,
+      "holm_beat_default": {
+        "n_tested": 102,
+        "n_better_holm": 0,
+        "n_worse_holm": 5,
+        "mean_policy_delta_vs_default": -0.13074776208832417,
+        "mean_policy_delta_ci95": [
+          -0.1706435659858666,
+          -0.09085195819078173
+        ],
+        "median_policy_delta": -0.06761820446953945,
+        "frac_positive_mean_delta": 0.18627450980392157
+      },
+      "free_vs_base": {
+        "channel": "free",
+        "n_policies": 25,
+        "n_seeds": 8,
+        "mean_delta": -0.1454338360006929,
+        "ci95": [
+          -0.577662283133328,
+          0.28679461113194227
+        ],
+        "se": 0.18278948413960103,
+        "ttest_p": 0.45237521491771027,
+        "tost_p": 0.3869868687893021,
+        "tost_equiv_margin": 0.2,
+        "tost_equiv_at_0.05": false,
+        "mde_halfwidth_approx": 0.43222844713263514,
+        "wins": 2
+      },
+      "perturb_vs_base": {
+        "channel": "perturb",
+        "n_policies": 8,
+        "n_seeds": 8,
+        "mean_delta": 0.04408540868046576,
+        "ci95": [
+          -0.2483924525996116,
+          0.3365632699605431
+        ],
+        "se": 0.12368893750585008,
+        "ttest_p": 0.7320259635420177,
+        "tost_p": 0.12393292301066443,
+        "tost_equiv_margin": 0.2,
+        "tost_equiv_at_0.05": false,
+        "mde_halfwidth_approx": 0.29247786128007736,
+        "wins": 5
+      },
+      "base_vs_free": {
+        "channel": "free",
+        "n_policies": 25,
+        "n_seeds": 8,
+        "se": 0.18278948413960103,
+        "ttest_p": 0.45237521491771027,
+        "tost_p": 0.3869868687893021,
+        "tost_equiv_margin": 0.2,
+        "tost_equiv_at_0.05": false,
+        "mde_halfwidth_approx": 0.43222844713263514,
+        "mean_delta": 0.1454338360006929,
+        "ci95": [
+          -0.28679461113194227,
+          0.577662283133328
+        ],
+        "wins": 6
+      },
+      "free_vs_random": {
+        "n_free_policies": 25,
+        "n_random_exec_policies": 18,
+        "complete_case": {
+          "mean_delta_free_minus_random": 0.10961737374481156,
+          "ci95": [
+            -0.028576601512748295,
+            0.24781134900237142
+          ],
+          "ttest_p": 0.08584758339983165,
+          "tost_p": 0.06441466650586253,
+          "tost_equiv_at_0.05": false,
+          "mde": 0.13819397525755986,
+          "n_seeds": 4,
+          "wins": 4
+        },
+        "policy_mean_of_means": {
+          "free_mean": 1.5392286226264926,
+          "free_n": 25,
+          "random_exec_mean": 1.4504793697684868,
+          "random_exec_n": 18,
+          "delta": 0.08874925285800583,
+          "welch_p": 0.21754735794291039
+        },
+        "itt": {
+          "mean_delta": 0.5509869419004761,
+          "ci95": [
+            0.4529832770445272,
+            0.6489906067564251
+          ],
+          "ttest_p": 4.117111094535896e-11,
+          "tost_p": 0.9999999219654564,
+          "tost_equiv_at_0.05": false,
+          "mde": 0.09800366485594897,
+          "n_seeds": 24,
+          "anchor": 0.11792982707519815
+        }
+      }
+    }
+  }
+}
