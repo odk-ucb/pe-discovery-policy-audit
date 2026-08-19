@@ -1,0 +1,75 @@
+========================================================================================================
+ANALYSIS OF RECORD   build 906f6c0b8e052fe7   41 executed policies   paired on seed_ids
+========================================================================================================
+
+DOES ANY POLICY BEAT THE DEFAULT (SEED:base_onehot_ridge)?
+   tested against the default: 40
+   significantly BETTER after Holm: 0/40
+   significantly WORSE  after Holm: 3/40
+
+BEHAVIOURALLY INERT POLICIES (seed vector bit-identical to base): 1/41
+   perturb           1/ 5 are the base under another name
+
+ATTRITION (cells lost to infeasibility), by arm:
+   coord_matched      8/  80 cells lost ( 10.0%)   whole policies lost: 1
+   free               8/  80 cells lost ( 10.0%)   whole policies lost: 1
+   null               0/   8 cells lost (  0.0%)   whole policies lost: 0
+   perturb            0/  40 cells lost (  0.0%)   whole policies lost: 0
+   random_basis      24/  80 cells lost ( 30.0%)   whole policies lost: 3
+   seed               0/  32 cells lost (  0.0%)   whole policies lost: 0
+   value_matched      0/  48 cells lost (  0.0%)   whole policies lost: 0
+
+channel            n  live  mean best      sd
+coord_matched      9     9      7.562   0.568
+free               9     9      6.668   1.064
+null               1     1      4.903   0.000
+perturb            5     4      7.828   0.235
+random_basis       7     7      7.460   0.637
+seed               4     3      7.504   0.360
+value_matched      6     6      7.008   1.485
+
+--------------------------------------------------------------------------------------------------------
+PRE-REGISTERED FAMILY — ALL POLICIES  (unit = seed; paired on seed ids; Holm across the family)
+--------------------------------------------------------------------------------------------------------
+   perturb vs base            (does the LLM's move add to the default?)  -0.011 p=0.9611 holm=0.9611   3/ 8 TOST=0.211       MDE=0.524
+   base vs free               (does the DEFAULT beat free proposal?)  +1.171 p=0.0321 holm=0.1283   7/ 8 TOST=0.969       MDE=1.038
+   perturb vs free            (is the channel better at all?)      +1.160 p=0.0027 holm=0.0187*  7/ 8 TOST=0.996       MDE=0.605
+   perturb vs coord_matched   (did the LLM pick the COORDINATE?)   +0.266 p=0.2365 holm=0.7096   6/ 8 TOST=0.622       MDE=0.486
+   perturb vs value_matched   (did the LLM pick the VALUE?)        +0.820 p=0.0037 holm=0.0222*  7/ 8 TOST=0.993       MDE=0.454
+   free vs random_basis       (does LLM generation beat uniform?)  -0.792 p=0.0073 holm=0.0364*  0/ 8 TOST=0.987       MDE=0.501
+   perturb vs random_basis    (does the channel beat uniform?)     +0.368 p=0.3121 holm=0.7096   6/ 8 TOST=0.683       MDE=0.798
+   project vs free            (do cross-domain donors help?)       arm absent
+   recombine vs free          (does combination help?)             arm absent
+   free_replication vs base   (does the SECOND generator's move beat the default?)  arm absent
+   free_replication vs random_basis (does the SECOND generator beat uniform?)  arm absent
+   free vs free_replication    (do the two generators differ from each other?)  arm absent
+   perturb_replication vs base (SECOND generator's perturb move vs default)  arm absent
+   perturb vs perturb_replication (do the two generators' perturb channels differ?)  arm absent
+   * survives Holm.  EQUIV = equivalent within +/-0.2 (TOST p<0.05), not merely non-significant.
+
+--------------------------------------------------------------------------------------------------------
+PRE-REGISTERED FAMILY — LIVE POLICIES ONLY  (unit = seed; paired on seed ids; Holm across the family)
+--------------------------------------------------------------------------------------------------------
+   perturb vs base            (does the LLM's move add to the default?)  -0.014 p=0.9611 holm=0.9611   3/ 8 TOST=0.262       MDE=0.655
+   base vs free               (does the DEFAULT beat free proposal?)  +1.171 p=0.0321 holm=0.1283   7/ 8 TOST=0.969       MDE=1.038
+   perturb vs free            (is the channel better at all?)      +1.157 p=0.0012 holm=0.0084*  8/ 8 TOST=0.998       MDE=0.523
+   perturb vs coord_matched   (did the LLM pick the COORDINATE?)   +0.264 p=0.1805 holm=0.5414   6/ 8 TOST=0.635       MDE=0.419
+   perturb vs value_matched   (did the LLM pick the VALUE?)        +0.817 p=0.0016 holm=0.0094*  7/ 8 TOST=0.997       MDE=0.387
+   free vs random_basis       (does LLM generation beat uniform?)  -0.792 p=0.0073 holm=0.0364*  0/ 8 TOST=0.987       MDE=0.501
+   perturb vs random_basis    (does the channel beat uniform?)     +0.365 p=0.2786 holm=0.5572   6/ 8 TOST=0.694       MDE=0.735
+   project vs free            (do cross-domain donors help?)       arm absent
+   recombine vs free          (does combination help?)             arm absent
+   free_replication vs base   (does the SECOND generator's move beat the default?)  arm absent
+   free_replication vs random_basis (does the SECOND generator beat uniform?)  arm absent
+   free vs free_replication    (do the two generators differ from each other?)  arm absent
+   perturb_replication vs base (SECOND generator's perturb move vs default)  arm absent
+   perturb vs perturb_replication (do the two generators' perturb channels differ?)  arm absent
+   * survives Holm.  EQUIV = equivalent within +/-0.2 (TOST p<0.05), not merely non-significant.
+
+--------------------------------------------------------------------------------------------------------
+ATTRITION SENSITIVITY — free vs random_basis under three handlings
+--------------------------------------------------------------------------------------------------------
+   complete-case                                  -0.792  p=0.0073  0/8
+   intention-to-treat (infeasible = anchor)       +0.252  p=0.1874  6/8   anchor=2.635
+   -> if these disagree, FEASIBILITY of the proposal is part of what the generator supplies,
+      and complete-case analysis deletes exactly that contribution.
