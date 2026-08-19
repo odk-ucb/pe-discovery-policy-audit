@@ -1,0 +1,164 @@
+{
+  "__build__": "logged_free_llama70b",
+  "__provenance__": {
+    "model": "meta-llama/llama-3.3-70b-instruct",
+    "temperature": 0.5,
+    "timestamp": "2026-08-19T15:09:16",
+    "prompt_user": "Propose 8 diverse protein directed-evolution campaign configs as a JSON array.\nEach element: {\"name\": \"...\", \"coords\": {\"representation\": {...}, \"surrogate\": {...}, ...}}\nOnly use allowed coordinates:\n  representation.encoding: ['onehot', 'physicochem', 'onehot_plus_pairs', 'esm2_frozen']\n  representation.pooling: ['mean', 'site']\n  representation.rank: ['full', 'low_rank_pca']\n  representation.site_coupling: ['independent_sites', 'pairwise_sites']\n  surrogate.family: ['ridge', 'random_forest', 'gaussian_process', 'boosted_trees', 'knn']\n  surrogate.count: ['single', 'ensemble_of_k']\n  surrogate.heads: ['joint_fitness', 'separated_activity_and_fitness']\n  surrogate.uncertainty: ['none', 'ensemble_disagreement', 'gp_posterior', 'bootstrap']\n  generator.scope: ['global_all_variants', 'local_hamming_ball', 'recombine_observed_elites']\n  generator.ball_centre: ['observed_elites', 'wild_type']\n  generator.radius: ['r1', 'r2', 'adaptive_radius']\n  generator.pool_size: ['small', 'medium', 'exhaustive']\n  generator.zero_shot_prior: ['none', 'esm_masked_marginal_focus']\n  acquisition.rule: ['greedy_mean', 'ucb', 'expected_improvement', 'thompson', 'pure_explore']\n  acquisition.beta: ['low', 'medium', 'high', 'state_adaptive_beta']\n  acquisition.lookahead: ['one_step', 'two_step_myopic_rollout']\n  batch.selection: ['top_k_by_score', 'diverse_top_k_by_distance', 'score_then_cluster', 'epsilon_mixed']\n  batch.size_rule: ['fixed', 'state_adaptive_size']\n  update.refit: ['refit_from_scratch', 'warm_start']\n  update.weighting: ['uniform', 'recency_weighted', 'elite_weighted']\n  update.target_transform: ['identity', 'log1p', 'rank']\n  stopping.rule: ['fixed_rounds', 'plateau_detect', 'budget_exhausted']\nClassical DEFAULT for reference: onehot, ridge, greedy_mean, global pool.\nOptimize for combinatorial fitness landscapes under 96-assay / 4x24 budget.\nReturn ONLY the JSON array.",
+    "response_text": "```json\n[\n  {\n    \"name\": \"Physicochem Ridge Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"physicochem\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"},\n      \"surrogate\": {\"family\": \"ridge\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"none\"},\n      \"generator\": {\"scope\": \"global_all_variants\", \"ball_centre\": \"observed_elites\", \"radius\": \"r1\", \"pool_size\": \"small\", \"zero_shot_prior\": \"none\"},\n      \"acquisition\": {\"rule\": \"greedy_mean\", \"beta\": \"low\", \"lookahead\": \"one_step\"},\n      \"batch\": {\"selection\": \"top_k_by_score\", \"size_rule\": \"fixed\"},\n      \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"uniform\", \"target_transform\": \"identity\"},\n      \"stopping\": {\"rule\": \"fixed_rounds\"}\n    }\n  },\n  {\n    \"name\": \"ESM2 Frozen Ensemble Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"esm2_frozen\", \"pooling\": \"site\", \"rank\": \"low_rank_pca\", \"site_coupling\": \"pairwise_sites\"},\n      \"surrogate\": {\"family\": \"random_forest\", \"count\": \"ensemble_of_k\", \"heads\": \"separated_activity_and_fitness\", \"uncertainty\": \"ensemble_disagreement\"},\n      \"generator\": {\"scope\": \"local_hamming_ball\", \"ball_centre\": \"wild_type\", \"radius\": \"r2\", \"pool_size\": \"medium\", \"zero_shot_prior\": \"esm_masked_marginal_focus\"},\n      \"acquisition\": {\"rule\": \"ucb\", \"beta\": \"medium\", \"lookahead\": \"two_step_myopic_rollout\"},\n      \"batch\": {\"selection\": \"diverse_top_k_by_distance\", \"size_rule\": \"state_adaptive_size\"},\n      \"update\": {\"refit\": \"warm_start\", \"weighting\": \"recency_weighted\", \"target_transform\": \"log1p\"},\n      \"stopping\": {\"rule\": \"plateau_detect\"}\n    }\n  },\n  {\n    \"name\": \"Onehot Plus Pairs Gaussian Process Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"onehot_plus_pairs\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"},\n      \"surrogate\": {\"family\": \"gaussian_process\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"gp_posterior\"},\n      \"generator\": {\"scope\": \"recombine_observed_elites\", \"ball_centre\": \"observed_elites\", \"radius\": \"adaptive_radius\", \"pool_size\": \"exhaustive\", \"zero_shot_prior\": \"none\"},\n      \"acquisition\": {\"rule\": \"expected_improvement\", \"beta\": \"high\", \"lookahead\": \"one_step\"},\n      \"batch\": {\"selection\": \"score_then_cluster\", \"size_rule\": \"fixed\"},\n      \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"elite_weighted\", \"target_transform\": \"rank\"},\n      \"stopping\": {\"rule\": \"budget_exhausted\"}\n    }\n  },\n  {\n    \"name\": \"Onehot Ridge Thompson Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"onehot\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"},\n      \"surrogate\": {\"family\": \"ridge\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"none\"},\n      \"generator\": {\"scope\": \"global_all_variants\", \"ball_centre\": \"observed_elites\", \"radius\": \"r1\", \"pool_size\": \"small\", \"zero_shot_prior\": \"none\"},\n      \"acquisition\": {\"rule\": \"thompson\", \"beta\": \"low\", \"lookahead\": \"one_step\"},\n      \"batch\": {\"selection\": \"top_k_by_score\", \"size_rule\": \"fixed\"},\n      \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"uniform\", \"target_transform\": \"identity\"},\n      \"stopping\": {\"rule\": \"fixed_rounds\"}\n    }\n  },\n  {\n    \"name\": \"Physicochem Boosted Trees Pure Explore Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"physicochem\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"},\n      \"surrogate\": {\"family\": \"boosted_trees\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"none\"},\n      \"generator\": {\"scope\": \"global_all_variants\", \"ball_centre\": \"observed_elites\", \"radius\": \"r1\", \"pool_size\": \"small\", \"zero_shot_prior\": \"none\"},\n      \"acquisition\": {\"rule\": \"pure_explore\", \"beta\": \"low\", \"lookahead\": \"one_step\"},\n      \"batch\": {\"selection\": \"top_k_by_score\", \"size_rule\": \"fixed\"},\n      \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"uniform\", \"target_transform\": \"identity\"},\n      \"stopping\": {\"rule\": \"fixed_rounds\"}\n    }\n  },\n  {\n    \"name\": \"ESM2 Frozen KNN Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"esm2_frozen\", \"pooling\": \"site\", \"rank\": \"low_rank_pca\", \"site_coupling\": \"pairwise_sites\"},\n      \"surrogate\": {\"family\": \"knn\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"none\"},\n      \"generator\": {\"scope\": \"local_hamming_ball\", \"ball_centre\": \"wild_type\", \"radius\": \"r2\", \"pool_size\": \"medium\", \"zero_shot_prior\": \"esm_masked_marginal_focus\"},\n      \"acquisition\": {\"rule\": \"greedy_mean\", \"beta\": \"medium\", \"lookahead\": \"two_step_myopic_rollout\"},\n      \"batch\": {\"selection\": \"diverse_top_k_by_distance\", \"size_rule\": \"state_adaptive_size\"},\n      \"update\": {\"refit\": \"warm_start\", \"weighting\": \"recency_weighted\", \"target_transform\": \"log1p\"},\n      \"stopping\": {\"rule\": \"plateau_detect\"}\n    }\n  },\n  {\n    \"name\": \"Onehot Plus Pairs Random Forest Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"onehot_plus_pairs\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"},\n      \"surrogate\": {\"family\": \"random_forest\", \"count\": \"ensemble_of_k\", \"heads\": \"separated_activity_and_fitness\", \"uncertainty\": \"ensemble_disagreement\"},\n      \"generator\": {\"scope\": \"recombine_observed_elites\", \"ball_centre\": \"observed_elites\", \"radius\": \"adaptive_radius\", \"pool_size\": \"exhaustive\", \"zero_shot_prior\": \"none\"},\n      \"acquisition\": {\"rule\": \"expected_improvement\", \"beta\": \"high\", \"lookahead\": \"one_step\"},\n      \"batch\": {\"selection\": \"score_then_cluster\", \"size_rule\": \"fixed\"},\n      \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"elite_weighted\", \"target_transform\": \"rank\"},\n      \"stopping\": {\"rule\": \"budget_exhausted\"}\n    }\n  },\n  {\n    \"name\": \"Onehot Ridge UCB Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"onehot\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"},\n      \"surrogate\": {\"family\": \"ridge\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"none\"},\n      \"generator\": {\"scope\": \"global_all_variants\", \"ball_centre\": \"observed_elites\", \"radius\": \"r1\", \"pool_size\": \"small\", \"zero_shot_prior\": \"none\"},\n      \"acquisition\": {\"rule\": \"ucb\", \"beta\": \"low\", \"lookahead\": \"one_step\"},\n      \"batch\": {\"selection\": \"top_k_by_score\", \"size_rule\": \"fixed\"},\n      \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"uniform\", \"target_transform\": \"identity\"},\n      \"stopping\": {\"rule\": \"fixed_rounds\"}\n    }\n  }\n]\n```",
+    "n_requested": 8,
+    "n_parsed": 8,
+    "openrouter_id": "gen-1787148403-SMNjy4Rm6Zdcyk3HI3X4"
+  },
+  "SEED:base_onehot_ridge": {
+    "channel": "seed",
+    "best": 3.8267276518713254,
+    "seeds": [
+      5.033633066381,
+      4.12789621874,
+      3.5139889572469003,
+      6.7765184421741,
+      3.1684264039996,
+      1.5463752175000005,
+      1.71888592506,
+      4.728096983869
+    ],
+    "fail": 0
+  },
+  "LOGGED:Physicochem Ridge Campaign": {
+    "channel": "free_logged",
+    "best": 4.094793468707575,
+    "seeds": [
+      5.697248703711,
+      4.375156056030001,
+      3.8562950341669002,
+      5.0602398856441,
+      4.4656445140295995,
+      0.7827223398200003,
+      4.37330542352,
+      4.147735792739
+    ],
+    "fail": 0,
+    "provenance_tag": "llama70b",
+    "model": "meta-llama/llama-3.3-70b-instruct"
+  },
+  "LOGGED:ESM2 Frozen Ensemble Campaign": {
+    "channel": "free_logged",
+    "best": 2.572686132220075,
+    "seeds": [
+      4.625250488911,
+      0.23817967578999966,
+      4.9807213852369,
+      4.0769583698541005,
+      4.358114659529599,
+      0.65633105614,
+      0.0,
+      1.645933422299
+    ],
+    "fail": 0,
+    "provenance_tag": "llama70b",
+    "model": "meta-llama/llama-3.3-70b-instruct"
+  },
+  "LOGGED:Onehot Plus Pairs Gaussian Process Campa": {
+    "channel": "free_logged",
+    "best": 4.124318025646325,
+    "seeds": [
+      5.751086501621,
+      3.5546127968499994,
+      8.6673876035569,
+      3.7435810573741,
+      4.6199681504995995,
+      1.6188661988000002,
+      1.1046894216200003,
+      3.9343524748489997
+    ],
+    "fail": 0,
+    "provenance_tag": "llama70b",
+    "model": "meta-llama/llama-3.3-70b-instruct"
+  },
+  "LOGGED:Onehot Ridge Thompson Campaign": {
+    "channel": "free_logged",
+    "best": 3.8374283307613246,
+    "seeds": [
+      5.356605855621,
+      2.6984443928399995,
+      3.5646634154669,
+      4.7999556835341,
+      6.8279125668696,
+      1.05348345239,
+      1.7687679861399999,
+      4.629593293229
+    ],
+    "fail": 0,
+    "provenance_tag": "llama70b",
+    "model": "meta-llama/llama-3.3-70b-instruct"
+  },
+  "LOGGED:Physicochem Boosted Trees Pure Explore C": {
+    "channel": "free_logged",
+    "best": 3.396549763070075,
+    "seeds": [
+      6.239680745851,
+      2.07964266049,
+      4.2252463758969006,
+      5.0602398856441,
+      4.479385346189599,
+      0.9404672977500006,
+      0.0,
+      4.147735792739
+    ],
+    "fail": 0,
+    "provenance_tag": "llama70b",
+    "model": "meta-llama/llama-3.3-70b-instruct"
+  },
+  "LOGGED:ESM2 Frozen KNN Campaign": {
+    "channel": "free_logged",
+    "best": 3.399992844436325,
+    "seeds": [
+      4.625250488911,
+      1.00924528537,
+      4.9807213852369,
+      4.9942746819041,
+      4.358114659529599,
+      1.6188661988000002,
+      1.40345285675,
+      4.210017198989
+    ],
+    "fail": 0,
+    "provenance_tag": "llama70b",
+    "model": "meta-llama/llama-3.3-70b-instruct"
+  },
+  "LOGGED:Onehot Plus Pairs Random Forest Campaign": {
+    "channel": "free_logged",
+    "best": 3.8555042938050748,
+    "seeds": [
+      4.660574570251,
+      2.76055595717,
+      7.1877547178869,
+      3.5713691185841,
+      4.6199681504995995,
+      1.3043766005400004,
+      1.1046894216200003,
+      5.634745813889
+    ],
+    "fail": 0,
+    "provenance_tag": "llama70b",
+    "model": "meta-llama/llama-3.3-70b-instruct"
+  },
+  "LOGGED:Onehot Ridge UCB Campaign": {
+    "channel": "free_logged",
+    "best": 3.8374283307613246,
+    "seeds": [
+      5.356605855621,
+      2.6984443928399995,
+      3.5646634154669,
+      4.7999556835341,
+      6.8279125668696,
+      1.05348345239,
+      1.7687679861399999,
+      4.629593293229
+    ],
+    "fail": 0,
+    "provenance_tag": "llama70b",
+    "model": "meta-llama/llama-3.3-70b-instruct"
+  }
+}

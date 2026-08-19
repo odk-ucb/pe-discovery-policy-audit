@@ -1,0 +1,62 @@
+{
+  "tag": "gpt4omini",
+  "holm_better": 0,
+  "family": 9,
+  "model": "openai/gpt-4o-mini",
+  "rows": [
+    {
+      "name": "LOGGED:Campaign 1",
+      "delta": 0.0,
+      "p": 1.0,
+      "holm": 1.0
+    },
+    {
+      "name": "LOGGED:Campaign 2",
+      "delta": -0.6136123417112503,
+      "p": 0.24890786078257407,
+      "holm": 1.0
+    },
+    {
+      "name": "LOGGED:Campaign 3",
+      "delta": 0.1957158701537497,
+      "p": 0.7809970657176439,
+      "holm": 1.0
+    },
+    {
+      "name": "LOGGED:Campaign 4",
+      "delta": -0.5055374123750003,
+      "p": 0.332289563480409,
+      "holm": 1.0
+    },
+    {
+      "name": "LOGGED:Campaign 5",
+      "delta": 0.1114507565287498,
+      "p": 0.8231402507684389,
+      "holm": 1.0
+    },
+    {
+      "name": "LOGGED:Campaign 6",
+      "delta": 0.23726031601374975,
+      "p": 0.6934072754966724,
+      "holm": 1.0
+    },
+    {
+      "name": "LOGGED:Campaign 7",
+      "delta": 0.21658634537499977,
+      "p": 0.5594115060427909,
+      "holm": 1.0
+    },
+    {
+      "name": "LOGGED:Campaign 9",
+      "delta": 0.2585822073974996,
+      "p": 0.5767870173356138,
+      "holm": 1.0
+    },
+    {
+      "name": "LOGGED:Campaign 10",
+      "delta": 0.3010470172949999,
+      "p": 0.722319666270764,
+      "holm": 1.0
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "base": 3.8267276518713254,
+  "n_policies": 10,
+  "n_beats_raw": 6,
+  "beats": [
+    [
+      "LOGGED:Campaign 3",
+      0.19571587015374936
+    ],
+    [
+      "LOGGED:Campaign 5",
+      0.11145075652874947
+    ],
+    [
+      "LOGGED:Campaign 6",
+      0.23726031601374897
+    ],
+    [
+      "LOGGED:Campaign 7",
+      0.21658634537499966
+    ],
+    [
+      "LOGGED:Campaign 9",
+      0.25858220739750015
+    ],
+    [
+      "LOGGED:Campaign 10",
+      0.3010470172949993
+    ]
+  ],
+  "out": "/Users/odysseus/Documents/Research/Academic_research/Projects/Novelty_Landscape_Engineering_2026_07/01_Scientific_Idea_Discovery_and_Lineages/paper_distant_inspiration_retrieval/protein/pool_results_GB1_logged_free_gpt4omini.json"
+}

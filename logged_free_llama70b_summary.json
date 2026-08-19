@@ -1,0 +1,28 @@
+{
+  "base": 3.8267276518713254,
+  "n_policies": 8,
+  "n_beats_raw": 5,
+  "beats": [
+    [
+      "LOGGED:Physicochem Ridge Campaign",
+      0.26806581683624975
+    ],
+    [
+      "LOGGED:Onehot Plus Pairs Gaussian Process Campa",
+      0.2975903737749994
+    ],
+    [
+      "LOGGED:Onehot Ridge Thompson Campaign",
+      0.01070067888999926
+    ],
+    [
+      "LOGGED:Onehot Plus Pairs Random Forest Campaign",
+      0.028776641933749403
+    ],
+    [
+      "LOGGED:Onehot Ridge UCB Campaign",
+      0.01070067888999926
+    ]
+  ],
+  "out": "/Users/odysseus/Documents/Research/Academic_research/Projects/Novelty_Landscape_Engineering_2026_07/01_Scientific_Idea_Discovery_and_Lineages/paper_distant_inspiration_retrieval/protein/pool_results_GB1_logged_free_llama70b.json"
+}

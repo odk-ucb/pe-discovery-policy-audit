@@ -1,0 +1,189 @@
+{
+  "__build__": "logged_free_gpt4omini",
+  "__provenance__": {
+    "model": "openai/gpt-4o-mini",
+    "temperature": 0.5,
+    "timestamp": "2026-08-19T15:04:28",
+    "prompt_user": "Propose 10 diverse protein directed-evolution campaign configs as a JSON array.\nEach element: {\"name\": \"...\", \"coords\": {\"representation\": {...}, \"surrogate\": {...}, ...}}\nOnly use allowed coordinates:\n  representation.encoding: ['onehot', 'physicochem', 'onehot_plus_pairs', 'esm2_frozen']\n  representation.pooling: ['mean', 'site']\n  representation.rank: ['full', 'low_rank_pca']\n  representation.site_coupling: ['independent_sites', 'pairwise_sites']\n  surrogate.family: ['ridge', 'random_forest', 'gaussian_process', 'boosted_trees', 'knn']\n  surrogate.count: ['single', 'ensemble_of_k']\n  surrogate.heads: ['joint_fitness', 'separated_activity_and_fitness']\n  surrogate.uncertainty: ['none', 'ensemble_disagreement', 'gp_posterior', 'bootstrap']\n  generator.scope: ['global_all_variants', 'local_hamming_ball', 'recombine_observed_elites']\n  generator.ball_centre: ['observed_elites', 'wild_type']\n  generator.radius: ['r1', 'r2', 'adaptive_radius']\n  generator.pool_size: ['small', 'medium', 'exhaustive']\n  generator.zero_shot_prior: ['none', 'esm_masked_marginal_focus']\n  acquisition.rule: ['greedy_mean', 'ucb', 'expected_improvement', 'thompson', 'pure_explore']\n  acquisition.beta: ['low', 'medium', 'high', 'state_adaptive_beta']\n  acquisition.lookahead: ['one_step', 'two_step_myopic_rollout']\n  batch.selection: ['top_k_by_score', 'diverse_top_k_by_distance', 'score_then_cluster', 'epsilon_mixed']\n  batch.size_rule: ['fixed', 'state_adaptive_size']\n  update.refit: ['refit_from_scratch', 'warm_start']\n  update.weighting: ['uniform', 'recency_weighted', 'elite_weighted']\n  update.target_transform: ['identity', 'log1p', 'rank']\n  stopping.rule: ['fixed_rounds', 'plateau_detect', 'budget_exhausted']\nClassical DEFAULT for reference: onehot, ridge, greedy_mean, global pool.\nOptimize for combinatorial fitness landscapes under 96-assay / 4x24 budget.\nReturn ONLY the JSON array.",
+    "response_text": "```json\n[\n    {\n        \"name\": \"Campaign 1\",\n        \"coords\": {\n            \"representation\": {\n                \"encoding\": \"onehot\",\n                \"pooling\": \"mean\",\n                \"rank\": \"full\",\n                \"site_coupling\": \"independent_sites\"\n            },\n            \"surrogate\": {\n                \"family\": \"ridge\",\n                \"count\": \"single\",\n                \"heads\": \"joint_fitness\",\n                \"uncertainty\": \"none\"\n            },\n            \"generator\": {\n                \"scope\": \"global_all_variants\",\n                \"ball_centre\": \"observed_elites\",\n                \"radius\": \"r1\",\n                \"pool_size\": \"medium\",\n                \"zero_shot_prior\": \"none\"\n            },\n            \"acquisition\": {\n                \"rule\": \"greedy_mean\",\n                \"beta\": \"medium\",\n                \"lookahead\": \"one_step\"\n            },\n            \"batch\": {\n                \"selection\": \"top_k_by_score\",\n                \"size_rule\": \"fixed\"\n            },\n            \"update\": {\n                \"refit\": \"refit_from_scratch\",\n                \"weighting\": \"uniform\",\n                \"target_transform\": \"identity\"\n            },\n            \"stopping\": {\n                \"rule\": \"fixed_rounds\"\n            }\n        }\n    },\n    {\n        \"name\": \"Campaign 2\",\n        \"coords\": {\n            \"representation\": {\n                \"encoding\": \"physicochem\",\n                \"pooling\": \"site\",\n                \"rank\": \"low_rank_pca\",\n                \"site_coupling\": \"pairwise_sites\"\n            },\n            \"surrogate\": {\n                \"family\": \"random_forest\",\n                \"count\": \"ensemble_of_k\",\n                \"heads\": \"separated_activity_and_fitness\",\n                \"uncertainty\": \"ensemble_disagreement\"\n            },\n            \"generator\": {\n                \"scope\": \"local_hamming_ball\",\n                \"ball_centre\": \"wild_type\",\n                \"radius\": \"adaptive_radius\",\n                \"pool_size\": \"small\",\n                \"zero_shot_prior\": \"esm_masked_marginal_focus\"\n            },\n            \"acquisition\": {\n                \"rule\": \"ucb\",\n                \"beta\": \"high\",\n                \"lookahead\": \"two_step_myopic_rollout\"\n            },\n            \"batch\": {\n                \"selection\": \"diverse_top_k_by_distance\",\n                \"size_rule\": \"state_adaptive_size\"\n            },\n            \"update\": {\n                \"refit\": \"warm_start\",\n                \"weighting\": \"recency_weighted\",\n                \"target_transform\": \"log1p\"\n            },\n            \"stopping\": {\n                \"rule\": \"plateau_detect\"\n            }\n        }\n    },\n    {\n        \"name\": \"Campaign 3\",\n        \"coords\": {\n            \"representation\": {\n                \"encoding\": \"onehot_plus_pairs\",\n                \"pooling\": \"mean\",\n                \"rank\": \"full\",\n                \"site_coupling\": \"independent_sites\"\n            },\n            \"surrogate\": {\n                \"family\": \"gaussian_process\",\n                \"count\": \"single\",\n                \"heads\": \"joint_fitness\",\n                \"uncertainty\": \"gp_posterior\"\n            },\n            \"generator\": {\n                \"scope\": \"recombine_observed_elites\",\n                \"ball_centre\": \"observed_elites\",\n                \"radius\": \"r2\",\n                \"pool_size\": \"exhaustive\",\n                \"zero_shot_prior\": \"none\"\n            },\n            \"acquisition\": {\n                \"rule\": \"expected_improvement\",\n                \"beta\": \"low\",\n                \"lookahead\": \"one_step\"\n            },\n            \"batch\": {\n                \"selection\": \"score_then_cluster\",\n                \"size_rule\": \"fixed\"\n            },\n            \"update\": {\n                \"refit\": \"refit_from_scratch\",\n                \"weighting\": \"elite_weighted\",\n                \"target_transform\": \"rank\"\n            },\n            \"stopping\": {\n                \"rule\": \"budget_exhausted\"\n            }\n        }\n    },\n    {\n        \"name\": \"Campaign 4\",\n        \"coords\": {\n            \"representation\": {\n                \"encoding\": \"esm2_frozen\",\n                \"pooling\": \"site\",\n                \"rank\": \"low_rank_pca\",\n                \"site_coupling\": \"pairwise_sites\"\n            },\n            \"surrogate\": {\n                \"family\": \"boosted_trees\",\n                \"count\": \"ensemble_of_k\",\n                \"heads\": \"separated_activity_and_fitness\",\n                \"uncertainty\": \"bootstrap\"\n            },\n            \"generator\": {\n                \"scope\": \"global_all_variants\",\n                \"ball_centre\": \"wild_type\",\n                \"radius\": \"r1\",\n                \"pool_size\": \"medium\",\n                \"zero_shot_prior\": \"esm_masked_marginal_focus\"\n            },\n            \"acquisition\": {\n                \"rule\": \"thompson\",\n                \"beta\": \"medium\",\n                \"lookahead\": \"two_step_myopic_rollout\"\n            },\n            \"batch\": {\n                \"selection\": \"top_k_by_score\",\n                \"size_rule\": \"state_adaptive_size\"\n            },\n            \"update\": {\n                \"refit\": \"warm_start\",\n                \"weighting\": \"uniform\",\n                \"target_transform\": \"identity\"\n            },\n            \"stopping\": {\n                \"rule\": \"fixed_rounds\"\n            }\n        }\n    },\n    {\n        \"name\": \"Campaign 5\",\n        \"coords\": {\n            \"representation\": {\n                \"encoding\": \"onehot\",\n                \"pooling\": \"mean\",\n                \"rank\": \"full\",\n                \"site_coupling\": \"independent_sites\"\n            },\n            \"surrogate\": {\n                \"family\": \"knn\",\n                \"count\": \"single\",\n                \"heads\": \"joint_fitness\",\n                \"uncertainty\": \"none\"\n            },\n            \"generator\": {\n                \"scope\": \"local_hamming_ball\",\n                \"ball_centre\": \"observed_elites\",\n                \"radius\": \"adaptive_radius\",\n                \"pool_size\": \"small\",\n                \"zero_shot_prior\": \"none\"\n            },\n            \"acquisition\": {\n                \"rule\": \"greedy_mean\",\n                \"beta\": \"high\",\n                \"lookahead\": \"one_step\"\n            },\n            \"batch\": {\n                \"selection\": \"diverse_top_k_by_distance\",\n                \"size_rule\": \"fixed\"\n            },\n            \"update\": {\n                \"refit\": \"refit_from_scratch\",\n                \"weighting\": \"recency_weighted\",\n                \"target_transform\": \"log1p\"\n            },\n            \"stopping\": {\n                \"rule\": \"plateau_detect\"\n            }\n        }\n    },\n    {\n        \"name\": \"Campaign 6\",\n        \"coords\": {\n            \"representation\": {\n                \"encoding\": \"physicochem\",\n                \"pooling\": \"site\",\n                \"rank\": \"low_rank_pca\",\n                \"site_coupling\": \"pairwise_sites\"\n            },\n            \"surrogate\": {\n                \"family\": \"ridge\",\n                \"count\": \"ensemble_of_k\",\n                \"heads\": \"separated_activity_and_fitness\",\n                \"uncertainty\": \"ensemble_disagreement\"\n            },\n            \"generator\": {\n                \"scope\": \"recombine_observed_elites\",\n                \"ball_centre\": \"wild_type\",\n                \"radius\": \"r2\",\n                \"pool_size\": \"medium\",\n                \"zero_shot_prior\": \"esm_masked_marginal_focus\"\n            },\n            \"acquisition\": {\n                \"rule\": \"ucb\",\n                \"beta\": \"medium\",\n                \"lookahead\": \"two_step_myopic_rollout\"\n            },\n            \"batch\": {\n                \"selection\": \"score_then_cluster\",\n                \"size_rule\": \"state_adaptive_size\"\n            },\n            \"update\": {\n                \"refit\": \"warm_start\",\n                \"weighting\": \"elite_weighted\",\n                \"target_transform\": \"identity\"\n            },\n            \"stopping\": {\n                \"rule\": \"budget_exhausted\"\n            }\n        }\n    },\n    {\n        \"name\": \"Campaign 7\",\n        \"coords\": {\n            \"representation\": {\n                \"encoding\": \"onehot_plus_pairs\",\n                \"pooling\": \"mean\",\n                \"rank\": \"full\",\n                \"site_coupling\": \"independent_sites\"\n            },\n            \"surrogate\": {\n                \"family\": \"gaussian_process\",\n                \"count\": \"single\",\n                \"heads\": \"joint_fitness\",\n                \"uncertainty\": \"gp_posterior\"\n            },\n            \"generator\": {\n                \"scope\": \"global_all_variants\",\n                \"ball_centre\": \"observed_elites\",\n                \"radius\": \"adaptive_radius\",\n                \"pool_size\": \"exhaustive\",\n                \"zero_shot_prior\": \"none\"\n            },\n            \"acquisition\": {\n                \"rule\": \"expected_improvement\",\n                \"beta\": \"low\",\n                \"lookahead\": \"one_step\"\n            },\n            \"batch\": {\n                \"selection\": \"top_k_by_score\",\n                \"size_rule\": \"fixed\"\n            },\n            \"update\": {\n                \"refit\": \"refit_from_scratch\",\n                \"weighting\": \"recency_weighted\",\n                \"target_transform\": \"rank\"\n            },\n            \"stopping\": {\n                \"rule\": \"fixed_rounds\"\n            }\n        }\n    },\n    {\n        \"name\": \"Campaign 8\",\n        \"coords\": {\n            \"representation\": {\n                \"encoding\": \"esm2_frozen\",\n                \"pooling\": \"site\",\n                \"rank\": \"low_rank_pca\",\n                \"site_coupling\": \"pairwise_sites\"\n            },\n            \"surrogate\": {\n                \"family\": \"boosted_trees\",\n                \"count\": \"ensemble_of_k\",\n                \"heads\": \"separated_activity_and_fitness\",\n                \"uncertainty\": \"bootstrap\"\n            },\n            \"generator\": {\n                \"scope\": \"local_hamming_ball\",\n                \"ball_centre\": \"wild_type\",\n                \"radius\": \"r1\",\n                \"pool_size\": \"small\",\n                \"zero_shot_prior\": \"esm_masked_marginal_focus\"\n            },\n            \"acquisition\": {\n                \"rule\": \"thompson\",\n                \"beta\": \"medium\",\n                \"lookahead\": \"two_step_myopic_rollout\"\n            },\n            \"batch\": {\n                \"selection\": \"diverse_top_k_by_distance\",\n                \"size_rule\": \"state_adaptive_size\"\n            },\n            \"update\": {\n                \"refit\": \"warm_start\",\n                \"weighting\": \"uniform\",\n                \"target_transform\": \"identity\"\n            },\n            \"stopping\": {\n                \"rule\": \"plateau_detect\"\n            }\n        }\n    },\n    {\n        \"name\": \"Campaign 9\",\n        \"coords\": {\n            \"representation\": {\n                \"encoding\": \"onehot\",\n                \"pooling\": \"mean\",\n                \"rank\": \"full\",\n                \"site_coupling\": \"independent_sites\"\n            },\n            \"surrogate\": {\n                \"family\": \"knn\",\n                \"count\": \"single\",\n                \"heads\": \"joint_fitness\",\n                \"uncertainty\": \"none\"\n            },\n            \"generator\": {\n                \"scope\": \"recombine_observed_elites\",\n                \"ball_centre\": \"observed_elites\",\n                \"radius\": \"r2\",\n                \"pool_size\": \"medium\",\n                \"zero_shot_prior\": \"none\"\n            },\n            \"acquisition\": {\n                \"rule\": \"greedy_mean\",\n                \"beta\": \"high\",\n                \"lookahead\": \"one_step\"\n            },\n            \"batch\": {\n                \"selection\": \"score_then_cluster\",\n                \"size_rule\": \"fixed\"\n            },\n            \"update\": {\n                \"refit\": \"refit_from_scratch\",\n                \"weighting\": \"recency_weighted\",\n                \"target_transform\": \"log1p\"\n            },\n            \"stopping\": {\n                \"rule\": \"budget_exhausted\"\n            }\n        }\n    },\n    {\n        \"name\": \"Campaign 10\",\n        \"coords\": {\n            \"representation\": {\n                \"encoding\": \"physicochem\",\n                \"pooling\": \"site\",\n                \"rank\": \"low_rank_pca\",\n                \"site_coupling\": \"pairwise_sites\"\n            },\n            \"surrogate\": {\n                \"family\": \"ridge\",\n                \"count\": \"ensemble_of_k\",\n                \"heads\": \"separated_activity_and_fitness\",\n                \"uncertainty\": \"ensemble_disagreement\"\n            },\n            \"generator\": {\n                \"scope\": \"global_all_variants\",\n                \"ball_centre\": \"wild_type\",\n                \"radius\": \"adaptive_radius\",\n                \"pool_size\": \"medium\",\n                \"zero_shot_prior\": \"esm_masked_marginal_focus\"\n            },\n            \"acquisition\": {\n                \"rule\": \"ucb\",\n                \"beta\": \"medium\",\n                \"lookahead\": \"two_step_myopic_rollout\"\n            },\n            \"batch\": {\n                \"selection\": \"diverse_top_k_by_distance\",\n                \"size_rule\": \"state_adaptive_size\"\n            },\n            \"update\": {\n                \"refit\": \"warm_start\",\n                \"weighting\": \"elite_weighted\",\n                \"target_transform\": \"identity\"\n            },\n            \"stopping\": {\n                \"rule\": \"plateau_detect\"\n            }\n        }\n    }\n]\n```",
+    "n_requested": 10,
+    "n_parsed": 10,
+    "openrouter_id": "gen-1787148221-M5MUHW84Hfto5NFs2gpV"
+  },
+  "SEED:base_onehot_ridge": {
+    "channel": "seed",
+    "best": 3.8267276518713254,
+    "seeds": [
+      5.033633066381,
+      4.12789621874,
+      3.5139889572469003,
+      6.7765184421741,
+      3.1684264039996,
+      1.5463752175000005,
+      1.71888592506,
+      4.728096983869
+    ],
+    "fail": 0
+  },
+  "LOGGED:Campaign 1": {
+    "channel": "free_logged",
+    "best": 3.8267276518713254,
+    "seeds": [
+      5.033633066381,
+      4.12789621874,
+      3.5139889572469003,
+      6.7765184421741,
+      3.1684264039996,
+      1.5463752175000005,
+      1.71888592506,
+      4.728096983869
+    ],
+    "fail": 0,
+    "provenance_tag": "gpt4omini",
+    "model": "openai/gpt-4o-mini"
+  },
+  "LOGGED:Campaign 2": {
+    "channel": "free_logged",
+    "best": 3.213115310160075,
+    "seeds": [
+      4.625250488911,
+      2.76072579909,
+      4.2931672381669,
+      4.3067205348341,
+      5.0456688065996,
+      0.93131205173,
+      0.21961451003,
+      3.522463051919
+    ],
+    "fail": 0,
+    "provenance_tag": "gpt4omini",
+    "model": "openai/gpt-4o-mini"
+  },
+  "LOGGED:Campaign 3": {
+    "channel": "free_logged",
+    "best": 4.022443522025075,
+    "seeds": [
+      5.673755846441,
+      3.5546127968499994,
+      7.4600851341169,
+      4.2132181530241,
+      4.6199681504995995,
+      1.6188661988000002,
+      1.1046894216200003,
+      3.9343524748489997
+    ],
+    "fail": 0,
+    "provenance_tag": "gpt4omini",
+    "model": "openai/gpt-4o-mini"
+  },
+  "LOGGED:Campaign 4": {
+    "channel": "free_logged",
+    "best": 3.321190239496325,
+    "seeds": [
+      4.623218709981,
+      2.63170097569,
+      3.9513824694568997,
+      3.7429294785941,
+      4.632557124129599,
+      1.8417467062900004,
+      0.6433724348700003,
+      4.502614016959
+    ],
+    "fail": 0,
+    "provenance_tag": "gpt4omini",
+    "model": "openai/gpt-4o-mini"
+  },
+  "LOGGED:Campaign 5": {
+    "channel": "free_logged",
+    "best": 3.938178408400075,
+    "seeds": [
+      4.373355805991,
+      2.7300257493599998,
+      3.8837830804069,
+      5.9632123892141005,
+      5.1446116451696,
+      3.52490013238,
+      0.47587420785,
+      5.409664256829
+    ],
+    "fail": 0,
+    "provenance_tag": "gpt4omini",
+    "model": "openai/gpt-4o-mini"
+  },
+  "LOGGED:Campaign 6": {
+    "channel": "free_logged",
+    "best": 4.063987967885074,
+    "seeds": [
+      5.577439597961,
+      3.5546127968499994,
+      3.5646634154669,
+      3.5713691185841,
+      5.3685041022996,
+      1.9841582984600006,
+      3.25641059957,
+      5.634745813889
+    ],
+    "fail": 0,
+    "provenance_tag": "gpt4omini",
+    "model": "openai/gpt-4o-mini"
+  },
+  "LOGGED:Campaign 7": {
+    "channel": "free_logged",
+    "best": 4.043313997246325,
+    "seeds": [
+      5.841033925411,
+      3.1532510577,
+      4.9082304039369005,
+      7.2013080145541,
+      4.6660195908596,
+      1.7728130668100004,
+      0.8695034438499998,
+      3.9343524748489997
+    ],
+    "fail": 0,
+    "provenance_tag": "gpt4omini",
+    "model": "openai/gpt-4o-mini"
+  },
+  "LOGGED:Campaign 8": {
+    "channel": "free_logged",
+    "best": null,
+    "seeds": [],
+    "fail": 8,
+    "provenance_tag": "gpt4omini",
+    "model": "openai/gpt-4o-mini"
+  },
+  "LOGGED:Campaign 9": {
+    "channel": "free_logged",
+    "best": 4.0853098592688255,
+    "seeds": [
+      5.577439597961,
+      2.75247407552,
+      5.3460365146269,
+      7.2316316413341,
+      4.6199681504995995,
+      2.74470221151,
+      0.47587420785,
+      3.9343524748489997
+    ],
+    "fail": 0,
+    "provenance_tag": "gpt4omini",
+    "model": "openai/gpt-4o-mini"
+  },
+  "LOGGED:Campaign 10": {
+    "channel": "free_logged",
+    "best": 4.127774669166325,
+    "seeds": [
+      4.617994471841,
+      2.82669100283,
+      8.6673876035569,
+      4.3067205348341,
+      4.8472694426495995,
+      1.2989126203800003,
+      1.2804262771099997,
+      5.176795400129
+    ],
+    "fail": 0,
+    "provenance_tag": "gpt4omini",
+    "model": "openai/gpt-4o-mini"
+  }
+}

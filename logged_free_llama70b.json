@@ -1,0 +1,679 @@
+{
+  "condition": "LOGGED_FREE",
+  "provenance": {
+    "model": "meta-llama/llama-3.3-70b-instruct",
+    "temperature": 0.5,
+    "timestamp": "2026-08-19T15:09:16",
+    "prompt_user": "Propose 8 diverse protein directed-evolution campaign configs as a JSON array.\nEach element: {\"name\": \"...\", \"coords\": {\"representation\": {...}, \"surrogate\": {...}, ...}}\nOnly use allowed coordinates:\n  representation.encoding: ['onehot', 'physicochem', 'onehot_plus_pairs', 'esm2_frozen']\n  representation.pooling: ['mean', 'site']\n  representation.rank: ['full', 'low_rank_pca']\n  representation.site_coupling: ['independent_sites', 'pairwise_sites']\n  surrogate.family: ['ridge', 'random_forest', 'gaussian_process', 'boosted_trees', 'knn']\n  surrogate.count: ['single', 'ensemble_of_k']\n  surrogate.heads: ['joint_fitness', 'separated_activity_and_fitness']\n  surrogate.uncertainty: ['none', 'ensemble_disagreement', 'gp_posterior', 'bootstrap']\n  generator.scope: ['global_all_variants', 'local_hamming_ball', 'recombine_observed_elites']\n  generator.ball_centre: ['observed_elites', 'wild_type']\n  generator.radius: ['r1', 'r2', 'adaptive_radius']\n  generator.pool_size: ['small', 'medium', 'exhaustive']\n  generator.zero_shot_prior: ['none', 'esm_masked_marginal_focus']\n  acquisition.rule: ['greedy_mean', 'ucb', 'expected_improvement', 'thompson', 'pure_explore']\n  acquisition.beta: ['low', 'medium', 'high', 'state_adaptive_beta']\n  acquisition.lookahead: ['one_step', 'two_step_myopic_rollout']\n  batch.selection: ['top_k_by_score', 'diverse_top_k_by_distance', 'score_then_cluster', 'epsilon_mixed']\n  batch.size_rule: ['fixed', 'state_adaptive_size']\n  update.refit: ['refit_from_scratch', 'warm_start']\n  update.weighting: ['uniform', 'recency_weighted', 'elite_weighted']\n  update.target_transform: ['identity', 'log1p', 'rank']\n  stopping.rule: ['fixed_rounds', 'plateau_detect', 'budget_exhausted']\nClassical DEFAULT for reference: onehot, ridge, greedy_mean, global pool.\nOptimize for combinatorial fitness landscapes under 96-assay / 4x24 budget.\nReturn ONLY the JSON array.",
+    "response_text": "```json\n[\n  {\n    \"name\": \"Physicochem Ridge Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"physicochem\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"},\n      \"surrogate\": {\"family\": \"ridge\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"none\"},\n      \"generator\": {\"scope\": \"global_all_variants\", \"ball_centre\": \"observed_elites\", \"radius\": \"r1\", \"pool_size\": \"small\", \"zero_shot_prior\": \"none\"},\n      \"acquisition\": {\"rule\": \"greedy_mean\", \"beta\": \"low\", \"lookahead\": \"one_step\"},\n      \"batch\": {\"selection\": \"top_k_by_score\", \"size_rule\": \"fixed\"},\n      \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"uniform\", \"target_transform\": \"identity\"},\n      \"stopping\": {\"rule\": \"fixed_rounds\"}\n    }\n  },\n  {\n    \"name\": \"ESM2 Frozen Ensemble Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"esm2_frozen\", \"pooling\": \"site\", \"rank\": \"low_rank_pca\", \"site_coupling\": \"pairwise_sites\"},\n      \"surrogate\": {\"family\": \"random_forest\", \"count\": \"ensemble_of_k\", \"heads\": \"separated_activity_and_fitness\", \"uncertainty\": \"ensemble_disagreement\"},\n      \"generator\": {\"scope\": \"local_hamming_ball\", \"ball_centre\": \"wild_type\", \"radius\": \"r2\", \"pool_size\": \"medium\", \"zero_shot_prior\": \"esm_masked_marginal_focus\"},\n      \"acquisition\": {\"rule\": \"ucb\", \"beta\": \"medium\", \"lookahead\": \"two_step_myopic_rollout\"},\n      \"batch\": {\"selection\": \"diverse_top_k_by_distance\", \"size_rule\": \"state_adaptive_size\"},\n      \"update\": {\"refit\": \"warm_start\", \"weighting\": \"recency_weighted\", \"target_transform\": \"log1p\"},\n      \"stopping\": {\"rule\": \"plateau_detect\"}\n    }\n  },\n  {\n    \"name\": \"Onehot Plus Pairs Gaussian Process Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"onehot_plus_pairs\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"},\n      \"surrogate\": {\"family\": \"gaussian_process\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"gp_posterior\"},\n      \"generator\": {\"scope\": \"recombine_observed_elites\", \"ball_centre\": \"observed_elites\", \"radius\": \"adaptive_radius\", \"pool_size\": \"exhaustive\", \"zero_shot_prior\": \"none\"},\n      \"acquisition\": {\"rule\": \"expected_improvement\", \"beta\": \"high\", \"lookahead\": \"one_step\"},\n      \"batch\": {\"selection\": \"score_then_cluster\", \"size_rule\": \"fixed\"},\n      \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"elite_weighted\", \"target_transform\": \"rank\"},\n      \"stopping\": {\"rule\": \"budget_exhausted\"}\n    }\n  },\n  {\n    \"name\": \"Onehot Ridge Thompson Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"onehot\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"},\n      \"surrogate\": {\"family\": \"ridge\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"none\"},\n      \"generator\": {\"scope\": \"global_all_variants\", \"ball_centre\": \"observed_elites\", \"radius\": \"r1\", \"pool_size\": \"small\", \"zero_shot_prior\": \"none\"},\n      \"acquisition\": {\"rule\": \"thompson\", \"beta\": \"low\", \"lookahead\": \"one_step\"},\n      \"batch\": {\"selection\": \"top_k_by_score\", \"size_rule\": \"fixed\"},\n      \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"uniform\", \"target_transform\": \"identity\"},\n      \"stopping\": {\"rule\": \"fixed_rounds\"}\n    }\n  },\n  {\n    \"name\": \"Physicochem Boosted Trees Pure Explore Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"physicochem\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"},\n      \"surrogate\": {\"family\": \"boosted_trees\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"none\"},\n      \"generator\": {\"scope\": \"global_all_variants\", \"ball_centre\": \"observed_elites\", \"radius\": \"r1\", \"pool_size\": \"small\", \"zero_shot_prior\": \"none\"},\n      \"acquisition\": {\"rule\": \"pure_explore\", \"beta\": \"low\", \"lookahead\": \"one_step\"},\n      \"batch\": {\"selection\": \"top_k_by_score\", \"size_rule\": \"fixed\"},\n      \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"uniform\", \"target_transform\": \"identity\"},\n      \"stopping\": {\"rule\": \"fixed_rounds\"}\n    }\n  },\n  {\n    \"name\": \"ESM2 Frozen KNN Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"esm2_frozen\", \"pooling\": \"site\", \"rank\": \"low_rank_pca\", \"site_coupling\": \"pairwise_sites\"},\n      \"surrogate\": {\"family\": \"knn\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"none\"},\n      \"generator\": {\"scope\": \"local_hamming_ball\", \"ball_centre\": \"wild_type\", \"radius\": \"r2\", \"pool_size\": \"medium\", \"zero_shot_prior\": \"esm_masked_marginal_focus\"},\n      \"acquisition\": {\"rule\": \"greedy_mean\", \"beta\": \"medium\", \"lookahead\": \"two_step_myopic_rollout\"},\n      \"batch\": {\"selection\": \"diverse_top_k_by_distance\", \"size_rule\": \"state_adaptive_size\"},\n      \"update\": {\"refit\": \"warm_start\", \"weighting\": \"recency_weighted\", \"target_transform\": \"log1p\"},\n      \"stopping\": {\"rule\": \"plateau_detect\"}\n    }\n  },\n  {\n    \"name\": \"Onehot Plus Pairs Random Forest Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"onehot_plus_pairs\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"},\n      \"surrogate\": {\"family\": \"random_forest\", \"count\": \"ensemble_of_k\", \"heads\": \"separated_activity_and_fitness\", \"uncertainty\": \"ensemble_disagreement\"},\n      \"generator\": {\"scope\": \"recombine_observed_elites\", \"ball_centre\": \"observed_elites\", \"radius\": \"adaptive_radius\", \"pool_size\": \"exhaustive\", \"zero_shot_prior\": \"none\"},\n      \"acquisition\": {\"rule\": \"expected_improvement\", \"beta\": \"high\", \"lookahead\": \"one_step\"},\n      \"batch\": {\"selection\": \"score_then_cluster\", \"size_rule\": \"fixed\"},\n      \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"elite_weighted\", \"target_transform\": \"rank\"},\n      \"stopping\": {\"rule\": \"budget_exhausted\"}\n    }\n  },\n  {\n    \"name\": \"Onehot Ridge UCB Campaign\",\n    \"coords\": {\n      \"representation\": {\"encoding\": \"onehot\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"},\n      \"surrogate\": {\"family\": \"ridge\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"none\"},\n      \"generator\": {\"scope\": \"global_all_variants\", \"ball_centre\": \"observed_elites\", \"radius\": \"r1\", \"pool_size\": \"small\", \"zero_shot_prior\": \"none\"},\n      \"acquisition\": {\"rule\": \"ucb\", \"beta\": \"low\", \"lookahead\": \"one_step\"},\n      \"batch\": {\"selection\": \"top_k_by_score\", \"size_rule\": \"fixed\"},\n      \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"uniform\", \"target_transform\": \"identity\"},\n      \"stopping\": {\"rule\": \"fixed_rounds\"}\n    }\n  }\n]\n```",
+    "n_requested": 8,
+    "n_parsed": 8,
+    "openrouter_id": "gen-1787148403-SMNjy4Rm6Zdcyk3HI3X4"
+  },
+  "policies": [
+    {
+      "name": "Physicochem Ridge Campaign",
+      "coords": {
+        "representation": {
+          "encoding": "physicochem",
+          "pooling": "mean",
+          "rank": "full",
+          "site_coupling": "independent_sites"
+        },
+        "surrogate": {
+          "family": "ridge",
+          "count": "single",
+          "heads": "joint_fitness",
+          "uncertainty": "none"
+        },
+        "generator": {
+          "scope": "global_all_variants",
+          "ball_centre": "observed_elites",
+          "radius": "r1",
+          "pool_size": "small",
+          "zero_shot_prior": "none"
+        },
+        "acquisition": {
+          "rule": "greedy_mean",
+          "beta": "low",
+          "lookahead": "one_step"
+        },
+        "batch": {
+          "selection": "top_k_by_score",
+          "size_rule": "fixed"
+        },
+        "update": {
+          "refit": "refit_from_scratch",
+          "weighting": "uniform",
+          "target_transform": "identity"
+        },
+        "stopping": {
+          "rule": "fixed_rounds"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Physicochem Ridge Campaign",
+        "coords": {
+          "representation": {
+            "encoding": "physicochem",
+            "pooling": "mean",
+            "rank": "full",
+            "site_coupling": "independent_sites"
+          },
+          "surrogate": {
+            "family": "ridge",
+            "count": "single",
+            "heads": "joint_fitness",
+            "uncertainty": "none"
+          },
+          "generator": {
+            "scope": "global_all_variants",
+            "ball_centre": "observed_elites",
+            "radius": "r1",
+            "pool_size": "small",
+            "zero_shot_prior": "none"
+          },
+          "acquisition": {
+            "rule": "greedy_mean",
+            "beta": "low",
+            "lookahead": "one_step"
+          },
+          "batch": {
+            "selection": "top_k_by_score",
+            "size_rule": "fixed"
+          },
+          "update": {
+            "refit": "refit_from_scratch",
+            "weighting": "uniform",
+            "target_transform": "identity"
+          },
+          "stopping": {
+            "rule": "fixed_rounds"
+          }
+        }
+      }
+    },
+    {
+      "name": "ESM2 Frozen Ensemble Campaign",
+      "coords": {
+        "representation": {
+          "encoding": "esm2_frozen",
+          "pooling": "site",
+          "rank": "low_rank_pca",
+          "site_coupling": "pairwise_sites"
+        },
+        "surrogate": {
+          "family": "random_forest",
+          "count": "ensemble_of_k",
+          "heads": "separated_activity_and_fitness",
+          "uncertainty": "ensemble_disagreement"
+        },
+        "generator": {
+          "scope": "local_hamming_ball",
+          "ball_centre": "wild_type",
+          "radius": "r2",
+          "pool_size": "medium",
+          "zero_shot_prior": "esm_masked_marginal_focus"
+        },
+        "acquisition": {
+          "rule": "ucb",
+          "beta": "medium",
+          "lookahead": "two_step_myopic_rollout"
+        },
+        "batch": {
+          "selection": "diverse_top_k_by_distance",
+          "size_rule": "state_adaptive_size"
+        },
+        "update": {
+          "refit": "warm_start",
+          "weighting": "recency_weighted",
+          "target_transform": "log1p"
+        },
+        "stopping": {
+          "rule": "plateau_detect"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "ESM2 Frozen Ensemble Campaign",
+        "coords": {
+          "representation": {
+            "encoding": "esm2_frozen",
+            "pooling": "site",
+            "rank": "low_rank_pca",
+            "site_coupling": "pairwise_sites"
+          },
+          "surrogate": {
+            "family": "random_forest",
+            "count": "ensemble_of_k",
+            "heads": "separated_activity_and_fitness",
+            "uncertainty": "ensemble_disagreement"
+          },
+          "generator": {
+            "scope": "local_hamming_ball",
+            "ball_centre": "wild_type",
+            "radius": "r2",
+            "pool_size": "medium",
+            "zero_shot_prior": "esm_masked_marginal_focus"
+          },
+          "acquisition": {
+            "rule": "ucb",
+            "beta": "medium",
+            "lookahead": "two_step_myopic_rollout"
+          },
+          "batch": {
+            "selection": "diverse_top_k_by_distance",
+            "size_rule": "state_adaptive_size"
+          },
+          "update": {
+            "refit": "warm_start",
+            "weighting": "recency_weighted",
+            "target_transform": "log1p"
+          },
+          "stopping": {
+            "rule": "plateau_detect"
+          }
+        }
+      }
+    },
+    {
+      "name": "Onehot Plus Pairs Gaussian Process Campaign",
+      "coords": {
+        "representation": {
+          "encoding": "onehot_plus_pairs",
+          "pooling": "mean",
+          "rank": "full",
+          "site_coupling": "independent_sites"
+        },
+        "surrogate": {
+          "family": "gaussian_process",
+          "count": "single",
+          "heads": "joint_fitness",
+          "uncertainty": "gp_posterior"
+        },
+        "generator": {
+          "scope": "recombine_observed_elites",
+          "ball_centre": "observed_elites",
+          "radius": "adaptive_radius",
+          "pool_size": "exhaustive",
+          "zero_shot_prior": "none"
+        },
+        "acquisition": {
+          "rule": "expected_improvement",
+          "beta": "high",
+          "lookahead": "one_step"
+        },
+        "batch": {
+          "selection": "score_then_cluster",
+          "size_rule": "fixed"
+        },
+        "update": {
+          "refit": "refit_from_scratch",
+          "weighting": "elite_weighted",
+          "target_transform": "rank"
+        },
+        "stopping": {
+          "rule": "budget_exhausted"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Onehot Plus Pairs Gaussian Process Campaign",
+        "coords": {
+          "representation": {
+            "encoding": "onehot_plus_pairs",
+            "pooling": "mean",
+            "rank": "full",
+            "site_coupling": "independent_sites"
+          },
+          "surrogate": {
+            "family": "gaussian_process",
+            "count": "single",
+            "heads": "joint_fitness",
+            "uncertainty": "gp_posterior"
+          },
+          "generator": {
+            "scope": "recombine_observed_elites",
+            "ball_centre": "observed_elites",
+            "radius": "adaptive_radius",
+            "pool_size": "exhaustive",
+            "zero_shot_prior": "none"
+          },
+          "acquisition": {
+            "rule": "expected_improvement",
+            "beta": "high",
+            "lookahead": "one_step"
+          },
+          "batch": {
+            "selection": "score_then_cluster",
+            "size_rule": "fixed"
+          },
+          "update": {
+            "refit": "refit_from_scratch",
+            "weighting": "elite_weighted",
+            "target_transform": "rank"
+          },
+          "stopping": {
+            "rule": "budget_exhausted"
+          }
+        }
+      }
+    },
+    {
+      "name": "Onehot Ridge Thompson Campaign",
+      "coords": {
+        "representation": {
+          "encoding": "onehot",
+          "pooling": "mean",
+          "rank": "full",
+          "site_coupling": "independent_sites"
+        },
+        "surrogate": {
+          "family": "ridge",
+          "count": "single",
+          "heads": "joint_fitness",
+          "uncertainty": "none"
+        },
+        "generator": {
+          "scope": "global_all_variants",
+          "ball_centre": "observed_elites",
+          "radius": "r1",
+          "pool_size": "small",
+          "zero_shot_prior": "none"
+        },
+        "acquisition": {
+          "rule": "thompson",
+          "beta": "low",
+          "lookahead": "one_step"
+        },
+        "batch": {
+          "selection": "top_k_by_score",
+          "size_rule": "fixed"
+        },
+        "update": {
+          "refit": "refit_from_scratch",
+          "weighting": "uniform",
+          "target_transform": "identity"
+        },
+        "stopping": {
+          "rule": "fixed_rounds"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Onehot Ridge Thompson Campaign",
+        "coords": {
+          "representation": {
+            "encoding": "onehot",
+            "pooling": "mean",
+            "rank": "full",
+            "site_coupling": "independent_sites"
+          },
+          "surrogate": {
+            "family": "ridge",
+            "count": "single",
+            "heads": "joint_fitness",
+            "uncertainty": "none"
+          },
+          "generator": {
+            "scope": "global_all_variants",
+            "ball_centre": "observed_elites",
+            "radius": "r1",
+            "pool_size": "small",
+            "zero_shot_prior": "none"
+          },
+          "acquisition": {
+            "rule": "thompson",
+            "beta": "low",
+            "lookahead": "one_step"
+          },
+          "batch": {
+            "selection": "top_k_by_score",
+            "size_rule": "fixed"
+          },
+          "update": {
+            "refit": "refit_from_scratch",
+            "weighting": "uniform",
+            "target_transform": "identity"
+          },
+          "stopping": {
+            "rule": "fixed_rounds"
+          }
+        }
+      }
+    },
+    {
+      "name": "Physicochem Boosted Trees Pure Explore Campaign",
+      "coords": {
+        "representation": {
+          "encoding": "physicochem",
+          "pooling": "mean",
+          "rank": "full",
+          "site_coupling": "independent_sites"
+        },
+        "surrogate": {
+          "family": "boosted_trees",
+          "count": "single",
+          "heads": "joint_fitness",
+          "uncertainty": "none"
+        },
+        "generator": {
+          "scope": "global_all_variants",
+          "ball_centre": "observed_elites",
+          "radius": "r1",
+          "pool_size": "small",
+          "zero_shot_prior": "none"
+        },
+        "acquisition": {
+          "rule": "pure_explore",
+          "beta": "low",
+          "lookahead": "one_step"
+        },
+        "batch": {
+          "selection": "top_k_by_score",
+          "size_rule": "fixed"
+        },
+        "update": {
+          "refit": "refit_from_scratch",
+          "weighting": "uniform",
+          "target_transform": "identity"
+        },
+        "stopping": {
+          "rule": "fixed_rounds"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Physicochem Boosted Trees Pure Explore Campaign",
+        "coords": {
+          "representation": {
+            "encoding": "physicochem",
+            "pooling": "mean",
+            "rank": "full",
+            "site_coupling": "independent_sites"
+          },
+          "surrogate": {
+            "family": "boosted_trees",
+            "count": "single",
+            "heads": "joint_fitness",
+            "uncertainty": "none"
+          },
+          "generator": {
+            "scope": "global_all_variants",
+            "ball_centre": "observed_elites",
+            "radius": "r1",
+            "pool_size": "small",
+            "zero_shot_prior": "none"
+          },
+          "acquisition": {
+            "rule": "pure_explore",
+            "beta": "low",
+            "lookahead": "one_step"
+          },
+          "batch": {
+            "selection": "top_k_by_score",
+            "size_rule": "fixed"
+          },
+          "update": {
+            "refit": "refit_from_scratch",
+            "weighting": "uniform",
+            "target_transform": "identity"
+          },
+          "stopping": {
+            "rule": "fixed_rounds"
+          }
+        }
+      }
+    },
+    {
+      "name": "ESM2 Frozen KNN Campaign",
+      "coords": {
+        "representation": {
+          "encoding": "esm2_frozen",
+          "pooling": "site",
+          "rank": "low_rank_pca",
+          "site_coupling": "pairwise_sites"
+        },
+        "surrogate": {
+          "family": "knn",
+          "count": "single",
+          "heads": "joint_fitness",
+          "uncertainty": "none"
+        },
+        "generator": {
+          "scope": "local_hamming_ball",
+          "ball_centre": "wild_type",
+          "radius": "r2",
+          "pool_size": "medium",
+          "zero_shot_prior": "esm_masked_marginal_focus"
+        },
+        "acquisition": {
+          "rule": "greedy_mean",
+          "beta": "medium",
+          "lookahead": "two_step_myopic_rollout"
+        },
+        "batch": {
+          "selection": "diverse_top_k_by_distance",
+          "size_rule": "state_adaptive_size"
+        },
+        "update": {
+          "refit": "warm_start",
+          "weighting": "recency_weighted",
+          "target_transform": "log1p"
+        },
+        "stopping": {
+          "rule": "plateau_detect"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "ESM2 Frozen KNN Campaign",
+        "coords": {
+          "representation": {
+            "encoding": "esm2_frozen",
+            "pooling": "site",
+            "rank": "low_rank_pca",
+            "site_coupling": "pairwise_sites"
+          },
+          "surrogate": {
+            "family": "knn",
+            "count": "single",
+            "heads": "joint_fitness",
+            "uncertainty": "none"
+          },
+          "generator": {
+            "scope": "local_hamming_ball",
+            "ball_centre": "wild_type",
+            "radius": "r2",
+            "pool_size": "medium",
+            "zero_shot_prior": "esm_masked_marginal_focus"
+          },
+          "acquisition": {
+            "rule": "greedy_mean",
+            "beta": "medium",
+            "lookahead": "two_step_myopic_rollout"
+          },
+          "batch": {
+            "selection": "diverse_top_k_by_distance",
+            "size_rule": "state_adaptive_size"
+          },
+          "update": {
+            "refit": "warm_start",
+            "weighting": "recency_weighted",
+            "target_transform": "log1p"
+          },
+          "stopping": {
+            "rule": "plateau_detect"
+          }
+        }
+      }
+    },
+    {
+      "name": "Onehot Plus Pairs Random Forest Campaign",
+      "coords": {
+        "representation": {
+          "encoding": "onehot_plus_pairs",
+          "pooling": "mean",
+          "rank": "full",
+          "site_coupling": "independent_sites"
+        },
+        "surrogate": {
+          "family": "random_forest",
+          "count": "ensemble_of_k",
+          "heads": "separated_activity_and_fitness",
+          "uncertainty": "ensemble_disagreement"
+        },
+        "generator": {
+          "scope": "recombine_observed_elites",
+          "ball_centre": "observed_elites",
+          "radius": "adaptive_radius",
+          "pool_size": "exhaustive",
+          "zero_shot_prior": "none"
+        },
+        "acquisition": {
+          "rule": "expected_improvement",
+          "beta": "high",
+          "lookahead": "one_step"
+        },
+        "batch": {
+          "selection": "score_then_cluster",
+          "size_rule": "fixed"
+        },
+        "update": {
+          "refit": "refit_from_scratch",
+          "weighting": "elite_weighted",
+          "target_transform": "rank"
+        },
+        "stopping": {
+          "rule": "budget_exhausted"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Onehot Plus Pairs Random Forest Campaign",
+        "coords": {
+          "representation": {
+            "encoding": "onehot_plus_pairs",
+            "pooling": "mean",
+            "rank": "full",
+            "site_coupling": "independent_sites"
+          },
+          "surrogate": {
+            "family": "random_forest",
+            "count": "ensemble_of_k",
+            "heads": "separated_activity_and_fitness",
+            "uncertainty": "ensemble_disagreement"
+          },
+          "generator": {
+            "scope": "recombine_observed_elites",
+            "ball_centre": "observed_elites",
+            "radius": "adaptive_radius",
+            "pool_size": "exhaustive",
+            "zero_shot_prior": "none"
+          },
+          "acquisition": {
+            "rule": "expected_improvement",
+            "beta": "high",
+            "lookahead": "one_step"
+          },
+          "batch": {
+            "selection": "score_then_cluster",
+            "size_rule": "fixed"
+          },
+          "update": {
+            "refit": "refit_from_scratch",
+            "weighting": "elite_weighted",
+            "target_transform": "rank"
+          },
+          "stopping": {
+            "rule": "budget_exhausted"
+          }
+        }
+      }
+    },
+    {
+      "name": "Onehot Ridge UCB Campaign",
+      "coords": {
+        "representation": {
+          "encoding": "onehot",
+          "pooling": "mean",
+          "rank": "full",
+          "site_coupling": "independent_sites"
+        },
+        "surrogate": {
+          "family": "ridge",
+          "count": "single",
+          "heads": "joint_fitness",
+          "uncertainty": "none"
+        },
+        "generator": {
+          "scope": "global_all_variants",
+          "ball_centre": "observed_elites",
+          "radius": "r1",
+          "pool_size": "small",
+          "zero_shot_prior": "none"
+        },
+        "acquisition": {
+          "rule": "ucb",
+          "beta": "low",
+          "lookahead": "one_step"
+        },
+        "batch": {
+          "selection": "top_k_by_score",
+          "size_rule": "fixed"
+        },
+        "update": {
+          "refit": "refit_from_scratch",
+          "weighting": "uniform",
+          "target_transform": "identity"
+        },
+        "stopping": {
+          "rule": "fixed_rounds"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Onehot Ridge UCB Campaign",
+        "coords": {
+          "representation": {
+            "encoding": "onehot",
+            "pooling": "mean",
+            "rank": "full",
+            "site_coupling": "independent_sites"
+          },
+          "surrogate": {
+            "family": "ridge",
+            "count": "single",
+            "heads": "joint_fitness",
+            "uncertainty": "none"
+          },
+          "generator": {
+            "scope": "global_all_variants",
+            "ball_centre": "observed_elites",
+            "radius": "r1",
+            "pool_size": "small",
+            "zero_shot_prior": "none"
+          },
+          "acquisition": {
+            "rule": "ucb",
+            "beta": "low",
+            "lookahead": "one_step"
+          },
+          "batch": {
+            "selection": "top_k_by_score",
+            "size_rule": "fixed"
+          },
+          "update": {
+            "refit": "refit_from_scratch",
+            "weighting": "uniform",
+            "target_transform": "identity"
+          },
+          "stopping": {
+            "rule": "fixed_rounds"
+          }
+        }
+      }
+    }
+  ]
+}

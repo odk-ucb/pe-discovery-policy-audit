@@ -1,0 +1,56 @@
+{
+  "tag": "llama70b",
+  "holm_better": 0,
+  "family": 8,
+  "model": "meta-llama/llama-3.3-70b-instruct",
+  "rows": [
+    {
+      "name": "LOGGED:Physicochem Ridge Campaign",
+      "delta": 0.2680658168362498,
+      "p": 0.5901782054588705,
+      "holm": 1.0
+    },
+    {
+      "name": "LOGGED:ESM2 Frozen Ensemble Campaign",
+      "delta": -1.2540415196512504,
+      "p": 0.11285137114542068,
+      "holm": 0.9028109691633655
+    },
+    {
+      "name": "LOGGED:Onehot Plus Pairs Gaussian Process Campa",
+      "delta": 0.2975903737749997,
+      "p": 0.7319334099927766,
+      "holm": 1.0
+    },
+    {
+      "name": "LOGGED:Onehot Ridge Thompson Campaign",
+      "delta": 0.010700678889999649,
+      "p": 0.9861103094200672,
+      "holm": 1.0
+    },
+    {
+      "name": "LOGGED:Physicochem Boosted Trees Pure Explore C",
+      "delta": -0.43017788880125013,
+      "p": 0.40156364224521507,
+      "holm": 1.0
+    },
+    {
+      "name": "LOGGED:ESM2 Frozen KNN Campaign",
+      "delta": -0.42673480743500025,
+      "p": 0.44472785096855044,
+      "holm": 1.0
+    },
+    {
+      "name": "LOGGED:Onehot Plus Pairs Random Forest Campaign",
+      "delta": 0.02877664193374979,
+      "p": 0.969291051092232,
+      "holm": 1.0
+    },
+    {
+      "name": "LOGGED:Onehot Ridge UCB Campaign",
+      "delta": 0.010700678889999649,
+      "p": 0.9861103094200672,
+      "holm": 1.0
+    }
+  ]
+}
