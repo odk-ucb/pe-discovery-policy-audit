@@ -1,0 +1,85 @@
+{
+  "landscape": "TEV",
+  "n_seeds": 8,
+  "n_candidates": 30,
+  "n_feasible_kept": 10,
+  "probe_seed": 0,
+  "method": "ex_ante_rejection_sample_parallel_probe_seed0",
+  "random_feasible": {
+    "label": "random_feasible",
+    "n_policies": 10,
+    "n_with_any_success": 10,
+    "mean_of_means": 0.9807903436487899,
+    "std_of_means": 0.12383203521704116,
+    "policy_means": [
+      0.8514897903282634,
+      1.0082426658332566,
+      0.9912451220189107,
+      1.0349367340634514,
+      0.8334056875389151,
+      0.9132289368957577,
+      1.0673303596854922,
+      0.9424646022077313,
+      0.9074979154700478,
+      1.2580616224460734
+    ],
+    "seed_success_rate": 1.0
+  },
+  "random_uniform": {
+    "label": "random_basis_uniform",
+    "n_policies": 10,
+    "n_with_any_success": 10,
+    "mean_of_means": 1.109739914917391,
+    "std_of_means": 0.1374356946617774,
+    "policy_means": [
+      1.150663007225566,
+      1.1011851563367294,
+      1.150663007225566,
+      1.007639256254193,
+      1.1437666943397318,
+      1.2233486239085627,
+      1.1309663319754222,
+      0.7804715110217634,
+      1.1168386248015019,
+      1.2918569360848726
+    ],
+    "seed_success_rate": 1.0
+  },
+  "free_complete_case": {
+    "source": "pool_results_TEV_plmfix2.json",
+    "n": 10,
+    "mean_of_means": 1.0774160568938913,
+    "policy_means": [
+      1.1639208942502768,
+      1.0729151703904636,
+      1.090374723671572,
+      1.002807727100136,
+      1.0260905852451074,
+      1.1008310275797488,
+      1.2991942864371409,
+      0.9943249320642334,
+      1.0021768857906852,
+      1.0215243364095483
+    ]
+  },
+  "contrast_free_minus_feasible": {
+    "delta": 0.09662571324510139,
+    "p": 0.06704752889764337,
+    "na": 10,
+    "nb": 10
+  },
+  "contrast_free_minus_uniform": {
+    "delta": -0.032323858023499685,
+    "p": 0.5493119582606645,
+    "na": 10,
+    "nb": 10
+  },
+  "contrast_feasible_minus_uniform": {
+    "delta": -0.12894957126860107,
+    "p": 0.04091058662902289,
+    "na": 10,
+    "nb": 10
+  },
+  "seconds": 96.1,
+  "interpretation": "If free \u2248 random_feasible, LLM advantage is mostly knowing feasibility, not selecting better already-feasible policies."
+}
