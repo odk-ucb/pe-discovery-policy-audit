@@ -1,0 +1,40 @@
+{
+  "base": 3.8267276518713254,
+  "n_policies": 5,
+  "n_better_holm": 0,
+  "better": [],
+  "rows": [
+    {
+      "name": "LOGGED:Campaign_A",
+      "delta": 0.04415446434124981,
+      "p": 0.9448555469152515,
+      "p_holm": 1.0
+    },
+    {
+      "name": "LOGGED:Campaign_B",
+      "delta": -0.5642196632512502,
+      "p": 0.33743150388239856,
+      "p_holm": 1.0
+    },
+    {
+      "name": "LOGGED:Campaign_C",
+      "delta": -1.4869427889550002,
+      "p": 0.19937320037527154,
+      "p_holm": 0.7974928015010861
+    },
+    {
+      "name": "LOGGED:Campaign_E",
+      "delta": 0.24648909028874977,
+      "p": 0.7885598104022171,
+      "p_holm": 1.0
+    },
+    {
+      "name": "LOGGED:Campaign_F",
+      "delta": -1.9164560435550002,
+      "p": 0.03185769141592287,
+      "p_holm": 0.15928845707961437
+    }
+  ],
+  "model": "openai/gpt-4o",
+  "tag": "gpt4o_b2"
+}

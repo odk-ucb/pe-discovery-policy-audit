@@ -1,0 +1,1261 @@
+{
+  "condition": "LOGGED_FREE",
+  "provenance": {
+    "model": "openai/gpt-4o",
+    "temperature": 0.5,
+    "timestamp": "2026-08-20T04:07:35",
+    "prompt_user": "Propose 24 diverse protein directed-evolution campaign configs as a JSON array.\nEach element: {\"name\": \"...\", \"coords\": {\"representation\": {...}, \"surrogate\": {...}, ...}}\nOnly use allowed coordinates:\n  representation.encoding: ['onehot', 'physicochem', 'onehot_plus_pairs', 'esm2_frozen']\n  representation.pooling: ['mean', 'site']\n  representation.rank: ['full', 'low_rank_pca']\n  representation.site_coupling: ['independent_sites', 'pairwise_sites']\n  surrogate.family: ['ridge', 'random_forest', 'gaussian_process', 'boosted_trees', 'knn']\n  surrogate.count: ['single', 'ensemble_of_k']\n  surrogate.heads: ['joint_fitness', 'separated_activity_and_fitness']\n  surrogate.uncertainty: ['none', 'ensemble_disagreement', 'gp_posterior', 'bootstrap']\n  generator.scope: ['global_all_variants', 'local_hamming_ball', 'recombine_observed_elites']\n  generator.ball_centre: ['observed_elites', 'wild_type']\n  generator.radius: ['r1', 'r2', 'adaptive_radius']\n  generator.pool_size: ['small', 'medium', 'exhaustive']\n  generator.zero_shot_prior: ['none', 'esm_masked_marginal_focus']\n  acquisition.rule: ['greedy_mean', 'ucb', 'expected_improvement', 'thompson', 'pure_explore']\n  acquisition.beta: ['low', 'medium', 'high', 'state_adaptive_beta']\n  acquisition.lookahead: ['one_step', 'two_step_myopic_rollout']\n  batch.selection: ['top_k_by_score', 'diverse_top_k_by_distance', 'score_then_cluster', 'epsilon_mixed']\n  batch.size_rule: ['fixed', 'state_adaptive_size']\n  update.refit: ['refit_from_scratch', 'warm_start']\n  update.weighting: ['uniform', 'recency_weighted', 'elite_weighted']\n  update.target_transform: ['identity', 'log1p', 'rank']\n  stopping.rule: ['fixed_rounds', 'plateau_detect', 'budget_exhausted']\nClassical DEFAULT for reference: onehot, ridge, greedy_mean, global pool.\nOptimize for combinatorial fitness landscapes under 96-assay / 4x24 budget.\nReturn ONLY the JSON array.",
+    "response_text": "```json\n[\n    {\"name\": \"Campaign_1\", \"coords\": {\"representation\": {\"encoding\": \"onehot\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"}, \"surrogate\": {\"family\": \"ridge\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"none\"}, \"generator\": {\"scope\": \"global_all_variants\", \"ball_centre\": \"observed_elites\", \"radius\": \"r1\", \"pool_size\": \"small\", \"zero_shot_prior\": \"none\"}, \"acquisition\": {\"rule\": \"greedy_mean\", \"beta\": \"low\", \"lookahead\": \"one_step\"}, \"batch\": {\"selection\": \"top_k_by_score\", \"size_rule\": \"fixed\"}, \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"uniform\", \"target_transform\": \"identity\"}, \"stopping\": {\"rule\": \"fixed_rounds\"}}},\n    {\"name\": \"Campaign_2\", \"coords\": {\"representation\": {\"encoding\": \"physicochem\", \"pooling\": \"site\", \"rank\": \"low_rank_pca\", \"site_coupling\": \"pairwise_sites\"}, \"surrogate\": {\"family\": \"random_forest\", \"count\": \"ensemble_of_k\", \"heads\": \"separated_activity_and_fitness\", \"uncertainty\": \"ensemble_disagreement\"}, \"generator\": {\"scope\": \"local_hamming_ball\", \"ball_centre\": \"wild_type\", \"radius\": \"adaptive_radius\", \"pool_size\": \"medium\", \"zero_shot_prior\": \"esm_masked_marginal_focus\"}, \"acquisition\": {\"rule\": \"ucb\", \"beta\": \"medium\", \"lookahead\": \"two_step_myopic_rollout\"}, \"batch\": {\"selection\": \"diverse_top_k_by_distance\", \"size_rule\": \"state_adaptive_size\"}, \"update\": {\"refit\": \"warm_start\", \"weighting\": \"recency_weighted\", \"target_transform\": \"log1p\"}, \"stopping\": {\"rule\": \"plateau_detect\"}}},\n    {\"name\": \"Campaign_3\", \"coords\": {\"representation\": {\"encoding\": \"onehot_plus_pairs\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"}, \"surrogate\": {\"family\": \"gaussian_process\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"gp_posterior\"}, \"generator\": {\"scope\": \"recombine_observed_elites\", \"ball_centre\": \"observed_elites\", \"radius\": \"r2\", \"pool_size\": \"exhaustive\", \"zero_shot_prior\": \"none\"}, \"acquisition\": {\"rule\": \"expected_improvement\", \"beta\": \"high\", \"lookahead\": \"one_step\"}, \"batch\": {\"selection\": \"score_then_cluster\", \"size_rule\": \"fixed\"}, \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"elite_weighted\", \"target_transform\": \"rank\"}, \"stopping\": {\"rule\": \"budget_exhausted\"}}},\n    {\"name\": \"Campaign_4\", \"coords\": {\"representation\": {\"encoding\": \"esm2_frozen\", \"pooling\": \"site\", \"rank\": \"low_rank_pca\", \"site_coupling\": \"pairwise_sites\"}, \"surrogate\": {\"family\": \"boosted_trees\", \"count\": \"ensemble_of_k\", \"heads\": \"separated_activity_and_fitness\", \"uncertainty\": \"bootstrap\"}, \"generator\": {\"scope\": \"global_all_variants\", \"ball_centre\": \"wild_type\", \"radius\": \"adaptive_radius\", \"pool_size\": \"medium\", \"zero_shot_prior\": \"esm_masked_marginal_focus\"}, \"acquisition\": {\"rule\": \"thompson\", \"beta\": \"state_adaptive_beta\", \"lookahead\": \"two_step_myopic_rollout\"}, \"batch\": {\"selection\": \"epsilon_mixed\", \"size_rule\": \"state_adaptive_size\"}, \"update\": {\"refit\": \"warm_start\", \"weighting\": \"uniform\", \"target_transform\": \"identity\"}, \"stopping\": {\"rule\": \"fixed_rounds\"}}},\n    {\"name\": \"Campaign_5\", \"coords\": {\"representation\": {\"encoding\": \"onehot\", \"pooling\": \"mean\", \"rank\": \"low_rank_pca\", \"site_coupling\": \"pairwise_sites\"}, \"surrogate\": {\"family\": \"knn\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"none\"}, \"generator\": {\"scope\": \"local_hamming_ball\", \"ball_centre\": \"observed_elites\", \"radius\": \"r1\", \"pool_size\": \"small\", \"zero_shot_prior\": \"none\"}, \"acquisition\": {\"rule\": \"pure_explore\", \"beta\": \"low\", \"lookahead\": \"one_step\"}, \"batch\": {\"selection\": \"top_k_by_score\", \"size_rule\": \"fixed\"}, \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"recency_weighted\", \"target_transform\": \"log1p\"}, \"stopping\": {\"rule\": \"plateau_detect\"}}},\n    {\"name\": \"Campaign_6\", \"coords\": {\"representation\": {\"encoding\": \"physicochem\", \"pooling\": \"site\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"}, \"surrogate\": {\"family\": \"ridge\", \"count\": \"ensemble_of_k\", \"heads\": \"separated_activity_and_fitness\", \"uncertainty\": \"ensemble_disagreement\"}, \"generator\": {\"scope\": \"recombine_observed_elites\", \"ball_centre\": \"wild_type\", \"radius\": \"r2\", \"pool_size\": \"exhaustive\", \"zero_shot_prior\": \"esm_masked_marginal_focus\"}, \"acquisition\": {\"rule\": \"ucb\", \"beta\": \"medium\", \"lookahead\": \"two_step_myopic_rollout\"}, \"batch\": {\"selection\": \"diverse_top_k_by_distance\", \"size_rule\": \"state_adaptive_size\"}, \"update\": {\"refit\": \"warm_start\", \"weighting\": \"elite_weighted\", \"target_transform\": \"rank\"}, \"stopping\": {\"rule\": \"budget_exhausted\"}}},\n    {\"name\": \"Campaign_7\", \"coords\": {\"representation\": {\"encoding\": \"onehot_plus_pairs\", \"pooling\": \"mean\", \"rank\": \"low_rank_pca\", \"site_coupling\": \"pairwise_sites\"}, \"surrogate\": {\"family\": \"random_forest\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"gp_posterior\"}, \"generator\": {\"scope\": \"global_all_variants\", \"ball_centre\": \"observed_elites\", \"radius\": \"adaptive_radius\", \"pool_size\": \"medium\", \"zero_shot_prior\": \"none\"}, \"acquisition\": {\"rule\": \"expected_improvement\", \"beta\": \"high\", \"lookahead\": \"one_step\"}, \"batch\": {\"selection\": \"score_then_cluster\", \"size_rule\": \"fixed\"}, \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"uniform\", \"target_transform\": \"identity\"}, \"stopping\": {\"rule\": \"fixed_rounds\"}}},\n    {\"name\": \"Campaign_8\", \"coords\": {\"representation\": {\"encoding\": \"esm2_frozen\", \"pooling\": \"site\", \"rank\": \"full\", \"site_coupling\": \"independent_sites\"}, \"surrogate\": {\"family\": \"gaussian_process\", \"count\": \"ensemble_of_k\", \"heads\": \"separated_activity_and_fitness\", \"uncertainty\": \"bootstrap\"}, \"generator\": {\"scope\": \"local_hamming_ball\", \"ball_centre\": \"wild_type\", \"radius\": \"r1\", \"pool_size\": \"small\", \"zero_shot_prior\": \"esm_masked_marginal_focus\"}, \"acquisition\": {\"rule\": \"thompson\", \"beta\": \"state_adaptive_beta\", \"lookahead\": \"two_step_myopic_rollout\"}, \"batch\": {\"selection\": \"epsilon_mixed\", \"size_rule\": \"state_adaptive_size\"}, \"update\": {\"refit\": \"warm_start\", \"weighting\": \"recency_weighted\", \"target_transform\": \"log1p\"}, \"stopping\": {\"rule\": \"plateau_detect\"}}},\n    {\"name\": \"Campaign_9\", \"coords\": {\"representation\": {\"encoding\": \"onehot\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"pairwise_sites\"}, \"surrogate\": {\"family\": \"boosted_trees\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"none\"}, \"generator\": {\"scope\": \"recombine_observed_elites\", \"ball_centre\": \"observed_elites\", \"radius\": \"r2\", \"pool_size\": \"exhaustive\", \"zero_shot_prior\": \"none\"}, \"acquisition\": {\"rule\": \"greedy_mean\", \"beta\": \"low\", \"lookahead\": \"one_step\"}, \"batch\": {\"selection\": \"top_k_by_score\", \"size_rule\": \"fixed\"}, \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"elite_weighted\", \"target_transform\": \"rank\"}, \"stopping\": {\"rule\": \"budget_exhausted\"}}},\n    {\"name\": \"Campaign_10\", \"coords\": {\"representation\": {\"encoding\": \"physicochem\", \"pooling\": \"site\", \"rank\": \"low_rank_pca\", \"site_coupling\": \"independent_sites\"}, \"surrogate\": {\"family\": \"knn\", \"count\": \"ensemble_of_k\", \"heads\": \"separated_activity_and_fitness\", \"uncertainty\": \"ensemble_disagreement\"}, \"generator\": {\"scope\": \"global_all_variants\", \"ball_centre\": \"wild_type\", \"radius\": \"adaptive_radius\", \"pool_size\": \"medium\", \"zero_shot_prior\": \"esm_masked_marginal_focus\"}, \"acquisition\": {\"rule\": \"ucb\", \"beta\": \"medium\", \"lookahead\": \"two_step_myopic_rollout\"}, \"batch\": {\"selection\": \"diverse_top_k_by_distance\", \"size_rule\": \"state_adaptive_size\"}, \"update\": {\"refit\": \"warm_start\", \"weighting\": \"uniform\", \"target_transform\": \"identity\"}, \"stopping\": {\"rule\": \"fixed_rounds\"}}},\n    {\"name\": \"Campaign_11\", \"coords\": {\"representation\": {\"encoding\": \"onehot_plus_pairs\", \"pooling\": \"mean\", \"rank\": \"full\", \"site_coupling\": \"pairwise_sites\"}, \"surrogate\": {\"family\": \"ridge\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"gp_posterior\"}, \"generator\": {\"scope\": \"local_hamming_ball\", \"ball_centre\": \"observed_elites\", \"radius\": \"r1\", \"pool_size\": \"small\", \"zero_shot_prior\": \"none\"}, \"acquisition\": {\"rule\": \"expected_improvement\", \"beta\": \"high\", \"lookahead\": \"one_step\"}, \"batch\": {\"selection\": \"score_then_cluster\", \"size_rule\": \"fixed\"}, \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"recency_weighted\", \"target_transform\": \"log1p\"}, \"stopping\": {\"rule\": \"plateau_detect\"}}},\n    {\"name\": \"Campaign_12\", \"coords\": {\"representation\": {\"encoding\": \"esm2_frozen\", \"pooling\": \"site\", \"rank\": \"low_rank_pca\", \"site_coupling\": \"independent_sites\"}, \"surrogate\": {\"family\": \"random_forest\", \"count\": \"ensemble_of_k\", \"heads\": \"separated_activity_and_fitness\", \"uncertainty\": \"bootstrap\"}, \"generator\": {\"scope\": \"recombine_observed_elites\", \"ball_centre\": \"wild_type\", \"radius\": \"r2\", \"pool_size\": \"exhaustive\", \"zero_shot_prior\": \"esm_masked_marginal_focus\"}, \"acquisition\": {\"rule\": \"thompson\", \"beta\": \"state_adaptive_beta\", \"lookahead\": \"two_step_myopic_rollout\"}, \"batch\": {\"selection\": \"epsilon_mixed\", \"size_rule\": \"state_adaptive_size\"}, \"update\": {\"refit\": \"warm_start\", \"weighting\": \"elite_weighted\", \"target_transform\": \"rank\"}, \"stopping\": {\"rule\": \"budget_exhausted\"}}},\n    {\"name\": \"Campaign_13\", \"coords\": {\"representation\": {\"encoding\": \"onehot\", \"pooling\": \"mean\", \"rank\": \"low_rank_pca\", \"site_coupling\": \"independent_sites\"}, \"surrogate\": {\"family\": \"gaussian_process\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"none\"}, \"generator\": {\"scope\": \"global_all_variants\", \"ball_centre\": \"observed_elites\", \"radius\": \"adaptive_radius\", \"pool_size\": \"medium\", \"zero_shot_prior\": \"none\"}, \"acquisition\": {\"rule\": \"greedy_mean\", \"beta\": \"low\", \"lookahead\": \"one_step\"}, \"batch\": {\"selection\": \"top_k_by_score\", \"size_rule\": \"fixed\"}, \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"uniform\", \"target_transform\": \"identity\"}, \"stopping\": {\"rule\": \"fixed_rounds\"}}},\n    {\"name\": \"Campaign_14\", \"coords\": {\"representation\": {\"encoding\": \"physicochem\", \"pooling\": \"site\", \"rank\": \"full\", \"site_coupling\": \"pairwise_sites\"}, \"surrogate\": {\"family\": \"boosted_trees\", \"count\": \"ensemble_of_k\", \"heads\": \"separated_activity_and_fitness\", \"uncertainty\": \"ensemble_disagreement\"}, \"generator\": {\"scope\": \"local_hamming_ball\", \"ball_centre\": \"wild_type\", \"radius\": \"r1\", \"pool_size\": \"small\", \"zero_shot_prior\": \"esm_masked_marginal_focus\"}, \"acquisition\": {\"rule\": \"ucb\", \"beta\": \"medium\", \"lookahead\": \"two_step_myopic_rollout\"}, \"batch\": {\"selection\": \"diverse_top_k_by_distance\", \"size_rule\": \"state_adaptive_size\"}, \"update\": {\"refit\": \"warm_start\", \"weighting\": \"recency_weighted\", \"target_transform\": \"log1p\"}, \"stopping\": {\"rule\": \"plateau_detect\"}}},\n    {\"name\": \"Campaign_15\", \"coords\": {\"representation\": {\"encoding\": \"onehot_plus_pairs\", \"pooling\": \"mean\", \"rank\": \"low_rank_pca\", \"site_coupling\": \"independent_sites\"}, \"surrogate\": {\"family\": \"knn\", \"count\": \"single\", \"heads\": \"joint_fitness\", \"uncertainty\": \"gp_posterior\"}, \"generator\": {\"scope\": \"recombine_observed_elites\", \"ball_centre\": \"observed_elites\", \"radius\": \"r2\", \"pool_size\": \"exhaustive\", \"zero_shot_prior\": \"none\"}, \"acquisition\": {\"rule\": \"expected_improvement\", \"beta\": \"high\", \"lookahead\": \"one_step\"}, \"batch\": {\"selection\": \"score_then_cluster\", \"size_rule\": \"fixed\"}, \"update\": {\"refit\": \"refit_from_scratch\", \"weighting\": \"elite_weighted\", \"target_transform\": \"rank\"}, \"stopping\": {\"rule\": \"budget_exhausted\"}}},\n    {\"name\": \"Campaign_16\", \"coords\": {\"representation\": {\"encoding\": \"esm2_frozen\", \"pooling\": \"site\", \"rank\": \"full\", \"site_coupling\": \"pairwise_sites\"}, \"surrogate\": {\"family\": \"ridge\", \"count\": \"ensemble_of_k\", \"heads\": \"separated_activity_and_fitness\", \"uncertainty\": \"bootstrap\"}, \"generator\": {\"scope\": \"global_all_variants\", \"ball_centre\": \"",
+    "n_requested": 24,
+    "n_parsed": 0,
+    "openrouter_id": "gen-1787195233-2vZcRmOyPqOgpEvotJmL",
+    "n_parsed_salvage": 15
+  },
+  "policies": [
+    {
+      "name": "Campaign_1",
+      "coords": {
+        "representation": {
+          "encoding": "onehot",
+          "pooling": "mean",
+          "rank": "full",
+          "site_coupling": "independent_sites"
+        },
+        "surrogate": {
+          "family": "ridge",
+          "count": "single",
+          "heads": "joint_fitness",
+          "uncertainty": "none"
+        },
+        "generator": {
+          "scope": "global_all_variants",
+          "ball_centre": "observed_elites",
+          "radius": "r1",
+          "pool_size": "small",
+          "zero_shot_prior": "none"
+        },
+        "acquisition": {
+          "rule": "greedy_mean",
+          "beta": "low",
+          "lookahead": "one_step"
+        },
+        "batch": {
+          "selection": "top_k_by_score",
+          "size_rule": "fixed"
+        },
+        "update": {
+          "refit": "refit_from_scratch",
+          "weighting": "uniform",
+          "target_transform": "identity"
+        },
+        "stopping": {
+          "rule": "fixed_rounds"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_1",
+        "coords": {
+          "representation": {
+            "encoding": "onehot",
+            "pooling": "mean",
+            "rank": "full",
+            "site_coupling": "independent_sites"
+          },
+          "surrogate": {
+            "family": "ridge",
+            "count": "single",
+            "heads": "joint_fitness",
+            "uncertainty": "none"
+          },
+          "generator": {
+            "scope": "global_all_variants",
+            "ball_centre": "observed_elites",
+            "radius": "r1",
+            "pool_size": "small",
+            "zero_shot_prior": "none"
+          },
+          "acquisition": {
+            "rule": "greedy_mean",
+            "beta": "low",
+            "lookahead": "one_step"
+          },
+          "batch": {
+            "selection": "top_k_by_score",
+            "size_rule": "fixed"
+          },
+          "update": {
+            "refit": "refit_from_scratch",
+            "weighting": "uniform",
+            "target_transform": "identity"
+          },
+          "stopping": {
+            "rule": "fixed_rounds"
+          }
+        }
+      }
+    },
+    {
+      "name": "Campaign_2",
+      "coords": {
+        "representation": {
+          "encoding": "physicochem",
+          "pooling": "site",
+          "rank": "low_rank_pca",
+          "site_coupling": "pairwise_sites"
+        },
+        "surrogate": {
+          "family": "random_forest",
+          "count": "ensemble_of_k",
+          "heads": "separated_activity_and_fitness",
+          "uncertainty": "ensemble_disagreement"
+        },
+        "generator": {
+          "scope": "local_hamming_ball",
+          "ball_centre": "wild_type",
+          "radius": "adaptive_radius",
+          "pool_size": "medium",
+          "zero_shot_prior": "esm_masked_marginal_focus"
+        },
+        "acquisition": {
+          "rule": "ucb",
+          "beta": "medium",
+          "lookahead": "two_step_myopic_rollout"
+        },
+        "batch": {
+          "selection": "diverse_top_k_by_distance",
+          "size_rule": "state_adaptive_size"
+        },
+        "update": {
+          "refit": "warm_start",
+          "weighting": "recency_weighted",
+          "target_transform": "log1p"
+        },
+        "stopping": {
+          "rule": "plateau_detect"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_2",
+        "coords": {
+          "representation": {
+            "encoding": "physicochem",
+            "pooling": "site",
+            "rank": "low_rank_pca",
+            "site_coupling": "pairwise_sites"
+          },
+          "surrogate": {
+            "family": "random_forest",
+            "count": "ensemble_of_k",
+            "heads": "separated_activity_and_fitness",
+            "uncertainty": "ensemble_disagreement"
+          },
+          "generator": {
+            "scope": "local_hamming_ball",
+            "ball_centre": "wild_type",
+            "radius": "adaptive_radius",
+            "pool_size": "medium",
+            "zero_shot_prior": "esm_masked_marginal_focus"
+          },
+          "acquisition": {
+            "rule": "ucb",
+            "beta": "medium",
+            "lookahead": "two_step_myopic_rollout"
+          },
+          "batch": {
+            "selection": "diverse_top_k_by_distance",
+            "size_rule": "state_adaptive_size"
+          },
+          "update": {
+            "refit": "warm_start",
+            "weighting": "recency_weighted",
+            "target_transform": "log1p"
+          },
+          "stopping": {
+            "rule": "plateau_detect"
+          }
+        }
+      }
+    },
+    {
+      "name": "Campaign_3",
+      "coords": {
+        "representation": {
+          "encoding": "onehot_plus_pairs",
+          "pooling": "mean",
+          "rank": "full",
+          "site_coupling": "independent_sites"
+        },
+        "surrogate": {
+          "family": "gaussian_process",
+          "count": "single",
+          "heads": "joint_fitness",
+          "uncertainty": "gp_posterior"
+        },
+        "generator": {
+          "scope": "recombine_observed_elites",
+          "ball_centre": "observed_elites",
+          "radius": "r2",
+          "pool_size": "exhaustive",
+          "zero_shot_prior": "none"
+        },
+        "acquisition": {
+          "rule": "expected_improvement",
+          "beta": "high",
+          "lookahead": "one_step"
+        },
+        "batch": {
+          "selection": "score_then_cluster",
+          "size_rule": "fixed"
+        },
+        "update": {
+          "refit": "refit_from_scratch",
+          "weighting": "elite_weighted",
+          "target_transform": "rank"
+        },
+        "stopping": {
+          "rule": "budget_exhausted"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_3",
+        "coords": {
+          "representation": {
+            "encoding": "onehot_plus_pairs",
+            "pooling": "mean",
+            "rank": "full",
+            "site_coupling": "independent_sites"
+          },
+          "surrogate": {
+            "family": "gaussian_process",
+            "count": "single",
+            "heads": "joint_fitness",
+            "uncertainty": "gp_posterior"
+          },
+          "generator": {
+            "scope": "recombine_observed_elites",
+            "ball_centre": "observed_elites",
+            "radius": "r2",
+            "pool_size": "exhaustive",
+            "zero_shot_prior": "none"
+          },
+          "acquisition": {
+            "rule": "expected_improvement",
+            "beta": "high",
+            "lookahead": "one_step"
+          },
+          "batch": {
+            "selection": "score_then_cluster",
+            "size_rule": "fixed"
+          },
+          "update": {
+            "refit": "refit_from_scratch",
+            "weighting": "elite_weighted",
+            "target_transform": "rank"
+          },
+          "stopping": {
+            "rule": "budget_exhausted"
+          }
+        }
+      }
+    },
+    {
+      "name": "Campaign_4",
+      "coords": {
+        "representation": {
+          "encoding": "esm2_frozen",
+          "pooling": "site",
+          "rank": "low_rank_pca",
+          "site_coupling": "pairwise_sites"
+        },
+        "surrogate": {
+          "family": "boosted_trees",
+          "count": "ensemble_of_k",
+          "heads": "separated_activity_and_fitness",
+          "uncertainty": "bootstrap"
+        },
+        "generator": {
+          "scope": "global_all_variants",
+          "ball_centre": "wild_type",
+          "radius": "adaptive_radius",
+          "pool_size": "medium",
+          "zero_shot_prior": "esm_masked_marginal_focus"
+        },
+        "acquisition": {
+          "rule": "thompson",
+          "beta": "state_adaptive_beta",
+          "lookahead": "two_step_myopic_rollout"
+        },
+        "batch": {
+          "selection": "epsilon_mixed",
+          "size_rule": "state_adaptive_size"
+        },
+        "update": {
+          "refit": "warm_start",
+          "weighting": "uniform",
+          "target_transform": "identity"
+        },
+        "stopping": {
+          "rule": "fixed_rounds"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_4",
+        "coords": {
+          "representation": {
+            "encoding": "esm2_frozen",
+            "pooling": "site",
+            "rank": "low_rank_pca",
+            "site_coupling": "pairwise_sites"
+          },
+          "surrogate": {
+            "family": "boosted_trees",
+            "count": "ensemble_of_k",
+            "heads": "separated_activity_and_fitness",
+            "uncertainty": "bootstrap"
+          },
+          "generator": {
+            "scope": "global_all_variants",
+            "ball_centre": "wild_type",
+            "radius": "adaptive_radius",
+            "pool_size": "medium",
+            "zero_shot_prior": "esm_masked_marginal_focus"
+          },
+          "acquisition": {
+            "rule": "thompson",
+            "beta": "state_adaptive_beta",
+            "lookahead": "two_step_myopic_rollout"
+          },
+          "batch": {
+            "selection": "epsilon_mixed",
+            "size_rule": "state_adaptive_size"
+          },
+          "update": {
+            "refit": "warm_start",
+            "weighting": "uniform",
+            "target_transform": "identity"
+          },
+          "stopping": {
+            "rule": "fixed_rounds"
+          }
+        }
+      }
+    },
+    {
+      "name": "Campaign_5",
+      "coords": {
+        "representation": {
+          "encoding": "onehot",
+          "pooling": "mean",
+          "rank": "low_rank_pca",
+          "site_coupling": "pairwise_sites"
+        },
+        "surrogate": {
+          "family": "knn",
+          "count": "single",
+          "heads": "joint_fitness",
+          "uncertainty": "none"
+        },
+        "generator": {
+          "scope": "local_hamming_ball",
+          "ball_centre": "observed_elites",
+          "radius": "r1",
+          "pool_size": "small",
+          "zero_shot_prior": "none"
+        },
+        "acquisition": {
+          "rule": "pure_explore",
+          "beta": "low",
+          "lookahead": "one_step"
+        },
+        "batch": {
+          "selection": "top_k_by_score",
+          "size_rule": "fixed"
+        },
+        "update": {
+          "refit": "refit_from_scratch",
+          "weighting": "recency_weighted",
+          "target_transform": "log1p"
+        },
+        "stopping": {
+          "rule": "plateau_detect"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_5",
+        "coords": {
+          "representation": {
+            "encoding": "onehot",
+            "pooling": "mean",
+            "rank": "low_rank_pca",
+            "site_coupling": "pairwise_sites"
+          },
+          "surrogate": {
+            "family": "knn",
+            "count": "single",
+            "heads": "joint_fitness",
+            "uncertainty": "none"
+          },
+          "generator": {
+            "scope": "local_hamming_ball",
+            "ball_centre": "observed_elites",
+            "radius": "r1",
+            "pool_size": "small",
+            "zero_shot_prior": "none"
+          },
+          "acquisition": {
+            "rule": "pure_explore",
+            "beta": "low",
+            "lookahead": "one_step"
+          },
+          "batch": {
+            "selection": "top_k_by_score",
+            "size_rule": "fixed"
+          },
+          "update": {
+            "refit": "refit_from_scratch",
+            "weighting": "recency_weighted",
+            "target_transform": "log1p"
+          },
+          "stopping": {
+            "rule": "plateau_detect"
+          }
+        }
+      }
+    },
+    {
+      "name": "Campaign_6",
+      "coords": {
+        "representation": {
+          "encoding": "physicochem",
+          "pooling": "site",
+          "rank": "full",
+          "site_coupling": "independent_sites"
+        },
+        "surrogate": {
+          "family": "ridge",
+          "count": "ensemble_of_k",
+          "heads": "separated_activity_and_fitness",
+          "uncertainty": "ensemble_disagreement"
+        },
+        "generator": {
+          "scope": "recombine_observed_elites",
+          "ball_centre": "wild_type",
+          "radius": "r2",
+          "pool_size": "exhaustive",
+          "zero_shot_prior": "esm_masked_marginal_focus"
+        },
+        "acquisition": {
+          "rule": "ucb",
+          "beta": "medium",
+          "lookahead": "two_step_myopic_rollout"
+        },
+        "batch": {
+          "selection": "diverse_top_k_by_distance",
+          "size_rule": "state_adaptive_size"
+        },
+        "update": {
+          "refit": "warm_start",
+          "weighting": "elite_weighted",
+          "target_transform": "rank"
+        },
+        "stopping": {
+          "rule": "budget_exhausted"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_6",
+        "coords": {
+          "representation": {
+            "encoding": "physicochem",
+            "pooling": "site",
+            "rank": "full",
+            "site_coupling": "independent_sites"
+          },
+          "surrogate": {
+            "family": "ridge",
+            "count": "ensemble_of_k",
+            "heads": "separated_activity_and_fitness",
+            "uncertainty": "ensemble_disagreement"
+          },
+          "generator": {
+            "scope": "recombine_observed_elites",
+            "ball_centre": "wild_type",
+            "radius": "r2",
+            "pool_size": "exhaustive",
+            "zero_shot_prior": "esm_masked_marginal_focus"
+          },
+          "acquisition": {
+            "rule": "ucb",
+            "beta": "medium",
+            "lookahead": "two_step_myopic_rollout"
+          },
+          "batch": {
+            "selection": "diverse_top_k_by_distance",
+            "size_rule": "state_adaptive_size"
+          },
+          "update": {
+            "refit": "warm_start",
+            "weighting": "elite_weighted",
+            "target_transform": "rank"
+          },
+          "stopping": {
+            "rule": "budget_exhausted"
+          }
+        }
+      }
+    },
+    {
+      "name": "Campaign_7",
+      "coords": {
+        "representation": {
+          "encoding": "onehot_plus_pairs",
+          "pooling": "mean",
+          "rank": "low_rank_pca",
+          "site_coupling": "pairwise_sites"
+        },
+        "surrogate": {
+          "family": "random_forest",
+          "count": "single",
+          "heads": "joint_fitness",
+          "uncertainty": "gp_posterior"
+        },
+        "generator": {
+          "scope": "global_all_variants",
+          "ball_centre": "observed_elites",
+          "radius": "adaptive_radius",
+          "pool_size": "medium",
+          "zero_shot_prior": "none"
+        },
+        "acquisition": {
+          "rule": "expected_improvement",
+          "beta": "high",
+          "lookahead": "one_step"
+        },
+        "batch": {
+          "selection": "score_then_cluster",
+          "size_rule": "fixed"
+        },
+        "update": {
+          "refit": "refit_from_scratch",
+          "weighting": "uniform",
+          "target_transform": "identity"
+        },
+        "stopping": {
+          "rule": "fixed_rounds"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_7",
+        "coords": {
+          "representation": {
+            "encoding": "onehot_plus_pairs",
+            "pooling": "mean",
+            "rank": "low_rank_pca",
+            "site_coupling": "pairwise_sites"
+          },
+          "surrogate": {
+            "family": "random_forest",
+            "count": "single",
+            "heads": "joint_fitness",
+            "uncertainty": "gp_posterior"
+          },
+          "generator": {
+            "scope": "global_all_variants",
+            "ball_centre": "observed_elites",
+            "radius": "adaptive_radius",
+            "pool_size": "medium",
+            "zero_shot_prior": "none"
+          },
+          "acquisition": {
+            "rule": "expected_improvement",
+            "beta": "high",
+            "lookahead": "one_step"
+          },
+          "batch": {
+            "selection": "score_then_cluster",
+            "size_rule": "fixed"
+          },
+          "update": {
+            "refit": "refit_from_scratch",
+            "weighting": "uniform",
+            "target_transform": "identity"
+          },
+          "stopping": {
+            "rule": "fixed_rounds"
+          }
+        }
+      }
+    },
+    {
+      "name": "Campaign_8",
+      "coords": {
+        "representation": {
+          "encoding": "esm2_frozen",
+          "pooling": "site",
+          "rank": "full",
+          "site_coupling": "independent_sites"
+        },
+        "surrogate": {
+          "family": "gaussian_process",
+          "count": "ensemble_of_k",
+          "heads": "separated_activity_and_fitness",
+          "uncertainty": "bootstrap"
+        },
+        "generator": {
+          "scope": "local_hamming_ball",
+          "ball_centre": "wild_type",
+          "radius": "r1",
+          "pool_size": "small",
+          "zero_shot_prior": "esm_masked_marginal_focus"
+        },
+        "acquisition": {
+          "rule": "thompson",
+          "beta": "state_adaptive_beta",
+          "lookahead": "two_step_myopic_rollout"
+        },
+        "batch": {
+          "selection": "epsilon_mixed",
+          "size_rule": "state_adaptive_size"
+        },
+        "update": {
+          "refit": "warm_start",
+          "weighting": "recency_weighted",
+          "target_transform": "log1p"
+        },
+        "stopping": {
+          "rule": "plateau_detect"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_8",
+        "coords": {
+          "representation": {
+            "encoding": "esm2_frozen",
+            "pooling": "site",
+            "rank": "full",
+            "site_coupling": "independent_sites"
+          },
+          "surrogate": {
+            "family": "gaussian_process",
+            "count": "ensemble_of_k",
+            "heads": "separated_activity_and_fitness",
+            "uncertainty": "bootstrap"
+          },
+          "generator": {
+            "scope": "local_hamming_ball",
+            "ball_centre": "wild_type",
+            "radius": "r1",
+            "pool_size": "small",
+            "zero_shot_prior": "esm_masked_marginal_focus"
+          },
+          "acquisition": {
+            "rule": "thompson",
+            "beta": "state_adaptive_beta",
+            "lookahead": "two_step_myopic_rollout"
+          },
+          "batch": {
+            "selection": "epsilon_mixed",
+            "size_rule": "state_adaptive_size"
+          },
+          "update": {
+            "refit": "warm_start",
+            "weighting": "recency_weighted",
+            "target_transform": "log1p"
+          },
+          "stopping": {
+            "rule": "plateau_detect"
+          }
+        }
+      }
+    },
+    {
+      "name": "Campaign_9",
+      "coords": {
+        "representation": {
+          "encoding": "onehot",
+          "pooling": "mean",
+          "rank": "full",
+          "site_coupling": "pairwise_sites"
+        },
+        "surrogate": {
+          "family": "boosted_trees",
+          "count": "single",
+          "heads": "joint_fitness",
+          "uncertainty": "none"
+        },
+        "generator": {
+          "scope": "recombine_observed_elites",
+          "ball_centre": "observed_elites",
+          "radius": "r2",
+          "pool_size": "exhaustive",
+          "zero_shot_prior": "none"
+        },
+        "acquisition": {
+          "rule": "greedy_mean",
+          "beta": "low",
+          "lookahead": "one_step"
+        },
+        "batch": {
+          "selection": "top_k_by_score",
+          "size_rule": "fixed"
+        },
+        "update": {
+          "refit": "refit_from_scratch",
+          "weighting": "elite_weighted",
+          "target_transform": "rank"
+        },
+        "stopping": {
+          "rule": "budget_exhausted"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_9",
+        "coords": {
+          "representation": {
+            "encoding": "onehot",
+            "pooling": "mean",
+            "rank": "full",
+            "site_coupling": "pairwise_sites"
+          },
+          "surrogate": {
+            "family": "boosted_trees",
+            "count": "single",
+            "heads": "joint_fitness",
+            "uncertainty": "none"
+          },
+          "generator": {
+            "scope": "recombine_observed_elites",
+            "ball_centre": "observed_elites",
+            "radius": "r2",
+            "pool_size": "exhaustive",
+            "zero_shot_prior": "none"
+          },
+          "acquisition": {
+            "rule": "greedy_mean",
+            "beta": "low",
+            "lookahead": "one_step"
+          },
+          "batch": {
+            "selection": "top_k_by_score",
+            "size_rule": "fixed"
+          },
+          "update": {
+            "refit": "refit_from_scratch",
+            "weighting": "elite_weighted",
+            "target_transform": "rank"
+          },
+          "stopping": {
+            "rule": "budget_exhausted"
+          }
+        }
+      }
+    },
+    {
+      "name": "Campaign_10",
+      "coords": {
+        "representation": {
+          "encoding": "physicochem",
+          "pooling": "site",
+          "rank": "low_rank_pca",
+          "site_coupling": "independent_sites"
+        },
+        "surrogate": {
+          "family": "knn",
+          "count": "ensemble_of_k",
+          "heads": "separated_activity_and_fitness",
+          "uncertainty": "ensemble_disagreement"
+        },
+        "generator": {
+          "scope": "global_all_variants",
+          "ball_centre": "wild_type",
+          "radius": "adaptive_radius",
+          "pool_size": "medium",
+          "zero_shot_prior": "esm_masked_marginal_focus"
+        },
+        "acquisition": {
+          "rule": "ucb",
+          "beta": "medium",
+          "lookahead": "two_step_myopic_rollout"
+        },
+        "batch": {
+          "selection": "diverse_top_k_by_distance",
+          "size_rule": "state_adaptive_size"
+        },
+        "update": {
+          "refit": "warm_start",
+          "weighting": "uniform",
+          "target_transform": "identity"
+        },
+        "stopping": {
+          "rule": "fixed_rounds"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_10",
+        "coords": {
+          "representation": {
+            "encoding": "physicochem",
+            "pooling": "site",
+            "rank": "low_rank_pca",
+            "site_coupling": "independent_sites"
+          },
+          "surrogate": {
+            "family": "knn",
+            "count": "ensemble_of_k",
+            "heads": "separated_activity_and_fitness",
+            "uncertainty": "ensemble_disagreement"
+          },
+          "generator": {
+            "scope": "global_all_variants",
+            "ball_centre": "wild_type",
+            "radius": "adaptive_radius",
+            "pool_size": "medium",
+            "zero_shot_prior": "esm_masked_marginal_focus"
+          },
+          "acquisition": {
+            "rule": "ucb",
+            "beta": "medium",
+            "lookahead": "two_step_myopic_rollout"
+          },
+          "batch": {
+            "selection": "diverse_top_k_by_distance",
+            "size_rule": "state_adaptive_size"
+          },
+          "update": {
+            "refit": "warm_start",
+            "weighting": "uniform",
+            "target_transform": "identity"
+          },
+          "stopping": {
+            "rule": "fixed_rounds"
+          }
+        }
+      }
+    },
+    {
+      "name": "Campaign_11",
+      "coords": {
+        "representation": {
+          "encoding": "onehot_plus_pairs",
+          "pooling": "mean",
+          "rank": "full",
+          "site_coupling": "pairwise_sites"
+        },
+        "surrogate": {
+          "family": "ridge",
+          "count": "single",
+          "heads": "joint_fitness",
+          "uncertainty": "gp_posterior"
+        },
+        "generator": {
+          "scope": "local_hamming_ball",
+          "ball_centre": "observed_elites",
+          "radius": "r1",
+          "pool_size": "small",
+          "zero_shot_prior": "none"
+        },
+        "acquisition": {
+          "rule": "expected_improvement",
+          "beta": "high",
+          "lookahead": "one_step"
+        },
+        "batch": {
+          "selection": "score_then_cluster",
+          "size_rule": "fixed"
+        },
+        "update": {
+          "refit": "refit_from_scratch",
+          "weighting": "recency_weighted",
+          "target_transform": "log1p"
+        },
+        "stopping": {
+          "rule": "plateau_detect"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_11",
+        "coords": {
+          "representation": {
+            "encoding": "onehot_plus_pairs",
+            "pooling": "mean",
+            "rank": "full",
+            "site_coupling": "pairwise_sites"
+          },
+          "surrogate": {
+            "family": "ridge",
+            "count": "single",
+            "heads": "joint_fitness",
+            "uncertainty": "gp_posterior"
+          },
+          "generator": {
+            "scope": "local_hamming_ball",
+            "ball_centre": "observed_elites",
+            "radius": "r1",
+            "pool_size": "small",
+            "zero_shot_prior": "none"
+          },
+          "acquisition": {
+            "rule": "expected_improvement",
+            "beta": "high",
+            "lookahead": "one_step"
+          },
+          "batch": {
+            "selection": "score_then_cluster",
+            "size_rule": "fixed"
+          },
+          "update": {
+            "refit": "refit_from_scratch",
+            "weighting": "recency_weighted",
+            "target_transform": "log1p"
+          },
+          "stopping": {
+            "rule": "plateau_detect"
+          }
+        }
+      }
+    },
+    {
+      "name": "Campaign_12",
+      "coords": {
+        "representation": {
+          "encoding": "esm2_frozen",
+          "pooling": "site",
+          "rank": "low_rank_pca",
+          "site_coupling": "independent_sites"
+        },
+        "surrogate": {
+          "family": "random_forest",
+          "count": "ensemble_of_k",
+          "heads": "separated_activity_and_fitness",
+          "uncertainty": "bootstrap"
+        },
+        "generator": {
+          "scope": "recombine_observed_elites",
+          "ball_centre": "wild_type",
+          "radius": "r2",
+          "pool_size": "exhaustive",
+          "zero_shot_prior": "esm_masked_marginal_focus"
+        },
+        "acquisition": {
+          "rule": "thompson",
+          "beta": "state_adaptive_beta",
+          "lookahead": "two_step_myopic_rollout"
+        },
+        "batch": {
+          "selection": "epsilon_mixed",
+          "size_rule": "state_adaptive_size"
+        },
+        "update": {
+          "refit": "warm_start",
+          "weighting": "elite_weighted",
+          "target_transform": "rank"
+        },
+        "stopping": {
+          "rule": "budget_exhausted"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_12",
+        "coords": {
+          "representation": {
+            "encoding": "esm2_frozen",
+            "pooling": "site",
+            "rank": "low_rank_pca",
+            "site_coupling": "independent_sites"
+          },
+          "surrogate": {
+            "family": "random_forest",
+            "count": "ensemble_of_k",
+            "heads": "separated_activity_and_fitness",
+            "uncertainty": "bootstrap"
+          },
+          "generator": {
+            "scope": "recombine_observed_elites",
+            "ball_centre": "wild_type",
+            "radius": "r2",
+            "pool_size": "exhaustive",
+            "zero_shot_prior": "esm_masked_marginal_focus"
+          },
+          "acquisition": {
+            "rule": "thompson",
+            "beta": "state_adaptive_beta",
+            "lookahead": "two_step_myopic_rollout"
+          },
+          "batch": {
+            "selection": "epsilon_mixed",
+            "size_rule": "state_adaptive_size"
+          },
+          "update": {
+            "refit": "warm_start",
+            "weighting": "elite_weighted",
+            "target_transform": "rank"
+          },
+          "stopping": {
+            "rule": "budget_exhausted"
+          }
+        }
+      }
+    },
+    {
+      "name": "Campaign_13",
+      "coords": {
+        "representation": {
+          "encoding": "onehot",
+          "pooling": "mean",
+          "rank": "low_rank_pca",
+          "site_coupling": "independent_sites"
+        },
+        "surrogate": {
+          "family": "gaussian_process",
+          "count": "single",
+          "heads": "joint_fitness",
+          "uncertainty": "none"
+        },
+        "generator": {
+          "scope": "global_all_variants",
+          "ball_centre": "observed_elites",
+          "radius": "adaptive_radius",
+          "pool_size": "medium",
+          "zero_shot_prior": "none"
+        },
+        "acquisition": {
+          "rule": "greedy_mean",
+          "beta": "low",
+          "lookahead": "one_step"
+        },
+        "batch": {
+          "selection": "top_k_by_score",
+          "size_rule": "fixed"
+        },
+        "update": {
+          "refit": "refit_from_scratch",
+          "weighting": "uniform",
+          "target_transform": "identity"
+        },
+        "stopping": {
+          "rule": "fixed_rounds"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_13",
+        "coords": {
+          "representation": {
+            "encoding": "onehot",
+            "pooling": "mean",
+            "rank": "low_rank_pca",
+            "site_coupling": "independent_sites"
+          },
+          "surrogate": {
+            "family": "gaussian_process",
+            "count": "single",
+            "heads": "joint_fitness",
+            "uncertainty": "none"
+          },
+          "generator": {
+            "scope": "global_all_variants",
+            "ball_centre": "observed_elites",
+            "radius": "adaptive_radius",
+            "pool_size": "medium",
+            "zero_shot_prior": "none"
+          },
+          "acquisition": {
+            "rule": "greedy_mean",
+            "beta": "low",
+            "lookahead": "one_step"
+          },
+          "batch": {
+            "selection": "top_k_by_score",
+            "size_rule": "fixed"
+          },
+          "update": {
+            "refit": "refit_from_scratch",
+            "weighting": "uniform",
+            "target_transform": "identity"
+          },
+          "stopping": {
+            "rule": "fixed_rounds"
+          }
+        }
+      }
+    },
+    {
+      "name": "Campaign_14",
+      "coords": {
+        "representation": {
+          "encoding": "physicochem",
+          "pooling": "site",
+          "rank": "full",
+          "site_coupling": "pairwise_sites"
+        },
+        "surrogate": {
+          "family": "boosted_trees",
+          "count": "ensemble_of_k",
+          "heads": "separated_activity_and_fitness",
+          "uncertainty": "ensemble_disagreement"
+        },
+        "generator": {
+          "scope": "local_hamming_ball",
+          "ball_centre": "wild_type",
+          "radius": "r1",
+          "pool_size": "small",
+          "zero_shot_prior": "esm_masked_marginal_focus"
+        },
+        "acquisition": {
+          "rule": "ucb",
+          "beta": "medium",
+          "lookahead": "two_step_myopic_rollout"
+        },
+        "batch": {
+          "selection": "diverse_top_k_by_distance",
+          "size_rule": "state_adaptive_size"
+        },
+        "update": {
+          "refit": "warm_start",
+          "weighting": "recency_weighted",
+          "target_transform": "log1p"
+        },
+        "stopping": {
+          "rule": "plateau_detect"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_14",
+        "coords": {
+          "representation": {
+            "encoding": "physicochem",
+            "pooling": "site",
+            "rank": "full",
+            "site_coupling": "pairwise_sites"
+          },
+          "surrogate": {
+            "family": "boosted_trees",
+            "count": "ensemble_of_k",
+            "heads": "separated_activity_and_fitness",
+            "uncertainty": "ensemble_disagreement"
+          },
+          "generator": {
+            "scope": "local_hamming_ball",
+            "ball_centre": "wild_type",
+            "radius": "r1",
+            "pool_size": "small",
+            "zero_shot_prior": "esm_masked_marginal_focus"
+          },
+          "acquisition": {
+            "rule": "ucb",
+            "beta": "medium",
+            "lookahead": "two_step_myopic_rollout"
+          },
+          "batch": {
+            "selection": "diverse_top_k_by_distance",
+            "size_rule": "state_adaptive_size"
+          },
+          "update": {
+            "refit": "warm_start",
+            "weighting": "recency_weighted",
+            "target_transform": "log1p"
+          },
+          "stopping": {
+            "rule": "plateau_detect"
+          }
+        }
+      }
+    },
+    {
+      "name": "Campaign_15",
+      "coords": {
+        "representation": {
+          "encoding": "onehot_plus_pairs",
+          "pooling": "mean",
+          "rank": "low_rank_pca",
+          "site_coupling": "independent_sites"
+        },
+        "surrogate": {
+          "family": "knn",
+          "count": "single",
+          "heads": "joint_fitness",
+          "uncertainty": "gp_posterior"
+        },
+        "generator": {
+          "scope": "recombine_observed_elites",
+          "ball_centre": "observed_elites",
+          "radius": "r2",
+          "pool_size": "exhaustive",
+          "zero_shot_prior": "none"
+        },
+        "acquisition": {
+          "rule": "expected_improvement",
+          "beta": "high",
+          "lookahead": "one_step"
+        },
+        "batch": {
+          "selection": "score_then_cluster",
+          "size_rule": "fixed"
+        },
+        "update": {
+          "refit": "refit_from_scratch",
+          "weighting": "elite_weighted",
+          "target_transform": "rank"
+        },
+        "stopping": {
+          "rule": "budget_exhausted"
+        }
+      },
+      "grounding_problems": [],
+      "raw": {
+        "name": "Campaign_15",
+        "coords": {
+          "representation": {
+            "encoding": "onehot_plus_pairs",
+            "pooling": "mean",
+            "rank": "low_rank_pca",
+            "site_coupling": "independent_sites"
+          },
+          "surrogate": {
+            "family": "knn",
+            "count": "single",
+            "heads": "joint_fitness",
+            "uncertainty": "gp_posterior"
+          },
+          "generator": {
+            "scope": "recombine_observed_elites",
+            "ball_centre": "observed_elites",
+            "radius": "r2",
+            "pool_size": "exhaustive",
+            "zero_shot_prior": "none"
+          },
+          "acquisition": {
+            "rule": "expected_improvement",
+            "beta": "high",
+            "lookahead": "one_step"
+          },
+          "batch": {
+            "selection": "score_then_cluster",
+            "size_rule": "fixed"
+          },
+          "update": {
+            "refit": "refit_from_scratch",
+            "weighting": "elite_weighted",
+            "target_transform": "rank"
+          },
+          "stopping": {
+            "rule": "budget_exhausted"
+          }
+        }
+      }
+    }
+  ]
+}

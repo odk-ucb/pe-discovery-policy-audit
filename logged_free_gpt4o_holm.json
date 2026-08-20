@@ -1,0 +1,118 @@
+{
+  "base": 3.8267276518713254,
+  "n_policies": 15,
+  "holm": {
+    "n_tested": 13,
+    "n_better_holm": 0,
+    "better": [],
+    "rows": [
+      {
+        "name": "LOGGED:Campaign_1",
+        "delta": 0.010700678889999649,
+        "p": 0.9861103094200672,
+        "p_holm": 0.9861103094200672,
+        "wins": 4,
+        "n": 8
+      },
+      {
+        "name": "LOGGED:Campaign_2",
+        "delta": -0.4140609044362503,
+        "p": 0.4292367265281762,
+        "p_holm": 1.0,
+        "wins": 3,
+        "n": 8
+      },
+      {
+        "name": "LOGGED:Campaign_3",
+        "delta": 0.20538220205124968,
+        "p": 0.7708609165155863,
+        "p_holm": 1.0,
+        "wins": 4,
+        "n": 8
+      },
+      {
+        "name": "LOGGED:Campaign_4",
+        "delta": -0.7067063462525003,
+        "p": 0.3196953852280476,
+        "p_holm": 1.0,
+        "wins": 3,
+        "n": 8
+      },
+      {
+        "name": "LOGGED:Campaign_5",
+        "delta": 0.10726233300124971,
+        "p": 0.7633371491010489,
+        "p_holm": 1.0,
+        "wins": 4,
+        "n": 8
+      },
+      {
+        "name": "LOGGED:Campaign_6",
+        "delta": 0.7543262592449997,
+        "p": 0.1428613470690836,
+        "p_holm": 1.0,
+        "wins": 6,
+        "n": 8
+      },
+      {
+        "name": "LOGGED:Campaign_7",
+        "delta": -2.3451370988937503,
+        "p": 0.028870895167075316,
+        "p_holm": 0.28870895167075317,
+        "wins": 1,
+        "n": 8
+      },
+      {
+        "name": "LOGGED:Campaign_9",
+        "delta": -2.1598168932263198,
+        "p": 0.09778206123295477,
+        "p_holm": 0.8800385510965929,
+        "wins": 1,
+        "n": 5
+      },
+      {
+        "name": "LOGGED:Campaign_10",
+        "delta": 0.27691873504124964,
+        "p": 0.41943181818865827,
+        "p_holm": 1.0,
+        "wins": 6,
+        "n": 8
+      },
+      {
+        "name": "LOGGED:Campaign_11",
+        "delta": -1.3823641158856252,
+        "p": 0.009268342539473066,
+        "p_holm": 0.11122011047367679,
+        "wins": 1,
+        "n": 8
+      },
+      {
+        "name": "LOGGED:Campaign_12",
+        "delta": -0.7210067309750001,
+        "p": 0.18898654287383096,
+        "p_holm": 1.0,
+        "wins": 3,
+        "n": 8
+      },
+      {
+        "name": "LOGGED:Campaign_13",
+        "delta": -1.4558746507318754,
+        "p": 0.013561828149234907,
+        "p_holm": 0.14918010964158399,
+        "wins": 1,
+        "n": 8
+      },
+      {
+        "name": "LOGGED:Campaign_15",
+        "delta": -1.4863948358762502,
+        "p": 0.004691592203125458,
+        "p_holm": 0.060990698640630954,
+        "wins": 1,
+        "n": 8
+      }
+    ]
+  },
+  "out": "/Users/odysseus/Documents/Research/Academic_research/Projects/Novelty_Landscape_Engineering_2026_07/01_Scientific_Idea_Discovery_and_Lineages/paper_distant_inspiration_retrieval/protein/pool_results_GB1_logged_free_gpt4o.json",
+  "model": "openai/gpt-4o",
+  "tag": "gpt4o"
+}
