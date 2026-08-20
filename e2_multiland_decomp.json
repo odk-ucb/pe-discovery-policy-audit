@@ -1,0 +1,191 @@
+{
+  "GB1": {
+    "land": "GB1",
+    "build": "594e370793f16f49",
+    "free": {
+      "n_policies": 25,
+      "n_seeds": 24
+    },
+    "perturb": {
+      "n_policies": 5,
+      "n_seeds": 24
+    },
+    "free_replication": {
+      "n_policies": 20,
+      "n_seeds": 16
+    },
+    "perturb_replication": {
+      "n_policies": 5,
+      "n_seeds": 24
+    },
+    "e2": {
+      "perturb_minus_free": {
+        "mean": 0.7296601924511851,
+        "ci95": [
+          0.48190847525163916,
+          0.977411909650731
+        ],
+        "p": 3.2521348622345635e-06,
+        "tost_p": 0.9999018069589202,
+        "tost_equiv": false,
+        "mde": 0.24775171719954592,
+        "n": 24
+      },
+      "perturb_minus_base": {
+        "mean": 0.024718988734916476,
+        "ci95": [
+          -0.2990226677931954,
+          0.34846064526302833
+        ],
+        "p": 0.8758744383165759,
+        "tost_p": 0.13713303886085573,
+        "tost_equiv": false,
+        "mde": 0.3237416565281119,
+        "n": 24
+      },
+      "base_minus_free": {
+        "mean": 0.7049412037162684,
+        "ci95": [
+          0.3190706632686368,
+          1.0908117441639
+        ],
+        "p": 0.0009718486595340771,
+        "tost_p": 0.9937112163871611,
+        "tost_equiv": false,
+        "mde": 0.38587054044763164,
+        "n": 24
+      },
+      "default_share": 0.9661226020130318,
+      "identity_check": 1.1102230246251565e-16,
+      "n_seeds": 24,
+      "n_perturb": 5,
+      "n_free": 25
+    }
+  },
+  "TEV": {
+    "land": "TEV",
+    "build": "plmfix_TEV_1787145235",
+    "free": {
+      "n_policies": 10,
+      "n_seeds": 8
+    },
+    "perturb": {
+      "n_policies": 5,
+      "n_seeds": 8
+    },
+    "free_replication": {
+      "n_policies": 0,
+      "n_seeds": 0
+    },
+    "perturb_replication": {
+      "n_policies": 0,
+      "n_seeds": 0
+    },
+    "e2": {
+      "perturb_minus_free": {
+        "mean": 0.028901158890052667,
+        "ci95": [
+          -0.18178570405886074,
+          0.23958802183896605
+        ],
+        "p": 0.7551360256405962,
+        "tost_p": 0.04814278523642869,
+        "tost_equiv": true,
+        "mde": 0.2106868629489134,
+        "n": 8
+      },
+      "perturb_minus_base": {
+        "mean": -0.0027179893426520496,
+        "ci95": [
+          -0.42295685211585093,
+          0.41752087343054683
+        ],
+        "p": 0.9882246070273769,
+        "tost_p": 0.1518187987570958,
+        "tost_equiv": false,
+        "mde": 0.4202388627731989,
+        "n": 8
+      },
+      "base_minus_free": {
+        "mean": 0.03161914823270473,
+        "ci95": [
+          -0.49858603815364677,
+          0.5618243346190562
+        ],
+        "p": 0.8918296297787714,
+        "tost_p": 0.2385816543451521,
+        "tost_equiv": false,
+        "mde": 0.5302051863863515,
+        "n": 8
+      },
+      "default_share": 1.0940443029634896,
+      "identity_check": -1.3877787807814457e-17,
+      "n_seeds": 8,
+      "n_perturb": 5,
+      "n_free": 10
+    }
+  },
+  "TrpB4": {
+    "land": "TrpB4",
+    "build": "plmfix_TrpB4_1787145384",
+    "free": {
+      "n_policies": 25,
+      "n_seeds": 8
+    },
+    "perturb": {
+      "n_policies": 8,
+      "n_seeds": 8
+    },
+    "free_replication": {
+      "n_policies": 0,
+      "n_seeds": 0
+    },
+    "perturb_replication": {
+      "n_policies": 0,
+      "n_seeds": 0
+    },
+    "e2": {
+      "perturb_minus_free": {
+        "mean": 0.18951924468115866,
+        "ci95": [
+          0.04193524973314544,
+          0.3371032396291719
+        ],
+        "p": 0.01893960617088994,
+        "tost_p": 0.4356954558194732,
+        "tost_equiv": false,
+        "mde": 0.14758399494801322,
+        "n": 8
+      },
+      "perturb_minus_base": {
+        "mean": 0.04408540868046576,
+        "ci95": [
+          -0.2483924525996116,
+          0.3365632699605431
+        ],
+        "p": 0.7320259635420177,
+        "tost_p": 0.12393292301066443,
+        "tost_equiv": false,
+        "mde": 0.29247786128007736,
+        "n": 8
+      },
+      "base_minus_free": {
+        "mean": 0.1454338360006929,
+        "ci95": [
+          -0.28679461113194227,
+          0.577662283133328
+        ],
+        "p": 0.45237521491771027,
+        "tost_p": 0.3869868687893021,
+        "tost_equiv": false,
+        "mde": 0.43222844713263514,
+        "n": 8
+      },
+      "default_share": 0.7673829443831222,
+      "identity_check": 0.0,
+      "n_seeds": 8,
+      "n_perturb": 8,
+      "n_free": 25
+    }
+  }
+}
